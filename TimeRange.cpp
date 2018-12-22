@@ -1,5 +1,23 @@
 #include "TimeRange.h"
 
+TimeRange::TimeRange(byte bh, byte bm, byte eh, byte em)
+{
+    set(bh, bm, eh, em);
+}
+
+bool TimeRange::set(byte bh, byte bm, byte eh, byte em)
+{
+    if (bh < 0 || bh > 23) return false; 
+    if (eh < 0 || eh > 23) return false; 
+    if (bm < 0 || bm > 59) return false; 
+    if (em < 0 || em > 59) return false; 
+    beginHour = bh;
+    beginMinute = bm;
+    endHour = eh;
+    endMinute = em;
+    return true;
+}
+
 bool TimeRange::isNow()
 {
     int h = hour();
@@ -25,10 +43,10 @@ void TimeRange::httpRouteSet(WebServer &server, WebServer::ConnectionType type, 
         server.httpUnauthorized();
         return;
     }
-    byte bHour = 255;
-    byte bMinute = 255;
-    byte eHour = 255;
-    byte eMinute = 255;
+    byte bh = 255;
+    byte bm = 255;
+    byte eh = 255;
+    byte em = 255;
 
     const byte keyLen = 2;
     const byte valueLen = 2;
@@ -36,26 +54,22 @@ void TimeRange::httpRouteSet(WebServer &server, WebServer::ConnectionType type, 
     char value[valueLen];
     while (server.readPOSTparam(key, keyLen, value, valueLen)) {
         if (strcmp(key, "bh") == 0) {
-            bHour = _parseBound(value);
+            bh = _parseBound(value);
         }
         if (strcmp(key, "bm") == 0) {
-            bMinute = _parseBound(value);
+            bm = _parseBound(value);
         }
         if (strcmp(key, "eh") == 0) {
-            eHour = _parseBound(value);
+            eh = _parseBound(value);
         }
-        if (strcmp(key, "eh") == 0) {
-            eMinute = _parseBound(value);
+        if (strcmp(key, "em") == 0) {
+            em = _parseBound(value);
         }
     }
 
-    if (bHour > 23 || bMinute > 59 || eHour > 23 || eMinute > 59) {
+    if (!set(bh, bm, eh, em)) {
         server.httpServerError();
         return;
     }
     server.httpSuccess();
-    beginHour = bHour;
-    beginMinute = bMinute;
-    endHour = eHour;
-    endMinute = eMinute;
 }

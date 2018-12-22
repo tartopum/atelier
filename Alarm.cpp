@@ -1,6 +1,6 @@
 #include "Alarm.h"
 
-Alarm::Alarm(int pinDetector, int pinBuzzer, int pinLightAlert, int pinListening, int pinListenSwitch)
+Alarm::Alarm(int pinDetector, int pinBuzzer, int pinLightAlert, int pinListening, int pinListenSwitch) : listeningPeriod(21, 30, 6, 30)
 {
     _pinDetector = pinDetector;
     _pinBuzzer = pinBuzzer;
