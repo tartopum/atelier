@@ -5,26 +5,22 @@
 #include "Arduino.h"
 #include "WebServer.h" // https://github.com/sirleech/Webduino
 #include "Time.h"
+#include "TimeRange.h"
 
 class Alarm
 {
     public:
         Alarm(int, int, int, int, int);
         unsigned long millisBeforeAlert = 5000;
-        byte listeningPeriodBeginHour = 6;
-        byte listeningPeriodBeginMinute = 30;
-        byte listeningPeriodEndHour = 21;
-        byte listeningPeriodEndMinute = 30;
+        TimeRange listeningPeriod;
 
         bool control();
         bool listening();
-        bool inListeningPeriod();
         bool breachDetected();
 
         void httpRouteState(WebServer &server, WebServer::ConnectionType type, char *, bool);
         void httpRouteListeningOn(WebServer &server, WebServer::ConnectionType type, char *, bool);
         void httpRouteListeningOff(WebServer &server, WebServer::ConnectionType type, char *, bool);
-        void httpRouteSetListeningPeriod(WebServer &server, WebServer::ConnectionType type, char *, bool);
 
     private:
         int _pinDetector;

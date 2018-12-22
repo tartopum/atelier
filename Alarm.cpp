@@ -30,13 +30,6 @@ void Alarm::_updateListeningFromSwitch()
     _listening = !_listening;
 }
 
-bool Alarm::inListeningPeriod()
-{
-    bool beforeBegin = hour() <= listeningPeriodBeginHour && minute() <= listeningPeriodBeginMinute;
-    bool afterEnd = hour() >= listeningPeriodEndHour && listeningPeriodEndMinute;
-    return beforeBegin || afterEnd;
-}
-
 bool Alarm::listening()
 {
     // _listening may have been set manually through the web
@@ -45,11 +38,11 @@ bool Alarm::listening()
 
     // If we enter or quit the listening period, we update it.
     // Otherwise, we don't change its value.
-    if (inListeningPeriod() && !_wasInListeningPeriod) {
+    if (listeningPeriod.isNow() && !_wasInListeningPeriod) {
         _listening = true;
         _wasInListeningPeriod = true;
     }
-    else if (!inListeningPeriod() && _wasInListeningPeriod) {
+    else if (!listeningPeriod.isNow() && _wasInListeningPeriod) {
         _listening = false;
         _wasInListeningPeriod = false;
     }
@@ -135,55 +128,4 @@ void Alarm::httpRouteListeningOff(WebServer &server, WebServer::ConnectionType t
     }
     server.httpSuccess();
     _listening = false;
-}
-
-byte _parseListeningPeriodBound(char value[2])
-{
-    byte tens = value[0] - '0';
-    byte units = value[1] - '0';
-    if (tens < 0 || tens > 9 || units < 0 || units > 9) {
-        return 255; // Error
-    }
-    return 10 * tens + units;
-}
-
-void Alarm::httpRouteSetListeningPeriod(WebServer &server, WebServer::ConnectionType type, char *, bool)
-{
-    if (type != WebServer::POST) {
-        server.httpUnauthorized();
-        return;
-    }
-    byte bHour = 255;
-    byte bMinute = 255;
-    byte eHour = 255;
-    byte eMinute = 255;
-
-    const byte keyLen = 2;
-    const byte valueLen = 2;
-    char key[keyLen];
-    char value[valueLen];
-    while (server.readPOSTparam(key, keyLen, value, valueLen)) {
-        if (strcmp(key, "bh") == 0) {
-            bHour = _parseListeningPeriodBound(value);
-        }
-        if (strcmp(key, "bm") == 0) {
-            bMinute = _parseListeningPeriodBound(value);
-        }
-        if (strcmp(key, "eh") == 0) {
-            eHour = _parseListeningPeriodBound(value);
-        }
-        if (strcmp(key, "eh") == 0) {
-            eMinute = _parseListeningPeriodBound(value);
-        }
-    }
-
-    if (bHour == 255 || bMinute == 255 || eHour == 255 || eMinute == 255) {
-        server.httpServerError();
-        return;
-    }
-    server.httpSuccess();
-    listeningPeriodBeginHour = bHour;
-    listeningPeriodBeginMinute = bMinute;
-    listeningPeriodEndHour = eHour;
-    listeningPeriodEndMinute = eMinute;
 }
