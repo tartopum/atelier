@@ -1,4 +1,5 @@
 #include "Alarm.h"
+#include "TimeRange.h"
 
 Alarm::Alarm(int pinDetector, int pinBuzzer, int pinLightAlert, int pinListening, int pinListenSwitch) : listeningPeriod(21, 30, 6, 30)
 {
