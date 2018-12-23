@@ -7,7 +7,7 @@
 class Atelier
 {
     public:
-        Atelier(int pinStopPower, int pinsAlarm[5], int pinsLight[3], int pinsLightBtns[2]);
+        Atelier(int pinStopPower, int pinsAlarm[5], int pinsLight[3], int pinsLightBtn[2]);
         Alarm alarm;
         Lights lights;
         void control();

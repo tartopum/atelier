@@ -16,7 +16,7 @@ class TimeRange
         byte beginMinute = 0;
         bool set(byte, byte, byte, byte);
         bool isNow();
-        void httpRouteSet(WebServer &server, WebServer::ConnectionType type, char *, bool);
+        void httpRoute(WebServer &server, WebServer::ConnectionType type);
 };
 
 #endif

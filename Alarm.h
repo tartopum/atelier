@@ -17,9 +17,7 @@ class Alarm
         bool control();
         bool listening();
         bool breachDetected();
-
-        void httpRouteState(WebServer &server, WebServer::ConnectionType type, char *, bool);
-        void httpRouteSetListening(WebServer &server, WebServer::ConnectionType type, char *, bool);
+        void httpRoute(WebServer &server, WebServer::ConnectionType type);
 
     private:
         int _pinDetector;
@@ -34,6 +32,8 @@ class Alarm
         unsigned long _breachTime = 0;
 
         void _updateListeningFromSwitch(); 
+        void _httpRouteGet(WebServer &server);
+        void _httpRouteSet(WebServer &server);
 };
 
 #endif

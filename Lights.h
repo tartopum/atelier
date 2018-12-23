@@ -16,14 +16,13 @@ class Lights
         void control();
         TimeRange sleep;
         TwoButtons buttons;
-
-        void httpRouteState(WebServer &server, WebServer::ConnectionType type, char *, bool);
-        void httpRouteCmd(WebServer &server, WebServer::ConnectionType type, char *, bool);
-
+        void httpRoute(WebServer &server, WebServer::ConnectionType type);
     private:
         byte _N_PINS = 3;
         int* _pins;
         void _commandFromBtn();
+        void _httpRouteGet(WebServer &server);
+        void _httpRouteSet(WebServer &server);
 };
 
 #endif

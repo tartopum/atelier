@@ -93,12 +93,8 @@ bool Alarm::control()
     return true;
 }
 
-void Alarm::httpRouteState(WebServer &server, WebServer::ConnectionType type, char *, bool)
+void Alarm::_httpRouteGet(WebServer &server)
 {
-    if (type != WebServer::GET) {
-        server.httpUnauthorized();
-        return;
-    }
     server.httpSuccess("application/json");
     server << "{ ";
     server << "\"listening\": " << listening() << ", ";
@@ -106,22 +102,26 @@ void Alarm::httpRouteState(WebServer &server, WebServer::ConnectionType type, ch
     server << " }";
 }
 
-void Alarm::httpRouteSetListening(WebServer &server, WebServer::ConnectionType type, char *, bool)
+void Alarm::_httpRouteSet(WebServer &server)
 {
-    if (type != WebServer::POST) {
-        server.httpUnauthorized();
-        return;
-    }
-
-    const byte keyLen = 2;
+    const byte keyLen = 6;
     const byte valueLen = 1;
     char key[keyLen];
     char value[valueLen];
     while (server.readPOSTparam(key, keyLen, value, valueLen)) {
-        if (strcmp(key, "on") != 0) continue;
+        if (strcmp(key, "listen") != 0) continue;
         _listening = (strcmp(value, "1") == 0);
         server.httpSuccess();
         return;
     }
     server.httpFail();
+}
+
+void Alarm::httpRoute(WebServer &server, WebServer::ConnectionType type)
+{
+    if (type == WebServer::POST) {
+        _httpRouteSet(server);
+        return;
+    }
+    _httpRouteGet(server);
 }

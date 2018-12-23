@@ -48,12 +48,8 @@ void Lights::control()
     _commandFromBtn();
 }
 
-void Lights::httpRouteState(WebServer &server, WebServer::ConnectionType type, char *, bool)
+void Lights::_httpRouteGet(WebServer &server)
 {
-    if (type != WebServer::GET) {
-        server.httpUnauthorized();
-        return;
-    }
     server.httpSuccess("application/json");
     server << "{ ";
 
@@ -64,13 +60,8 @@ void Lights::httpRouteState(WebServer &server, WebServer::ConnectionType type, c
     server << " }";
 }
 
-void Lights::httpRouteCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
+void Lights::_httpRouteSet(WebServer &server)
 {
-    if (type != WebServer::POST) {
-        server.httpUnauthorized();
-        return;
-    }
-    
     const byte keyLen = 2;
     const byte valueLen = 1;
     char key[keyLen];
@@ -83,4 +74,13 @@ void Lights::httpRouteCmd(WebServer &server, WebServer::ConnectionType type, cha
         }
     }
     server.httpSuccess();
+}
+
+void Lights::httpRoute(WebServer &server, WebServer::ConnectionType type)
+{
+    if (type == WebServer::POST) {
+        _httpRouteSet(server);
+        return;
+    }
+    _httpRouteGet(server);
 }

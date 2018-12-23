@@ -37,7 +37,7 @@ byte _parseBound(char value[2])
     return 10 * tens + units;
 }
 
-void TimeRange::httpRouteSet(WebServer &server, WebServer::ConnectionType type, char *, bool)
+void TimeRange::httpRoute(WebServer &server, WebServer::ConnectionType type)
 {
     if (type != WebServer::POST) {
         server.httpUnauthorized();
