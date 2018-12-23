@@ -24,12 +24,17 @@ int pinsLightBtn[2] = {
     CONTROLLINO_AI3,
     CONTROLLINO_AI4,
 };
+int pinsFence[2] = {
+    CONTROLLINO_RELAY_06,
+    CONTROLLINO_DO3,
+};
 
 Atelier atelier(
     pinStopPower,
     pinsAlarm,
     pinsLight,
-    pinsLightBtn
+    pinsLightBtn,
+    pinsFence
 );
 
 
