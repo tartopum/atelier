@@ -13,7 +13,7 @@ class Lights
     public:
         Lights(int lightPins[3], int, int);
         void cmdLight(int n, bool on);
-        void command();
+        void control();
         TimeRange sleep;
         TwoButtons buttons;
 

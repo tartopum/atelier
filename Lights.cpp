@@ -38,7 +38,7 @@ void Lights::_commandFromBtn()
     }
 }
 
-void Lights::command()
+void Lights::control()
 {
     if (sleep.isNow()) {
         for (int i = 0; i < _N_PINS; i++) {

@@ -1,15 +1,17 @@
 #ifndef Atelier_h
 #define Atelier_h
-#define WEBDUINO_NO_IMPLEMENTATION
 
-#include "WebServer.h"
+#include "Alarm.h"
+#include "Lights.h"
 
 class Atelier
 {
     public:
-        Atelier(int);
-        //Alarm alarm;
-        //Lights lights;
+        Atelier(int pinStopPower, int pinsAlarm[5], int pinsLight[3], int pinsLightBtns[2]);
+        Alarm alarm;
+        Lights lights;
+        void control();
+        void cmdPower(bool on);
 
     private:
         int _pinStopPower;
