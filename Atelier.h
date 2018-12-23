@@ -8,6 +8,7 @@ class Atelier
 {
   public:
     Atelier();
+
   private:
 };
 

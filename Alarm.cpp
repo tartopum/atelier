@@ -1,6 +1,10 @@
 #include "Alarm.h"
 #include "TimeRange.h"
 
+template<class T>
+inline Print &operator <<(Print &obj, T arg)
+{ obj.print(arg); return obj; }
+
 Alarm::Alarm(int pinDetector, int pinBuzzer, int pinLightAlert, int pinListening, int pinListenSwitch) : listeningPeriod(21, 30, 6, 30)
 {
     _pinDetector = pinDetector;
@@ -95,38 +99,29 @@ void Alarm::httpRouteState(WebServer &server, WebServer::ConnectionType type, ch
         server.httpUnauthorized();
         return;
     }
-    server.httpSuccess();
-    server.println("HTTP/1.1 200 OK");
-    server.println("Content-Type: application/json");
-    server.println();
-    server.println("{");
-
-    server.print("\"listening\": ");
-    server.print(listening());
-    server.println(",");
-
-    server.print("\"breach\": ");
-    server.println(breachDetected());
-
-    server.println("}");
+    server.httpSuccess("application/json");
+    server << "{ ";
+    server << "\"listening\": " << listening() << ", ";
+    server << "\"breach\": " << breachDetected();
+    server << " }";
 }
 
-void Alarm::httpRouteListeningOn(WebServer &server, WebServer::ConnectionType type, char *, bool)
+void Alarm::httpRouteSetListening(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
     if (type != WebServer::POST) {
         server.httpUnauthorized();
         return;
     }
-    server.httpSuccess();
-    _listening = true;
-}
 
-void Alarm::httpRouteListeningOff(WebServer &server, WebServer::ConnectionType type, char *, bool)
-{
-    if (type != WebServer::POST) {
-        server.httpUnauthorized();
+    const byte keyLen = 2;
+    const byte valueLen = 1;
+    char key[keyLen];
+    char value[valueLen];
+    while (server.readPOSTparam(key, keyLen, value, valueLen)) {
+        if (strcmp(key, "on") != 0) continue;
+        _listening = (strcmp(value, "1") == 0);
+        server.httpSuccess();
         return;
     }
-    server.httpSuccess();
-    _listening = false;
+    server.httpFail();
 }

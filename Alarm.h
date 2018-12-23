@@ -19,8 +19,7 @@ class Alarm
         bool breachDetected();
 
         void httpRouteState(WebServer &server, WebServer::ConnectionType type, char *, bool);
-        void httpRouteListeningOn(WebServer &server, WebServer::ConnectionType type, char *, bool);
-        void httpRouteListeningOff(WebServer &server, WebServer::ConnectionType type, char *, bool);
+        void httpRouteSetListening(WebServer &server, WebServer::ConnectionType type, char *, bool);
 
     private:
         int _pinDetector;
