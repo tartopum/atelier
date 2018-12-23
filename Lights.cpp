@@ -5,43 +5,42 @@ template<class T>
 inline Print &operator <<(Print &obj, T arg)
 { obj.print(arg); return obj; }
 
-Lights::Lights(int pinInside1, int pinInside2, int pinOutside) : sleep(21, 30, 6, 30)
+Lights::Lights(int pinsInside[2], int pinsOutside[1], int pinsBtn[2]) : sleep(21, 30, 6, 30)
 {
-    _pinInside1 = pinInside1;
-    _pinInside2 = pinInside2;
-    _pinOutside = pinOutside;
+    _pinsInside = pinsInside;
+    _pinsOutside = pinsOutside;
+    _pinsBtn = pinsBtn;
 
-    pinMode(_pinInside1, OUTPUT);
-    pinMode(_pinInside2, OUTPUT);
-    pinMode(_pinOutside, OUTPUT);
+    pinMode(_pinsInside[0], OUTPUT);
+    pinMode(_pinsInside[1], OUTPUT);
+    pinMode(_pinsOutside[0], OUTPUT);
+
+    pinMode(_pinsBtn[0], INPUT);
+    pinMode(_pinsBtn[1], INPUT);
 }
 
-int Lights::_lightToPin(light_t light)
+void Lights::cmdInside(bool on, int n = -1)
 {
-    if (light == INSIDE1) return _pinInside1;
-    if (light == INSIDE2) return _pinInside2;
-    return _pinOutside;
+    uint16_t state = on ? HIGH : LOW;
+    if (n == -1) {
+        digitalWrite(_pinsInside[0], state);
+        digitalWrite(_pinsInside[1], state);
+        return;
+    }
+    digitalWrite(_pinsInside[n], state);
 }
 
-bool Lights::isOn(light_t light)
+void Lights::cmdOutside(bool on, int n = -1)
 {
-    return digitalRead(_lightToPin(light)) == HIGH;
+    uint16_t state = on ? HIGH : LOW;
+    digitalWrite(_pinsOutside[0], state);
 }
 
-void Lights::cmdLight(light_t light, bool on)
+void Lights::_commandFromBtn()
 {
-    digitalWrite(_lightToPin(light), on ? HIGH : LOW);
-}
-
-void Lights::cmdInside(bool on)
-{
-    cmdLight(INSIDE1, on);
-    cmdLight(INSIDE2, on);
-}
-
-void Lights::cmdOutside(bool on)
-{
-    cmdLight(OUTSIDE, on);
+    int btn1State = digitalRead(_pinsBtn[0]);
+    int btn2State = digitalRead(_pinsBtn[1]);
+    unsigned long now = millis();
 }
 
 void Lights::command()
@@ -50,6 +49,7 @@ void Lights::command()
         cmdInside(false); 
         cmdOutside(false); 
     }
+    _commandFromBtn();
 }
 
 void Lights::httpRouteState(WebServer &server, WebServer::ConnectionType type, char *, bool)
@@ -60,32 +60,50 @@ void Lights::httpRouteState(WebServer &server, WebServer::ConnectionType type, c
     }
     server.httpSuccess("application/json");
     server << "{ ";
-    server << "\"inside1\": " << isOn(INSIDE1) << ", ";
-    server << "\"inside2\": " << isOn(INSIDE2) << ", ";
-    server << "\"outside\": " << isOn(OUTSIDE);
+
+    for (int i = 0; i < 2; i++) {
+        server << "\"in" << i << "\": " << (digitalRead(_pinsInside[i]) == HIGH) << ", ";
+    }
+    server << "\"out0\": " << (digitalRead(_pinsOutside[0]) == HIGH);
     server << " }";
 }
 
-void Lights::httpRouteCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
+void Lights::httpRouteCmdInside(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
     if (type != WebServer::POST) {
         server.httpUnauthorized();
         return;
     }
     
-    const byte keyLen = 3;
+    const byte keyLen = 1;
     const byte valueLen = 1;
     char key[keyLen];
     char value[valueLen];
     while (server.readPOSTparam(key, keyLen, value, valueLen)) {
-        if (strcmp(key, "in1") == 0) {
-            cmdLight(INSIDE1, (strcmp(value, "1") == 0)); 
+        if (strcmp(key, "0") == 0) {
+            cmdInside((strcmp(value, "1") == 0), 0); 
         }
-        if (strcmp(key, "in2") == 0) {
-            cmdLight(INSIDE2, (strcmp(value, "1") == 0)); 
+        if (strcmp(key, "1") == 0) {
+            cmdInside((strcmp(value, "1") == 0), 1); 
         }
-        if (strcmp(key, "out") == 0) {
-            cmdLight(OUTSIDE, (strcmp(value, "1") == 0)); 
+    }
+    server.httpSuccess();
+}
+
+void Lights::httpRouteCmdOutside(WebServer &server, WebServer::ConnectionType type, char *, bool)
+{
+    if (type != WebServer::POST) {
+        server.httpUnauthorized();
+        return;
+    }
+    
+    const byte keyLen = 1;
+    const byte valueLen = 1;
+    char key[keyLen];
+    char value[valueLen];
+    while (server.readPOSTparam(key, keyLen, value, valueLen)) {
+        if (strcmp(key, "0") == 0) {
+            cmdOutside((strcmp(value, "1") == 0), 0); 
         }
     }
     server.httpSuccess();

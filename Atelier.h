@@ -6,10 +6,13 @@
 
 class Atelier
 {
-  public:
-    Atelier();
+    public:
+        Atelier(int);
+        //Alarm alarm;
+        //Lights lights;
 
-  private:
+    private:
+        int _pinStopPower;
 };
 
 #endif
