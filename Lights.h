@@ -6,27 +6,23 @@
 #include "WebServer.h" // https://github.com/sirleech/Webduino
 #include "Time.h"
 #include "TimeRange.h"
+#include "TwoButtons.h"
 
 class Lights
 {
     public:
-        Lights(int pinsInside[2], int pinsOutside[1], int pinsBtn[2]);
-        unsigned long pressDelay = 2000;
-        void cmdInside(bool on, int n = -1);
-        void cmdOutside(bool on, int n = -1);
+        Lights(int lightPins[3], int, int);
+        void cmdLight(int n, bool on);
         void command();
         TimeRange sleep;
+        TwoButtons buttons;
 
         void httpRouteState(WebServer &server, WebServer::ConnectionType type, char *, bool);
-        void httpRouteCmdInside(WebServer &server, WebServer::ConnectionType type, char *, bool);
-        void httpRouteCmdOutside(WebServer &server, WebServer::ConnectionType type, char *, bool);
+        void httpRouteCmd(WebServer &server, WebServer::ConnectionType type, char *, bool);
 
     private:
-        int* _pinsInside;
-        int* _pinsOutside;
-        int* _pinsBtn;
-        unsigned long _lastDebounceTime = 0;
-        unsigned long _debounceDelay = 1000;
+        byte _N_PINS = 3;
+        int* _pins;
         void _commandFromBtn();
 };
 

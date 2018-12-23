@@ -5,49 +5,45 @@ template<class T>
 inline Print &operator <<(Print &obj, T arg)
 { obj.print(arg); return obj; }
 
-Lights::Lights(int pinsInside[2], int pinsOutside[1], int pinsBtn[2]) : sleep(21, 30, 6, 30)
+Lights::Lights(int lightPins[3], int pinBtn1, int pinBtn2) : sleep(21, 30, 6, 30), buttons(pinBtn1, pinBtn2)
 {
-    _pinsInside = pinsInside;
-    _pinsOutside = pinsOutside;
-    _pinsBtn = pinsBtn;
-
-    pinMode(_pinsInside[0], OUTPUT);
-    pinMode(_pinsInside[1], OUTPUT);
-    pinMode(_pinsOutside[0], OUTPUT);
-
-    pinMode(_pinsBtn[0], INPUT);
-    pinMode(_pinsBtn[1], INPUT);
-}
-
-void Lights::cmdInside(bool on, int n = -1)
-{
-    uint16_t state = on ? HIGH : LOW;
-    if (n == -1) {
-        digitalWrite(_pinsInside[0], state);
-        digitalWrite(_pinsInside[1], state);
-        return;
+    _pins = lightPins;
+    for (int i = 0; i < _N_PINS; i++) {
+        pinMode(_pins[i], OUTPUT);
     }
-    digitalWrite(_pinsInside[n], state);
 }
 
-void Lights::cmdOutside(bool on, int n = -1)
+void Lights::cmdLight(int n, bool on)
 {
-    uint16_t state = on ? HIGH : LOW;
-    digitalWrite(_pinsOutside[0], state);
+    if (n < 0 || n >= _N_PINS) return;
+    digitalWrite(_pins[n], on ? HIGH : LOW);
 }
 
 void Lights::_commandFromBtn()
 {
-    int btn1State = digitalRead(_pinsBtn[0]);
-    int btn2State = digitalRead(_pinsBtn[1]);
-    unsigned long now = millis();
+    two_btn_state_t state = buttons.state(); 
+    int pinIndex = -1;
+    if (state == BOTH) {
+        pinIndex = 0;
+    }
+    if (state == BTN1) {
+        pinIndex = 1;
+    }
+    if (state == BTN2) {
+        pinIndex = 2;
+    }
+    if (pinIndex != -1) {
+        bool cur = digitalRead(_pins[pinIndex]) == HIGH;
+        cmdLight(pinIndex, !cur);
+    }
 }
 
 void Lights::command()
 {
     if (sleep.isNow()) {
-        cmdInside(false); 
-        cmdOutside(false); 
+        for (int i = 0; i < _N_PINS; i++) {
+            cmdLight(i, false); 
+        }
     }
     _commandFromBtn();
 }
@@ -61,49 +57,29 @@ void Lights::httpRouteState(WebServer &server, WebServer::ConnectionType type, c
     server.httpSuccess("application/json");
     server << "{ ";
 
-    for (int i = 0; i < 2; i++) {
-        server << "\"in" << i << "\": " << (digitalRead(_pinsInside[i]) == HIGH) << ", ";
+    for (int i = 0; i < _N_PINS; i++) {
+        server << "\"" << i << "\": " << (digitalRead(_pins[i]) == HIGH);
+        if (i < (_N_PINS - 1)) server << ", ";
     }
-    server << "\"out0\": " << (digitalRead(_pinsOutside[0]) == HIGH);
     server << " }";
 }
 
-void Lights::httpRouteCmdInside(WebServer &server, WebServer::ConnectionType type, char *, bool)
+void Lights::httpRouteCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
     if (type != WebServer::POST) {
         server.httpUnauthorized();
         return;
     }
     
-    const byte keyLen = 1;
+    const byte keyLen = 2;
     const byte valueLen = 1;
     char key[keyLen];
     char value[valueLen];
     while (server.readPOSTparam(key, keyLen, value, valueLen)) {
-        if (strcmp(key, "0") == 0) {
-            cmdInside((strcmp(value, "1") == 0), 0); 
-        }
-        if (strcmp(key, "1") == 0) {
-            cmdInside((strcmp(value, "1") == 0), 1); 
-        }
-    }
-    server.httpSuccess();
-}
-
-void Lights::httpRouteCmdOutside(WebServer &server, WebServer::ConnectionType type, char *, bool)
-{
-    if (type != WebServer::POST) {
-        server.httpUnauthorized();
-        return;
-    }
-    
-    const byte keyLen = 1;
-    const byte valueLen = 1;
-    char key[keyLen];
-    char value[valueLen];
-    while (server.readPOSTparam(key, keyLen, value, valueLen)) {
-        if (strcmp(key, "0") == 0) {
-            cmdOutside((strcmp(value, "1") == 0), 0); 
+        for (int i = 0; i < _N_PINS; i++) {
+            if (strcmp(key, String(i).c_str()) == 0) {
+                cmdLight(i, (strcmp(value, "1") == 0)); 
+            }
         }
     }
     server.httpSuccess();
