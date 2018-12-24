@@ -3,6 +3,11 @@ body {
     padding: 0;
 }
 
+h1, h2 {
+    font-family: Slabo, Helvetica, Arial, sans-serif;
+    text-transform: uppercase;
+}
+
 header {
     display: flex;
     padding: 25px 50px;
@@ -51,14 +56,9 @@ header .nav  ul li.active {
     text-align: center;
 }
 
-.fence h2 {
-    font-family: Slabo, Helvetica, Arial, sans-serif;
-    text-transform: uppercase;
-}
-
-.arduino-404 h1 {
-    font-family: Slabo, Helvetica, Arial, sans-serif;
-    text-transform: uppercase;
+#workshop-wrapper .lights > div {
+    display: inline-block;
+    margin: 0 30px;
 }
 
 .arduino-404 h1 img {

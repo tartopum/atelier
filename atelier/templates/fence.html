@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="fence">
+<div id="fence-wrapper">
     {% if state["state"] == "1" %}
         <h2>Clôture allumée</h2>
         <a href="{{ url_for('fence.activate', on="0") }}">
