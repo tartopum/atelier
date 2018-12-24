@@ -1,4 +1,5 @@
 import functools
+import json
 
 from flask import abort, current_app as app, render_template, request, url_for, redirect
 import requests
@@ -14,21 +15,26 @@ def build_arduino_url(endpoint):
     return f"http://{ip}:{port}/{endpoint}"
 
 
-def arduino_req_route(f):
+def arduino_get(f):
     def decorated(*args, **kwargs):
         try:
             return f(*args, **kwargs)
         except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout) as e:
-            return render_template("arduino_404.html", url=e.request.url), 500
+            logs = f"GET {e.request.url}"
+            return render_template("arduino_404.html", logs=logs), 500
     functools.update_wrapper(decorated, f)
     return decorated
 
 
-@arduino_req_route
 def post_arduino(endpoint, data):
-    requests.post(
-        build_arduino_url(endpoint),
-        timeout=app.config["TIMEOUT"],
-        data=data
-    )
+    try:
+        requests.post(
+            build_arduino_url(endpoint),
+            timeout=app.config["TIMEOUT"],
+            data=data
+        )
+    except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout) as e:
+        body = json.dumps(data, indent=2)
+        logs = f"POST {e.request.url}\n{body}"
+        return render_template("arduino_404.html", logs=logs), 500
     return redirect(redirect_url())

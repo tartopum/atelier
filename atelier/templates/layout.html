@@ -3,6 +3,14 @@
 <head>
     <meta charset="utf-8" />
     <title>{% block title %}{% endblock %}Godardière</title>
+    <style>
+        @font-face {
+            font-family: 'Slabo';
+            font-style: normal;
+            font-weight: 400;
+            src: url({{ url_for('static', filename='fonts/Slabo.ttf') }});
+        }
+    </style>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
     {% block css %}{% endblock %}
 </head>
@@ -13,9 +21,15 @@
         </div>
         <div class="nav">
             <ul>
-                <li><a href="{{ url_for('fence_route') }}">Clôture</a></li>
-                <li><a href="{{ url_for('workshop_route') }}">Atelier</a></li>
-                <li><a href="{{ url_for('tank_route') }}">Eau</a></li>
+                <li {% if page == "fence" %}class="active"{% endif %}>
+                    <a href="{{ url_for('fence_route') }}">Clôture</a>
+                </li>
+                <li {% if page == "workshop" %}class="active"{% endif %}>
+                    <a href="{{ url_for('workshop_route') }}">Atelier</a>
+                </li>
+                <li {% if page == "tank" %}class="active"{% endif %}>
+                    <a href="{{ url_for('tank_route') }}">Eau</a>
+                </li>
             </ul>
         </div>
     </header>

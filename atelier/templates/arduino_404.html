@@ -1,7 +1,11 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="arduino-404">
-    <p>Impossible de joindre la Controllino à cette adresse :</p>
-    {{ url }}
+    <img src="{{ url_for('static', filename='img/arduino_404.png') }}" alt="Fil électrique cassé" />
+    <h1>
+        <img src="{{ url_for('static', filename='img/controllino.png') }}" alt="Controllino" />
+        ne répond pas...
+    </h1>
+    <pre class="logs">{{ logs }}</pre>
 </div>
 {% endblock %}

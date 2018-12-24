@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify
 import requests
 
 from . import alarm, lights, fence
-from .helpers import build_arduino_url, arduino_req_route
+from .helpers import build_arduino_url, arduino_get
 
 app = Flask(__name__)
 app.register_blueprint(alarm.blueprint, url_prefix="/alarm")
@@ -21,29 +21,30 @@ def update_state(x):
 
 
 @app.route("/")
-@arduino_req_route
+@arduino_get
 def home():
     # TODO: display alerts
     return render_template("fence.html", state=update_state(fence))
 
 
 @app.route("/cloture")
-@arduino_req_route
+@arduino_get
 def fence_route():
-    return render_template("fence.html", state=update_state(fence))
+    return render_template("fence.html", page="fence", state=update_state(fence))
 
 
 @app.route("/atelier")
-@arduino_req_route
+@arduino_get
 def workshop_route():
     return render_template(
         "workshop.html",
+        page="workshop",
         alarm=update_state(alarm),
         lights=update_state(lights)
     )
 
 
 @app.route("/eau")
-@arduino_req_route
+@arduino_get
 def tank_route():
-    return render_template("tank.html")
+    return render_template("tank.html", page="tank")
