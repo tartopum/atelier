@@ -8,11 +8,12 @@ IPAddress ip(192, 168, 168, 100);
 WebServer webserver("", 80);
 
 int pinStopPower = CONTROLLINO_RELAY_05;
-int pinsAlarm[5] = {
+int pinsAlarm[6] = {
     CONTROLLINO_AI6,
     CONTROLLINO_DO5,
     CONTROLLINO_DO4,
     CONTROLLINO_DO1,
+    CONTROLLINO_DO0,
     CONTROLLINO_AI5,
 };
 int pinsLight[3] = {

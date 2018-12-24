@@ -5,12 +5,13 @@ template<class T>
 inline Print &operator <<(Print &obj, T arg)
 { obj.print(arg); return obj; }
 
-Alarm::Alarm(int pinDetector, int pinBuzzer, int pinLightAlert, int pinListening, int pinListenSwitch) : listeningPeriod(21, 30, 6, 30)
+Alarm::Alarm(int pinDetector, int pinBuzzer, int pinLightAlert, int pinListening, int pinNotListening, int pinListenSwitch) : listeningPeriod(21, 30, 6, 30)
 {
     _pinDetector = pinDetector;
     _pinBuzzer = pinBuzzer;
     _pinLightAlert = pinLightAlert;
     _pinListening = pinListening;
+    _pinNotListening = pinNotListening;
     _pinListenSwitch = pinListenSwitch;
 
     pinMode(_pinDetector, INPUT);
@@ -19,9 +20,11 @@ Alarm::Alarm(int pinDetector, int pinBuzzer, int pinLightAlert, int pinListening
     pinMode(_pinBuzzer, OUTPUT);
     pinMode(_pinLightAlert, OUTPUT);
     pinMode(_pinListening, OUTPUT);
+    pinMode(_pinNotListening, OUTPUT);
     digitalWrite(_pinBuzzer, LOW);
     digitalWrite(_pinLightAlert, LOW);
     digitalWrite(_pinListening, LOW);
+    digitalWrite(_pinNotListening, LOW);
 
     _oldListenSwitchState = digitalRead(_pinListenSwitch);
 }
@@ -65,10 +68,12 @@ bool Alarm::control()
         digitalWrite(_pinBuzzer, LOW);
         digitalWrite(_pinLightAlert, LOW);
         digitalWrite(_pinListening, LOW);
+        digitalWrite(_pinNotListening, HIGH);
         _breachTime = 0;
         return false;
     }
     digitalWrite(_pinListening, HIGH);
+    digitalWrite(_pinNotListening, LOW);
 
     if (!breachDetected()) {
         _breachTime = 0;

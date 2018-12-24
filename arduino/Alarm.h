@@ -10,7 +10,7 @@
 class Alarm
 {
     public:
-        Alarm(int, int, int, int, int);
+        Alarm(int, int, int, int, int, int);
         unsigned long millisBeforeAlert = 5000;
         TimeRange listeningPeriod;
 
@@ -24,6 +24,7 @@ class Alarm
         int _pinBuzzer;
         int _pinLightAlert;
         int _pinListening;
+        int _pinNotListening;
         int _pinListenSwitch;
 
         bool _listening = false;
