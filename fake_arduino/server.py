@@ -18,16 +18,20 @@ def home():
 @app.route("/<page>", methods=["GET", "POST"])
 def route(page):
     with open(state_path) as f:
-        data = json.load(f)[page]
+        data = json.load(f)
 
     if request.method == "POST":
         for k, v in request.form.items():
-            data[k] = v
+            if k not in data[page]:
+                return f"Invalid attribute {k} for {page}", 400
+                continue
+            data[page][k] = v
         with open(state_path, "w") as f:
             json.dump(data, f)
 
-    return jsonify(data)
+    return jsonify(data[page])
 
 
 if __name__ == "__main__":
+    app.debug = True
     app.run(host="0.0.0.0", port=5001)

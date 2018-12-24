@@ -1,7 +1,7 @@
-from flask import Blueprint
+from flask import Blueprint, redirect, request
 import requests
 
-from .shared import post_arduino
+from .helpers import post_arduino
 
 
 state = dict(on=False)
@@ -9,6 +9,6 @@ arduino_endpoint = "fence"
 
 blueprint = Blueprint("fence", __name__, template_folder="templates")
 
-@blueprint.route("/activate/<int:on>")
+@blueprint.route("/activate/<on>")
 def activate(on):
-    post_arduino(arduino_endpoint, {"on": on})
+    return post_arduino(arduino_endpoint, {"state": on})

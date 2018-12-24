@@ -1,3 +1,10 @@
 {% extends "layout.html" %}
 {% block content %}
+    {% if state["state"] == "1" %}
+        <p>Clôture allumée</p>
+        <p><a href="{{ url_for('fence.activate', on="0") }}">Eteindre</a></p>
+    {% else %}
+        <p>Clôture éteinte</p>
+        <p><a href="{{ url_for('fence.activate', on="1") }}">Allumer</a></p>
+    {% endif %}
 {% endblock %}

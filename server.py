@@ -20,4 +20,5 @@ if __name__ == "__main__":
     app.config["ARDUINO_HOST"] = f"http://{args.arduino_ip}:{args.arduino_port}"
     app.config["TIMEOUT"] = args.timeout
 
+    app.debug = True # TODO
     app.run(host="0.0.0.0")

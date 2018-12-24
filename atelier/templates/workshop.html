@@ -1,3 +1,23 @@
 {% extends "layout.html" %}
 {% block content %}
+    {% if alarm["listen"] == "1" %}
+        <p>Alarme en écoute</p>
+        <p><a href="{{ url_for('alarm.listen', on="0") }}">Désactiver</a></p>
+    {% else %}
+        <p>Alarme désactivée</p>
+        <p><a href="{{ url_for('alarm.listen', on="1") }}">Activer</a></p>
+    {% endif %}
+    {% if alarm["breach"] == "1" %}
+        <p>Intrusion détectée !</p>
+    {% endif %}
+
+    {% for k, v in lights.items() %}
+        {% if v == "1" %}
+            <p>Lampe {{ k }} allumée</p>
+            <p><a href="{{ url_for('lights.activate', n=k, on="0") }}">Eteindre</a></p>
+        {% else %}
+            <p>Lampe {{ k }} éteinte</p>
+            <p><a href="{{ url_for('lights.activate', n=k, on="1") }}">Allumer</a></p>
+        {% endif %}
+    {% endfor %}
 {% endblock %}

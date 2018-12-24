@@ -1,14 +1,1 @@
-{
-    "alarm": {
-        "listening": 0,
-        "breach": 0
-    },
-    "lights": {
-        "0": 0,
-        "1": 0,
-        "2": 0
-    },
-    "fence": {
-        "on": 0
-    }
-}
+{"alarm": {"listen": "0", "breach": "0"}, "lights": {"0": "0", "1": "0", "2": "0"}, "fence": {"state": "0"}}

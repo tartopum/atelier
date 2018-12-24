@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify
 import requests
 
 from . import alarm, lights, fence
-from .shared import build_arduino_url, arduino_req_route
+from .helpers import build_arduino_url, arduino_req_route
 
 app = Flask(__name__)
 app.register_blueprint(alarm.blueprint, url_prefix="/alarm")
