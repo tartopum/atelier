@@ -48,6 +48,11 @@ void lightsRoute(WebServer &server, WebServer::ConnectionType type, char *, bool
     atelier.lights.httpRoute(server, type);
 }
 
+void fenceRoute(WebServer &server, WebServer::ConnectionType type, char *, bool)
+{
+    atelier.fence.httpRoute(server, type);
+}
+
 void handleHTTP()
 {
     char buff[64];
@@ -60,6 +65,7 @@ void setup()
     Ethernet.begin(mac, ip);
     webserver.addCommand("alarm", &alarmRoute);
     webserver.addCommand("lights", &lightsRoute);
+    webserver.addCommand("fence", &fenceRoute);
 }
 
 void loop()
