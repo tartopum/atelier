@@ -1,10 +1,16 @@
 {% extends "layout.html" %}
 {% block content %}
+<div class="fence">
     {% if state["state"] == "1" %}
-        <p>Clôture allumée</p>
-        <p><a href="{{ url_for('fence.activate', on="0") }}">Eteindre</a></p>
+        <h2>Clôture allumée</h2>
+        <a href="{{ url_for('fence.activate', on="0") }}">
+            <img src="{{ url_for('static', filename='img/fence_on.png') }}" alt="Allumée. Cliquer pour éteindre." />
+        </a>
     {% else %}
-        <p>Clôture éteinte</p>
-        <p><a href="{{ url_for('fence.activate', on="1") }}">Allumer</a></p>
+        <h2>Clôture éteinte</h2>
+        <a href="{{ url_for('fence.activate', on="1") }}">
+            <img src="{{ url_for('static', filename='img/fence_off.png') }}" alt="Eteinte. Cliquer pour allumer." />
+        </a>
     {% endif %}
+</div>
 {% endblock %}
