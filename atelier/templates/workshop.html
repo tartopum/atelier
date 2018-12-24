@@ -1,16 +1,31 @@
 {% extends "layout.html" %}
 {% block content %}
 <div id="workshop-wrapper">
-    {% if alarm["listen"] == "1" %}
-        <p>Alarme en écoute</p>
-        <p><a href="{{ url_for('alarm.listen', on="0") }}">Désactiver</a></p>
-    {% else %}
-        <p>Alarme désactivée</p>
-        <p><a href="{{ url_for('alarm.listen', on="1") }}">Activer</a></p>
-    {% endif %}
-    {% if alarm["breach"] == "1" %}
-        <p>Intrusion détectée !</p>
-    {% endif %}
+    <div class="alarm">
+        <div>
+        {% if alarm["listen"] == "1" %}
+            <h2>Alarme en écoute</h2>
+            <a href="{{ url_for('alarm.listen', on="0") }}">
+                <img src="{{ url_for('static', filename='img/alarm_listen_on.png') }}" alt="Alarme en écoute. Cliquer pour désactiver." />
+            </a>
+        {% else %}
+            <h2>Alarme désactivée</h2>
+            <a href="{{ url_for('alarm.listen', on="1") }}">
+                <img src="{{ url_for('static', filename='img/alarm_listen_off.png') }}" alt="Alarme désactivée. Cliquer pour activer." />
+            </a>
+        {% endif %}
+        </div>
+        <div>
+        {% if alarm["breach"] == "1" %}
+            <h2>Intrusion détectée !</h2>
+            <img src="{{ url_for('static', filename='img/alarm_breach_on.png') }}" alt="Intrusion détectée !" />
+        {% else %}
+            <h2>Pas d'intrusion</h2>
+        {% endif %}
+        </div>
+    </div>
+
+    <div class="sep"></div>
 
     <div class="lights">
         <div>

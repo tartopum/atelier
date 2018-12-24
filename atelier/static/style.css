@@ -10,14 +10,16 @@ h1, h2 {
 
 header {
     display: flex;
-    padding: 25px 50px;
-    margin-bottom: 40px;
+    padding: 20px 50px;
+    margin-bottom: 20px;
     font-family: Slabo, Helvetica, Arial, sans-serif;
     text-transform: uppercase;
     font-size: 16px;
     font-weight: bold;
     letter-spacing: 1.2px;
     color: rgb(34, 34, 34);
+    border-bottom: 1px solid #e7edf2;
+    box-shadow: 0px -15px 30px 15px rgba(0, 0, 0, 0.08);
 }
 
 header div {
@@ -56,9 +58,23 @@ header .nav  ul li.active {
     text-align: center;
 }
 
-#workshop-wrapper .lights > div {
+#workshop-wrapper h2 {
+    margin: 0;
+    margin-bottom: 10px;
+}
+
+#workshop-wrapper .sep {
+    border-bottom: 1px solid #e7edf2;
+    width: 300px;
+    margin: 15px auto;
+}
+
+#workshop-wrapper .lights > div,
+#workshop-wrapper .alarm > div
+{
     display: inline-block;
-    margin: 0 30px;
+    vertical-align: top;
+    margin: 20px 30px;
 }
 
 .arduino-404 h1 img {
