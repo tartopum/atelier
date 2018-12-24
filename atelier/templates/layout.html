@@ -2,12 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>{% block title %}Atelier{% endblock %}</title>
+    <title>{% block title %}{% endblock %}Godardière</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
     {% block css %}{% endblock %}
 </head>
 <body>
-    <header>Header TODO</header>
+    <header>
+        <div class="home">
+            <a href="/">Godardière</a>
+        </div>
+        <div class="nav">
+            <ul>
+                <li><a href="{{ url_for('fence_route') }}">Clôture</a></li>
+                <li><a href="{{ url_for('workshop_route') }}">Atelier</a></li>
+                <li><a href="{{ url_for('tank_route') }}">Eau</a></li>
+            </ul>
+        </div>
+    </header>
     <div id="content">
         {% block content %}{% endblock %}
     </div>
