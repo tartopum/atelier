@@ -9,6 +9,6 @@ arduino_endpoint = "lights"
 
 blueprint = Blueprint("lights", __name__, template_folder="templates")
 
-@blueprint.route("/<n>/<on>")
+@blueprint.route("/<int:n>/<int:on>")
 def activate(n, on):
     return post_arduino(arduino_endpoint, {n: on})

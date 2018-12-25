@@ -27,14 +27,20 @@ def arduino_get(f):
 
 
 def post_arduino(endpoint, data):
+    body = json.dumps(data, indent=2)
     try:
-        requests.post(
+        resp = requests.post(
             build_arduino_url(endpoint),
             timeout=app.config["TIMEOUT"],
             data=data
         )
     except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout) as e:
-        body = json.dumps(data, indent=2)
         logs = f"POST {e.request.url}\n{body}"
         return render_template("arduino_404.html", logs=logs), 500
+
+    if resp.status_code != 200:
+        req_logs = f"POST {resp.request.url}\n{body}"
+        resp_logs = resp.text
+        return render_template("arduino_400.html", req=req_logs, resp=resp_logs), 500
+
     return redirect(redirect_url())

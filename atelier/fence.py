@@ -9,6 +9,6 @@ arduino_endpoint = "fence"
 
 blueprint = Blueprint("fence", __name__, template_folder="templates")
 
-@blueprint.route("/activate/<on>")
+@blueprint.route("/activate/<int:on>")
 def activate(on):
     return post_arduino(arduino_endpoint, {"state": on})

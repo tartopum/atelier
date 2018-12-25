@@ -77,11 +77,11 @@ header .nav  ul li.active {
     margin: 20px 30px;
 }
 
-.arduino-404 h1 img {
+.arduino-error h1 img {
     vertical-align: middle;
 }
 
-.arduino-404 .logs {
+.arduino-error .logs {
     font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, Courier, monospace;
     display: inline-block;
     margin: auto;

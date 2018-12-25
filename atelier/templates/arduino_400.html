@@ -4,8 +4,12 @@
     <img src="{{ url_for('static', filename='img/arduino_404.png') }}" alt="Fil électrique cassé" />
     <h1>
         <img src="{{ url_for('static', filename='img/controllino.png') }}" alt="Controllino" />
-        ne répond pas...
+        a reçu une requête invalide...
     </h1>
-    <pre class="logs">{{ logs }}</pre>
+    <pre class="logs">{{ req }}</pre>
+    {% if resp %}
+    <br />
+    <pre class="logs">{{ resp }}</pre>
+    {% endif %}
 </div>
 {% endblock %}
