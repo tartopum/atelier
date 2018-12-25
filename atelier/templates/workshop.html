@@ -1,4 +1,6 @@
 {% extends "layout.html" %}
+{% block title %}Atelier - {% endblock %}
+
 {% block content %}
 <div id="workshop-wrapper">
     <div class="alarm">
@@ -34,7 +36,7 @@
 
     <div class="lights">
         <div>
-            <h2>Extérieur</h2>
+            <h2>Extérieure</h2>
         {% if lights["0"] %}
             <a href="{{ url_for('lights.activate', n=0, on=0) }}">
                 <img src="{{ url_for('static', filename='img/light_on.png') }}" alt="Extérieur allumé. Cliquer pour éteindre." />
@@ -46,7 +48,7 @@
         {% endif %}
         </div>
         <div>
-            <h2>Intérieur 1</h2>
+            <h2>Intérieure 1</h2>
         {% if lights["1"] %}
             <a href="{{ url_for('lights.activate', n=1, on=0) }}">
                 <img src="{{ url_for('static', filename='img/light_on.png') }}" alt="Intérieur 1 allumé. Cliquer pour éteindre." />
@@ -58,7 +60,7 @@
         {% endif %}
         </div>
         <div>
-            <h2>Intérieur 2</h2>
+            <h2>Intérieure 2</h2>
         {% if lights["2"] %}
             <a href="{{ url_for('lights.activate', n=2, on=0) }}">
                 <img src="{{ url_for('static', filename='img/light_on.png') }}" alt="Intérieur 2 allumé. Cliquer pour éteindre." />
@@ -74,18 +76,17 @@
     <div class="sep"></div>
 
     <div>
-        <h2>Alimentation</h2>
         {% if workshop["power_supply"] %}
+            <h2>Atelier alimenté</h2>
             <a href="{{ url_for('workshop.power_supply', on=0) }}">
                 <img src="{{ url_for('static', filename='img/power_supply_on.png') }}" alt="Alimentation allumée. Cliquer pour éteindre." />
             </a>
         {% else %}
+            <h2>Alimentation coupée</h2>
             <a href="{{ url_for('workshop.power_supply', on=1) }}">
                 <img src="{{ url_for('static', filename='img/power_supply_off.png') }}" alt="Alimentation coupée. Cliquer pour allumer." />
             </a>
         {% endif %}
     </div>
-
-    <h1>TODO: config lunch, night, inactivity, alarm delay</h1>
 </div>
 {% endblock %}
