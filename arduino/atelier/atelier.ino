@@ -7,11 +7,8 @@ byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
 IPAddress ip(192, 168, 167, 100);
 WebServer webserver("", 80);
 
-TimeRange lunch(13, 0, 14, 0);
-TimeRange night(21, 0, 6, 0);
-
 unsigned long inactivityDelay = 15000 * 60;
-int pinStopPower = CONTROLLINO_RELAY_05;
+int pinPower = CONTROLLINO_RELAY_05;
 int pinsAlarm[6] = {
     CONTROLLINO_AI6,
     CONTROLLINO_DO5,
@@ -35,14 +32,12 @@ int pinsFence[2] = {
 };
 
 Atelier atelier(
-    pinStopPower,
+    pinPower,
     inactivityDelay,
     pinsAlarm,
     pinsLight,
     pinsLightBtn,
-    pinsFence,
-    &lunch,
-    &night
+    pinsFence
 );
 
 
@@ -61,16 +56,6 @@ void fenceRoute(WebServer &server, WebServer::ConnectionType type, char *, bool)
     atelier.fence.httpRoute(server, type);
 }
 
-void lunchRoute(WebServer &server, WebServer::ConnectionType type, char *, bool)
-{
-    lunch.httpRoute(server, type);
-}
-
-void nightRoute(WebServer &server, WebServer::ConnectionType type, char *, bool)
-{
-    night.httpRoute(server, type);
-}
-
 void atelierRoute(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
     atelier.httpRoute(server, type);
@@ -86,8 +71,6 @@ void handleHTTP()
 void setup()
 {
     Ethernet.begin(mac, ip);
-    webserver.addCommand("lunch", &lunchRoute);
-    webserver.addCommand("night", &nightRoute);
     webserver.addCommand("alarm", &alarmRoute);
     webserver.addCommand("lights", &lightsRoute);
     webserver.addCommand("fence", &fenceRoute);

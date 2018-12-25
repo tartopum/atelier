@@ -4,48 +4,43 @@ template<class T>
 inline Print &operator <<(Print &obj, T arg)
 { obj.print(arg); return obj; }
 
-Atelier::Atelier(int pinStopPower, unsigned long inactivityDelay_, int pinsAlarm[5], int pinsLigth[3], int pinsLightBtn[2], int pinsFence[2], TimeRange *lunch_, TimeRange *night_) :
-    alarm(pinsAlarm[0], pinsAlarm[1], pinsAlarm[2], pinsAlarm[3], pinsAlarm[4], pinsAlarm[5], lunch_, night_),
-    lights(pinsLigth, pinsLightBtn[0], pinsLightBtn[1], night_),
+Atelier::Atelier(int pinPowerSupply, unsigned long inactivityDelay_, int pinsAlarm[5], int pinsLigth[3], int pinsLightBtn[2], int pinsFence[2]) :
+    alarm(pinsAlarm[0], pinsAlarm[1], pinsAlarm[2], pinsAlarm[3], pinsAlarm[4], pinsAlarm[5]),
+    lights(pinsLigth, pinsLightBtn[0], pinsLightBtn[1]),
     fence(pinsFence[0], pinsFence[1])
 {
-    lunch = lunch_;
-    night = night_;
-    _pinStopPower = pinStopPower;
+    _pinPowerSupply = pinPowerSupply;
     inactivityDelay = inactivityDelay_;
-    pinMode(_pinStopPower, OUTPUT);
+    pinMode(_pinPowerSupply, OUTPUT);
 }
 
-void Atelier::cmdPower(bool on)
+void Atelier::cmdPowerSupply(bool on)
 {
-    digitalWrite(_pinStopPower, on ? HIGH : LOW);
+    digitalWrite(_pinPowerSupply, on ? HIGH : LOW);
 }
 
 void Atelier::control()
 {
-    if (millis() - _lastActivityTime > inactivityDelay) {
-        lights.cmdAll(false);
-    }
-
     fence.control();
     alarm.control();
     lights.control();
 
+    if (millis() - _lastActivityTime > inactivityDelay) {
+        lights.cmdAll(false);
+    }
     if (alarm.movementDetected()) {
         _lastActivityTime = millis();
     }
-
     if (alarm.breachDetected()) {
         lights.cmdLight(0, true);
     }
-
-    cmdPower(!night->isNow());
 }
 
 void Atelier::_httpRouteGet(WebServer &server)
 {
     server.httpSuccess("application/json");
     server << "{ ";
+    server << "\"power_supply\": " << (digitalRead(_pinPowerSupply) == HIGH) << ",";
     server << "\"inactivity_delay\": " << inactivityDelay;
     server << " }";
 }
@@ -65,6 +60,9 @@ void Atelier::_httpRouteSet(WebServer &server)
                 server.httpServerError();
                 return;
             }
+        }
+        if (strcmp(key, "power_supply") == 0) {
+            (strcmp(value, "1") == 0) ? cmdPowerSupply(true) : cmdPowerSupply(false);
         }
     }
     server.httpSuccess();

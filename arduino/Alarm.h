@@ -10,7 +10,8 @@
 class Alarm
 {
     public:
-        Alarm(int, int, int, int, int, int, TimeRange *lunch, TimeRange *night);
+        Alarm(int, int, int, int, int, int);
+        // The movement detector stays active ~ 8 seconds after we leave the room
         unsigned long millisBeforeAlert = 15000;
 
         bool control();
@@ -27,14 +28,11 @@ class Alarm
         int _pinNotListening;
         int _pinListenSwitch;
 
-        TimeRange *_lunch;
-        TimeRange *_night;
         bool _listening = false;
         uint8_t _oldListenSwitchState; 
         unsigned long _breachTime = 0;
         unsigned long _lightStateChangeTime = 0;
 
-        void _updateListeningFromSwitch(); 
         void _httpRouteGet(WebServer &server);
         void _httpRouteSet(WebServer &server);
 };

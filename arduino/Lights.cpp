@@ -5,10 +5,9 @@ template<class T>
 inline Print &operator <<(Print &obj, T arg)
 { obj.print(arg); return obj; }
 
-Lights::Lights(int lightPins[3], int pinBtn1, int pinBtn2, TimeRange *sleep) : _buttons(pinBtn1, pinBtn2)
+Lights::Lights(int lightPins[3], int pinBtn1, int pinBtn2) : _buttons(pinBtn1, pinBtn2)
 {
     _pins = lightPins;
-    _sleep = sleep;
     for (int i = 0; i < _N_PINS; i++) {
         pinMode(_pins[i], OUTPUT);
     }
@@ -27,10 +26,12 @@ void Lights::cmdLight(int n, bool on)
     digitalWrite(_pins[n], on ? HIGH : LOW);
 }
 
-void Lights::_commandFromBtn()
+void Lights::control()
 {
     two_btn_state_t state = _buttons.state(); 
-    int pinIndex = -1;
+    if (state == UNKNOWN || state == NONE) return;
+
+    int pinIndex = 0;
     if (state == BOTH) {
         pinIndex = 0;
     }
@@ -40,20 +41,8 @@ void Lights::_commandFromBtn()
     if (state == BTN2) {
         pinIndex = 2;
     }
-    if (pinIndex != -1) {
-        bool curState = (digitalRead(_pins[pinIndex]) == HIGH);
-        cmdLight(pinIndex, !curState);
-    }
-}
-
-void Lights::control()
-{
-    if (_sleep->isNow()) {
-        for (int i = 0; i < _N_PINS; i++) {
-            cmdLight(i, false); 
-        }
-    }
-    _commandFromBtn();
+    bool curState = (digitalRead(_pins[pinIndex]) == HIGH);
+    cmdLight(pinIndex, !curState);
 }
 
 void Lights::_httpRouteGet(WebServer &server)

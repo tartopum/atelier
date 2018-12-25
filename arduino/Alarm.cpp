@@ -5,7 +5,7 @@ template<class T>
 inline Print &operator <<(Print &obj, T arg)
 { obj.print(arg); return obj; }
 
-Alarm::Alarm(int pinDetector, int pinBuzzer, int pinLightAlert, int pinListening, int pinNotListening, int pinListenSwitch, TimeRange *lunch, TimeRange *night)
+Alarm::Alarm(int pinDetector, int pinBuzzer, int pinLightAlert, int pinListening, int pinNotListening, int pinListenSwitch)
 {
     _pinDetector = pinDetector;
     _pinBuzzer = pinBuzzer;
@@ -13,9 +13,6 @@ Alarm::Alarm(int pinDetector, int pinBuzzer, int pinLightAlert, int pinListening
     _pinListening = pinListening;
     _pinNotListening = pinNotListening;
     _pinListenSwitch = pinListenSwitch;
-
-    _lunch = lunch;
-    _night = night;
 
     pinMode(_pinDetector, INPUT);
     pinMode(_pinListenSwitch, INPUT);
@@ -32,15 +29,6 @@ Alarm::Alarm(int pinDetector, int pinBuzzer, int pinLightAlert, int pinListening
     _oldListenSwitchState = digitalRead(_pinListenSwitch);
 }
 
-void Alarm::_updateListeningFromSwitch() 
-{
-    uint8_t curState = digitalRead(_pinListenSwitch);
-    if (curState == _oldListenSwitchState) return;
-    // The key was turned
-    _oldListenSwitchState = curState;
-    _listening = !_listening;
-}
-
 bool Alarm::breachDetected()
 {
     return listening() && movementDetected();
@@ -48,17 +36,10 @@ bool Alarm::breachDetected()
 
 bool Alarm::listening()
 {
-    // _listening may have been set manually through the web
-    // interface or the switch.
-    _updateListeningFromSwitch();
-
-    // If we enter or quit the listening period, we update it.
-    // Otherwise, we don't change its value.
-    if (_lunch->entering() || _night->entering()) {
-        _listening = true;
-    }
-    else if (_lunch->leaving() || _night->leaving()) {
-        _listening = false;
+    uint8_t curState = digitalRead(_pinListenSwitch);
+    if (curState != _oldListenSwitchState) { // The key was turned
+        _oldListenSwitchState = curState;
+        _listening = !_listening;
     }
     return _listening;
 }
