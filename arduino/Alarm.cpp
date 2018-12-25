@@ -41,6 +41,11 @@ void Alarm::_updateListeningFromSwitch()
     _listening = !_listening;
 }
 
+bool Alarm::breachDetected()
+{
+    return listening() && movementDetected();
+}
+
 bool Alarm::listening()
 {
     // _listening may have been set manually through the web
@@ -58,7 +63,7 @@ bool Alarm::listening()
     return _listening;
 }
 
-bool Alarm::breachDetected()
+bool Alarm::movementDetected()
 {
     return digitalRead(_pinDetector);
 }
@@ -76,7 +81,7 @@ bool Alarm::control()
     digitalWrite(_pinListening, HIGH);
     digitalWrite(_pinNotListening, LOW);
 
-    if (!breachDetected()) {
+    if (!movementDetected()) {
         _breachTime = 0;
         return false;
     }
@@ -95,7 +100,12 @@ bool Alarm::control()
 
     // We raise the alert
     digitalWrite(_pinBuzzer, HIGH);
-    digitalWrite(_pinLightAlert, HIGH);
+    // Make light blink
+    if (millis() - _lightStateChangeTime > 500) {
+        bool isLightOn = (digitalRead(_pinLightAlert) == HIGH);
+        digitalWrite(_pinLightAlert, isLightOn ? LOW : HIGH);
+        _lightStateChangeTime = millis();
+    }
     return true;
 }
 
@@ -105,14 +115,14 @@ void Alarm::_httpRouteGet(WebServer &server)
     server << "{ ";
     server << "\"listen\": " << listening() << ", ";
     server << "\"ms_before_alert\": " << millisBeforeAlert << ", ";
-    server << "\"breach\": " << breachDetected();
+    server << "\"movement\": " << movementDetected();
     server << " }";
 }
 
 void Alarm::_httpRouteSet(WebServer &server)
 {
     const byte keyLen = 20;
-    const byte valueLen = 1;
+    const byte valueLen = 5;
     char key[keyLen];
     char value[valueLen];
     while (server.readPOSTparam(key, keyLen, value, valueLen)) {

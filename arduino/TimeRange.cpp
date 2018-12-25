@@ -77,8 +77,8 @@ void TimeRange::_httpRouteSet(WebServer &server)
     byte eh = 255;
     byte em = 255;
 
-    const byte keyLen = 2;
-    const byte valueLen = 2;
+    const byte keyLen = 5;
+    const byte valueLen = 5;
     char key[keyLen];
     char value[valueLen];
     while (server.readPOSTparam(key, keyLen, value, valueLen)) {

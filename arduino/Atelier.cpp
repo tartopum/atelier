@@ -23,13 +23,22 @@ void Atelier::cmdPower(bool on)
 
 void Atelier::control()
 {
-    if (millis() - _lastInactivityTime > inactivityDelay) {
+    if (millis() - _lastActivityTime > inactivityDelay) {
         lights.cmdAll(false);
-        _lastInactivityTime = millis();
     }
 
+    fence.control();
     alarm.control();
     lights.control();
+
+    if (alarm.movementDetected()) {
+        _lastActivityTime = millis();
+    }
+
+    if (alarm.breachDetected()) {
+        lights.cmdLight(0, true);
+    }
+
     cmdPower(!night->isNow());
 }
 
@@ -44,7 +53,7 @@ void Atelier::_httpRouteGet(WebServer &server)
 void Atelier::_httpRouteSet(WebServer &server)
 {
     const byte keyLen = 20;
-    const byte valueLen = 3;
+    const byte valueLen = 5;
     char key[keyLen];
     char value[valueLen];
     while (server.readPOSTparam(key, keyLen, value, valueLen)) {

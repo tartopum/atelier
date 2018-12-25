@@ -12,11 +12,13 @@ class Fence
         void on();
         void off();
         bool isOn();
+        void control();
         void httpRoute(WebServer &server, WebServer::ConnectionType type);
 
     private:
         int _pinControl;
         int _pinDisplay;
+        unsigned long _lightStateChangeTime = 0;
         void _httpRouteGet(WebServer &server);
         void _httpRouteSet(WebServer &server);
 };

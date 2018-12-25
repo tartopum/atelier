@@ -11,10 +11,11 @@ class Alarm
 {
     public:
         Alarm(int, int, int, int, int, int, TimeRange *lunch, TimeRange *night);
-        unsigned long millisBeforeAlert = 5000;
+        unsigned long millisBeforeAlert = 15000;
 
         bool control();
         bool listening();
+        bool movementDetected();
         bool breachDetected();
         void httpRoute(WebServer &server, WebServer::ConnectionType type);
 
@@ -31,6 +32,7 @@ class Alarm
         bool _listening = false;
         uint8_t _oldListenSwitchState; 
         unsigned long _breachTime = 0;
+        unsigned long _lightStateChangeTime = 0;
 
         void _updateListeningFromSwitch(); 
         void _httpRouteGet(WebServer &server);

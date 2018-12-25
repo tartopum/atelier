@@ -22,7 +22,7 @@ class Atelier
 
     private:
         int _pinStopPower;
-        unsigned long _lastInactivityTime = 0;
+        unsigned long _lastActivityTime = 0;
         void _httpRouteGet(WebServer &server);
         void _httpRouteSet(WebServer &server);
 };

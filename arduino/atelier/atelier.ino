@@ -4,7 +4,7 @@
 #include <Atelier.h>
 
 byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
-IPAddress ip(192, 168, 168, 100);
+IPAddress ip(192, 168, 167, 100);
 WebServer webserver("", 80);
 
 TimeRange lunch(13, 0, 14, 0);
@@ -30,7 +30,7 @@ int pinsLightBtn[2] = {
     CONTROLLINO_AI4,
 };
 int pinsFence[2] = {
-    CONTROLLINO_RELAY_06,
+    CONTROLLINO_RELAY_04,
     CONTROLLINO_DO3,
 };
 

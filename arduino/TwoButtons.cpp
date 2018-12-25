@@ -27,7 +27,7 @@ two_btn_state_t TwoButtons::state()
         _lastChangeTime = millis();
         return UNKNOWN;
     }
-    if (millis - _lastChangeTime < pressDelay) {
+    if (millis() - _lastChangeTime < pressDelay) {
         return UNKNOWN;
     }
 

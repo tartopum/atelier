@@ -41,8 +41,8 @@ void Lights::_commandFromBtn()
         pinIndex = 2;
     }
     if (pinIndex != -1) {
-        bool cur = digitalRead(_pins[pinIndex]) == HIGH;
-        cmdLight(pinIndex, !cur);
+        bool curState = (digitalRead(_pins[pinIndex]) == HIGH);
+        cmdLight(pinIndex, !curState);
     }
 }
 
@@ -70,8 +70,8 @@ void Lights::_httpRouteGet(WebServer &server)
 
 void Lights::_httpRouteSet(WebServer &server)
 {
-    const byte keyLen = 2;
-    const byte valueLen = 1;
+    const byte keyLen = 10;
+    const byte valueLen = 5;
     char key[keyLen];
     char value[valueLen];
     while (server.readPOSTparam(key, keyLen, value, valueLen)) {

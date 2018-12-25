@@ -16,7 +16,7 @@ class TwoButtons
     public:
         TwoButtons(int, int);
         two_btn_state_t state();
-        unsigned long pressDelay = 2000;
+        unsigned long pressDelay = 1000;
 
     private:
         int _pin1;
