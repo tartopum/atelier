@@ -104,23 +104,26 @@ void Alarm::_httpRouteGet(WebServer &server)
     server.httpSuccess("application/json");
     server << "{ ";
     server << "\"listen\": " << listening() << ", ";
+    server << "\"ms_before_alert\": " << millisBeforeAlert << ", ";
     server << "\"breach\": " << breachDetected();
     server << " }";
 }
 
 void Alarm::_httpRouteSet(WebServer &server)
 {
-    const byte keyLen = 6;
+    const byte keyLen = 20;
     const byte valueLen = 1;
     char key[keyLen];
     char value[valueLen];
     while (server.readPOSTparam(key, keyLen, value, valueLen)) {
-        if (strcmp(key, "listen") != 0) continue;
-        _listening = (strcmp(value, "1") == 0);
-        server.httpSuccess();
-        return;
+        if (strcmp(key, "listen") == 0) {
+            _listening = (strcmp(value, "1") == 0);
+        }
+        if (strcmp(key, "ms_before_alert") == 0) {
+            millisBeforeAlert = String(value).toInt();
+        }
     }
-    server.httpFail();
+    server.httpSuccess();
 }
 
 void Alarm::httpRoute(WebServer &server, WebServer::ConnectionType type)

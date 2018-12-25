@@ -4,7 +4,7 @@ template<class T>
 inline Print &operator <<(Print &obj, T arg)
 { obj.print(arg); return obj; }
 
-Atelier::Atelier(int pinStopPower, unsigned long inactivityDelay, int pinsAlarm[5], int pinsLigth[3], int pinsLightBtn[2], int pinsFence[2], TimeRange *lunch_, TimeRange *night_) :
+Atelier::Atelier(int pinStopPower, unsigned long inactivityDelay_, int pinsAlarm[5], int pinsLigth[3], int pinsLightBtn[2], int pinsFence[2], TimeRange *lunch_, TimeRange *night_) :
     alarm(pinsAlarm[0], pinsAlarm[1], pinsAlarm[2], pinsAlarm[3], pinsAlarm[4], pinsAlarm[5], lunch_, night_),
     lights(pinsLigth, pinsLightBtn[0], pinsLightBtn[1], night_),
     fence(pinsFence[0], pinsFence[1])
@@ -12,7 +12,7 @@ Atelier::Atelier(int pinStopPower, unsigned long inactivityDelay, int pinsAlarm[
     lunch = lunch_;
     night = night_;
     _pinStopPower = pinStopPower;
-    _inactivityDelay = inactivityDelay;
+    inactivityDelay = inactivityDelay_;
     pinMode(_pinStopPower, OUTPUT);
 }
 
@@ -23,7 +23,7 @@ void Atelier::cmdPower(bool on)
 
 void Atelier::control()
 {
-    if (millis() - _lastInactivityTime > _inactivityDelay) {
+    if (millis() - _lastInactivityTime > inactivityDelay) {
         lights.cmdAll(false);
         _lastInactivityTime = millis();
     }
@@ -37,30 +37,27 @@ void Atelier::_httpRouteGet(WebServer &server)
 {
     server.httpSuccess("application/json");
     server << "{ ";
-    server << "\"inactivity_delay\": " << _inactivityDelay;
+    server << "\"inactivity_delay\": " << inactivityDelay;
     server << " }";
 }
 
 void Atelier::_httpRouteSet(WebServer &server)
 {
-    unsigned long delayMinutes = 0;
-
     const byte keyLen = 20;
     const byte valueLen = 3;
     char key[keyLen];
     char value[valueLen];
     while (server.readPOSTparam(key, keyLen, value, valueLen)) {
         if (strcmp(key, "inactivity_delay") == 0) {
-            String delay = String(value);
-            delayMinutes = delay.toInt();
+            unsigned long delay = String(value).toInt();
+            if (delay > 0) {
+                inactivityDelay = delay;
+            } else {
+                server.httpServerError();
+                return;
+            }
         }
     }
-    if (delayMinutes == 0) {
-        server.httpServerError();
-        return;
-    }
-
-    _inactivityDelay = 1000 * 60 * delayMinutes;
     server.httpSuccess();
 }
 
