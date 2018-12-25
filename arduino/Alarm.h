@@ -10,9 +10,8 @@
 class Alarm
 {
     public:
-        Alarm(int, int, int, int, int, int);
+        Alarm(int, int, int, int, int, int, TimeRange *lunch, TimeRange *night);
         unsigned long millisBeforeAlert = 5000;
-        TimeRange listeningPeriod;
 
         bool control();
         bool listening();
@@ -27,8 +26,9 @@ class Alarm
         int _pinNotListening;
         int _pinListenSwitch;
 
+        TimeRange *_lunch;
+        TimeRange *_night;
         bool _listening = false;
-        bool _wasInListeningPeriod = false;
         uint8_t _oldListenSwitchState; 
         unsigned long _breachTime = 0;
 

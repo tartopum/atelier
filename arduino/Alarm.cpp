@@ -5,7 +5,7 @@ template<class T>
 inline Print &operator <<(Print &obj, T arg)
 { obj.print(arg); return obj; }
 
-Alarm::Alarm(int pinDetector, int pinBuzzer, int pinLightAlert, int pinListening, int pinNotListening, int pinListenSwitch) : listeningPeriod(21, 30, 6, 30)
+Alarm::Alarm(int pinDetector, int pinBuzzer, int pinLightAlert, int pinListening, int pinNotListening, int pinListenSwitch, TimeRange *lunch, TimeRange *night)
 {
     _pinDetector = pinDetector;
     _pinBuzzer = pinBuzzer;
@@ -13,6 +13,9 @@ Alarm::Alarm(int pinDetector, int pinBuzzer, int pinLightAlert, int pinListening
     _pinListening = pinListening;
     _pinNotListening = pinNotListening;
     _pinListenSwitch = pinListenSwitch;
+
+    _lunch = lunch;
+    _night = night;
 
     pinMode(_pinDetector, INPUT);
     pinMode(_pinListenSwitch, INPUT);
@@ -46,13 +49,11 @@ bool Alarm::listening()
 
     // If we enter or quit the listening period, we update it.
     // Otherwise, we don't change its value.
-    if (listeningPeriod.isNow() && !_wasInListeningPeriod) {
+    if (_lunch->entering() || _night->entering()) {
         _listening = true;
-        _wasInListeningPeriod = true;
     }
-    else if (!listeningPeriod.isNow() && _wasInListeningPeriod) {
+    else if (_lunch->leaving() || _night->leaving()) {
         _listening = false;
-        _wasInListeningPeriod = false;
     }
     return _listening;
 }

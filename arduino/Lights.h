@@ -11,15 +11,17 @@
 class Lights
 {
     public:
-        Lights(int lightPins[3], int, int);
+        Lights(int lightPins[3], int pinBtn1, int pinBtn2, TimeRange *sleep);
+        void cmdAll(bool on);
         void cmdLight(int n, bool on);
         void control();
-        TimeRange sleep;
-        TwoButtons buttons;
         void httpRoute(WebServer &server, WebServer::ConnectionType type);
+
     private:
         byte _N_PINS = 3;
         int* _pins;
+        TimeRange *_sleep;
+        TwoButtons _buttons;
         void _commandFromBtn();
         void _httpRouteGet(WebServer &server);
         void _httpRouteSet(WebServer &server);

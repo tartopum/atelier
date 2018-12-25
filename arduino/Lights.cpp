@@ -5,11 +5,19 @@ template<class T>
 inline Print &operator <<(Print &obj, T arg)
 { obj.print(arg); return obj; }
 
-Lights::Lights(int lightPins[3], int pinBtn1, int pinBtn2) : sleep(21, 30, 6, 30), buttons(pinBtn1, pinBtn2)
+Lights::Lights(int lightPins[3], int pinBtn1, int pinBtn2, TimeRange *sleep) : _buttons(pinBtn1, pinBtn2)
 {
     _pins = lightPins;
+    _sleep = sleep;
     for (int i = 0; i < _N_PINS; i++) {
         pinMode(_pins[i], OUTPUT);
+    }
+}
+
+void Lights::cmdAll(bool on)
+{
+    for (int i = 0; i < _N_PINS; i++) {
+        cmdLight(i, on);
     }
 }
 
@@ -21,7 +29,7 @@ void Lights::cmdLight(int n, bool on)
 
 void Lights::_commandFromBtn()
 {
-    two_btn_state_t state = buttons.state(); 
+    two_btn_state_t state = _buttons.state(); 
     int pinIndex = -1;
     if (state == BOTH) {
         pinIndex = 0;
@@ -40,7 +48,7 @@ void Lights::_commandFromBtn()
 
 void Lights::control()
 {
-    if (sleep.isNow()) {
+    if (_sleep->isNow()) {
         for (int i = 0; i < _N_PINS; i++) {
             cmdLight(i, false); 
         }

@@ -1,5 +1,9 @@
 #include "TimeRange.h"
 
+template<class T>
+inline Print &operator <<(Print &obj, T arg)
+{ obj.print(arg); return obj; }
+
 TimeRange::TimeRange(byte bh, byte bm, byte eh, byte em)
 {
     set(bh, bm, eh, em);
@@ -11,19 +15,37 @@ bool TimeRange::set(byte bh, byte bm, byte eh, byte em)
     if (eh < 0 || eh > 23) return false; 
     if (bm < 0 || bm > 59) return false; 
     if (em < 0 || em > 59) return false; 
-    beginHour = bh;
-    beginMinute = bm;
-    endHour = eh;
-    endMinute = em;
+    _bh = bh;
+    _bm = bm;
+    _eh = eh;
+    _em = em;
     return true;
+}
+
+bool TimeRange::entering()
+{
+    if (isNow() && !_wasIn) {
+        _wasIn = true;
+        return true;
+    }
+    return false;
+}
+
+bool TimeRange::leaving()
+{
+    if (!isNow() && _wasIn) {
+        _wasIn = false;
+        return true;
+    }
+    return false;
 }
 
 bool TimeRange::isNow()
 {
     int h = hour();
     int m = minute();
-    bool afterBegin = (h > beginHour) || (h == beginHour && m > beginMinute);
-    bool beforeEnd = (h < endHour) || (h == endHour && m < endMinute);
+    bool afterBegin = (h > _bh) || (h == _bh && m > _bm);
+    bool beforeEnd = (h < _eh) || (h == _eh && m < _em);
     return afterBegin && beforeEnd;
 }
 
@@ -37,12 +59,19 @@ byte _parseBound(char value[2])
     return 10 * tens + units;
 }
 
-void TimeRange::httpRoute(WebServer &server, WebServer::ConnectionType type)
+void TimeRange::_httpRouteGet(WebServer &server)
 {
-    if (type != WebServer::POST) {
-        server.httpUnauthorized();
-        return;
-    }
+    server.httpSuccess("application/json");
+    server << "{ ";
+    server << "\"bh\": " << _bh << ", ";
+    server << "\"bm\": " << _bm << ", ";
+    server << "\"eh\": " << _eh << ", ";
+    server << "\"em\": " << _em;
+    server << " }";
+}
+
+void TimeRange::_httpRouteSet(WebServer &server)
+{
     byte bh = 255;
     byte bm = 255;
     byte eh = 255;
@@ -72,4 +101,13 @@ void TimeRange::httpRoute(WebServer &server, WebServer::ConnectionType type)
         return;
     }
     server.httpSuccess();
+}
+
+void TimeRange::httpRoute(WebServer &server, WebServer::ConnectionType type)
+{
+    if (type == WebServer::POST) {
+        _httpRouteSet(server);
+        return;
+    }
+    _httpRouteGet(server);
 }
