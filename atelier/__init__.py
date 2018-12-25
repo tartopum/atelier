@@ -1,13 +1,14 @@
 from flask import Flask, render_template, request, jsonify
 import requests
 
-from . import alarm, lights, fence
+from . import alarm, lights, fence, workshop
 from .helpers import build_arduino_url, arduino_get
 
 app = Flask(__name__)
 app.register_blueprint(alarm.blueprint, url_prefix="/alarm")
 app.register_blueprint(fence.blueprint, url_prefix="/fence")
 app.register_blueprint(lights.blueprint, url_prefix="/lights")
+app.register_blueprint(workshop.blueprint, url_prefix="/workshop")
 
 
 def update_state(x):
@@ -40,7 +41,8 @@ def workshop_route():
         "workshop.html",
         page="workshop",
         alarm=update_state(alarm),
-        lights=update_state(lights)
+        lights=update_state(lights),
+        workshop=update_state(workshop),
     )
 
 
