@@ -11,6 +11,7 @@ Lights::Lights(int lightPins[3], int pinBtn1, int pinBtn2) : _buttons(pinBtn1, p
     for (int i = 0; i < _N_PINS; i++) {
         pinMode(_pins[i], OUTPUT);
     }
+    cmdAll(false);
 }
 
 void Lights::cmdAll(bool on)

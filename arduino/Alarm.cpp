@@ -23,6 +23,7 @@ Alarm::Alarm(int pinDetector, int pinBuzzer, int pinLightAlert, int pinListening
     pinMode(_pinNotListening, OUTPUT);
 
     _oldListenSwitchState = digitalRead(_pinListenSwitch);
+    _listening = false;
 }
 
 bool Alarm::breachDetected()
