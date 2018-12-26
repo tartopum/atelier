@@ -24,6 +24,7 @@ class TwoButtons
         uint16_t _oldState1;
         uint16_t _oldState2;
         unsigned long _lastChangeTime = 0;
+        bool changed = false;
 };
 
 #endif

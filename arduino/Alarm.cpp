@@ -15,16 +15,12 @@ Alarm::Alarm(int pinDetector, int pinBuzzer, int pinLightAlert, int pinListening
     _pinListenSwitch = pinListenSwitch;
 
     pinMode(_pinDetector, INPUT);
-    pinMode(_pinListenSwitch, INPUT);
+    pinMode(_pinListenSwitch, INPUT_PULLUP);
 
     pinMode(_pinBuzzer, OUTPUT);
     pinMode(_pinLightAlert, OUTPUT);
     pinMode(_pinListening, OUTPUT);
     pinMode(_pinNotListening, OUTPUT);
-    digitalWrite(_pinBuzzer, LOW);
-    digitalWrite(_pinLightAlert, LOW);
-    digitalWrite(_pinListening, LOW);
-    digitalWrite(_pinNotListening, LOW);
 
     _oldListenSwitchState = digitalRead(_pinListenSwitch);
 }
