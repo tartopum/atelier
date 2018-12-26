@@ -12,6 +12,7 @@ Atelier::Atelier(int pinPowerSupply, unsigned long inactivityDelay_, int pinsAla
     _pinPowerSupply = pinPowerSupply;
     inactivityDelay = inactivityDelay_;
     pinMode(_pinPowerSupply, OUTPUT);
+    cmdPowerSupply(true);
 }
 
 void Atelier::cmdPowerSupply(bool on)
