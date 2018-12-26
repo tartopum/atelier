@@ -15,7 +15,7 @@ Alarm::Alarm(int pinDetector, int pinBuzzer, int pinLightAlert, int pinListening
     _pinListenSwitch = pinListenSwitch;
 
     pinMode(_pinDetector, INPUT);
-    pinMode(_pinListenSwitch, INPUT_PULLUP);
+    pinMode(_pinListenSwitch, INPUT);
 
     pinMode(_pinBuzzer, OUTPUT);
     pinMode(_pinLightAlert, OUTPUT);
@@ -27,7 +27,7 @@ Alarm::Alarm(int pinDetector, int pinBuzzer, int pinLightAlert, int pinListening
 
 bool Alarm::breachDetected()
 {
-    return listening() && movementDetected();
+    return _breachDetected;
 }
 
 bool Alarm::listening()
@@ -53,6 +53,7 @@ bool Alarm::control()
         digitalWrite(_pinListening, LOW);
         digitalWrite(_pinNotListening, HIGH);
         _breachTime = 0;
+        _breachDetected = false;
         return false;
     }
     digitalWrite(_pinListening, HIGH);
@@ -75,6 +76,7 @@ bool Alarm::control()
         return false;
     }
 
+    _breachDetected = true;
     // We raise the alert
     digitalWrite(_pinBuzzer, HIGH);
     // Make light blink

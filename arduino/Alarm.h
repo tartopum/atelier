@@ -16,8 +16,8 @@ class Alarm
 
         bool control();
         bool listening();
-        bool movementDetected();
         bool breachDetected();
+        bool movementDetected();
         void httpRoute(WebServer &server, WebServer::ConnectionType type);
 
     private:
@@ -28,6 +28,7 @@ class Alarm
         int _pinNotListening;
         int _pinListenSwitch;
 
+        bool _breachDetected = false;
         bool _listening = false;
         uint8_t _oldListenSwitchState; 
         unsigned long _breachTime = 0;
