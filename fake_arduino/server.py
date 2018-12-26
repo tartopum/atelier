@@ -12,7 +12,7 @@ state_path = os.path.join(here, "state.json")
 @app.route("/")
 def home():
     with open(state_path) as f:
-        return "<pre>" + json.dumps(json.load(f), indent=4) + "</pre>"
+        return jsonify(json.load(f))
 
 
 @app.route("/<page>", methods=["GET", "POST"])
@@ -21,6 +21,7 @@ def route(page):
         data = json.load(f)
 
     if request.method == "POST":
+        print(request.form)
         for k, v in request.form.items():
             if k not in data[page]:
                 return f"Invalid attribute {k} for {page}", 400

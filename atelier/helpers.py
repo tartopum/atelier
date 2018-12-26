@@ -1,8 +1,10 @@
 import functools
 import json
 
-from flask import abort, current_app as app, render_template, request, url_for, redirect
+from flask import abort, render_template, request, url_for, redirect
 import requests
+
+from . import config
 
 
 def redirect_url(default="home"):
@@ -10,8 +12,8 @@ def redirect_url(default="home"):
 
 
 def build_arduino_url(endpoint):
-    ip = app.config["ARDUINO_IP"]
-    port = app.config["ARDUINO_PORT"]
+    ip = config.arduino["ip"]
+    port = config.arduino["port"]
     return f"http://{ip}:{port}/{endpoint}"
 
 
@@ -27,20 +29,27 @@ def arduino_get(f):
 
 
 def post_arduino(endpoint, data):
-    body = json.dumps(data, indent=2)
-    try:
-        resp = requests.post(
-            build_arduino_url(endpoint),
-            timeout=app.config["TIMEOUT"],
-            data=data
-        )
-    except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout) as e:
-        logs = f"POST {e.request.url}\n{body}"
-        return render_template("arduino_404.html", logs=logs), 500
+    resp = requests.post(
+        build_arduino_url(endpoint),
+        timeout=config.arduino["timeout"],
+        data=data
+    )
+    resp.raise_for_status()
+    return resp
 
-    if resp.status_code != 200:
-        req_logs = f"POST {resp.request.url}\n{body}"
-        resp_logs = resp.text
-        return render_template("arduino_400.html", req=req_logs, resp=resp_logs), 500
 
-    return redirect(redirect_url())
+def register_arduino_route(func, app, route):
+    def route_func(*args, **kwargs):
+        try:
+            resp = func(*args, **kwargs)
+        except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout) as e:
+            logs = f"POST {e.request.url} {e.request.body}"
+            return render_template("arduino_404.html", logs=logs), 500
+        except requests.exceptions.HTTPError:
+            req_logs = f"POST {resp.request.url} {resp.request.body}"
+            resp_logs = resp.text
+            return render_template("arduino_400.html", req=req_logs, resp=resp_logs), 500
+
+        return redirect(redirect_url())
+    route_func.__name__ = func.__name__
+    app.route(route)(route_func)

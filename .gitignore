@@ -122,3 +122,5 @@ ENV/
 
 # Vim
 .swp
+
+logs*.txt
