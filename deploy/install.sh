@@ -2,7 +2,7 @@
 
 sudo apt-get update
 sudo apt-get -y upgrade
-sudo apt-get install -y git build-essential libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev zlib1g
+sudo apt-get install -y build-essential libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev zlib1g
 
 # Install Python 3.7
 python3.7 -V
@@ -30,19 +30,11 @@ sudo rm -rf Python-3.7.0*
 # Install Pipenv
 sudo pip3.7 install --upgrade pip
 sudo pip3.7 install pipenv
-if [ $? -ne 0 ];
-then
-    exit 1
-fi
+pipenv install
 
 # Run web server at startup
 sudo cp /etc/rc.local /etc/rc.local.bak
 sudo cp rc.local /etc/rc.local
-
-# Download project
-git clone https://github.com/tartopum/atelier ../atelier
-cd ../atelier
-pipenv install
 
 echo "------------"
 echo "Installation finished."

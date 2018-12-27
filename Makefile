@@ -40,9 +40,13 @@ check_network:
 config_ip:
 	sudo ifconfig ${NETWORK_INT} 192.168.167.102 netmask 255.255.255.0
 
+.PHONY: download
+download:
+	ssh ${SSH_HOST} 'cd ${RPI_HOME}/deploy; ./download.sh'
+
 .PHONY: install
 install:
-	ssh ${SSH_HOST} 'cd ${RPI_HOME}/deploy; ./install.sh'
+	ssh ${SSH_HOST} 'cd ${RPI_HOME}/atelier/deploy; ./install.sh'
 
 .PHONY: update
 update:

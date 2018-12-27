@@ -60,7 +60,9 @@ make prod
     6. Reboot the RPi
     7. Set your IP to communicate with the RPi: `make config_ip`
     8. `make check_network`
-4. Install the project (Internet access needed): `make install`
+4. Install the project (Internet access needed):
+    * `make download`
+    * `make install`
 5. Reboot the RPi to start the web server
 
 ## Credits
