@@ -125,3 +125,4 @@ ENV/
 
 logs*.txt
 pid
+server.err

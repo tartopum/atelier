@@ -3,6 +3,8 @@ import logging
 import logging.config
 import os
 
+from gevent.pywsgi import WSGIServer
+
 HERE = os.path.dirname(__file__)
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 logging.config.dictConfig(dict(
@@ -48,7 +50,8 @@ from atelier import app, config, scheduler
 
 def run_server():
     app.debug = config["server"]["debug"]
-    app.run(host="0.0.0.0", port=config["server"]["port"])
+    http_server = WSGIServer(("", config["server"]["port"]), app)
+    http_server.serve_forever()
 
 
 if __name__ == "__main__":

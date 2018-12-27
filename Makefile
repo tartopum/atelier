@@ -20,7 +20,8 @@ fake_arduino:
 .PHONY: prod
 prod:
 	-cat pid | xargs kill
-	pipenv run python server.py & echo "$$!" > pid
+	rm -f server.log server.err
+	pipenv run python server.py > server.log 2> server.err & echo "$$!" > pid
 
 .PHONY: arduino
 arduino:
