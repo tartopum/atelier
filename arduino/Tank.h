@@ -44,7 +44,7 @@ class Tank
         unsigned int _flowIn = 0; // mL/s
         unsigned int _flowOut = 0; // mL/s
         unsigned long _oldTimeFlow = 0;
-        unsigned long _oldTimePumpInOff = 0;
+        unsigned long _lastTimePumpInOff = 0;
         volatile byte _flowInPulses = 0;
         volatile byte _flowOutPulses = 0;
 

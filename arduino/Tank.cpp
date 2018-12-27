@@ -73,7 +73,7 @@ bool Tank::isTankEmpty()
 
 bool Tank::isWellFull()
 {
-  return (millis() - _oldTimePumpInOff) > timeToFillUp;
+  return (millis() - _lastTimePumpInOff) > timeToFillUp;
 }
 
 bool Tank::isWellEmpty()
@@ -97,7 +97,7 @@ void Tank::_alertMotor(bool on)
 void Tank::_cmdPumpIn(bool on)
 {
     if (isTankFull() and on) return;
-    if (!on && isOn(_pinPumpIn)) _oldTimePumpInOff = millis();
+    if (!on && isOn(_pinPumpIn)) _lastTimePumpInOff = millis();
     digitalWrite(_pinPumpIn, on ? HIGH : LOW); 
 }
 
@@ -187,7 +187,20 @@ void Tank::_httpRouteGet(WebServer &server)
 {
     server.httpSuccess("application/json");
     server << "{ ";
-    //server << "\"ms_before_alert\": " << millisBeforeAlert << ", ";
+    server << "\"pump_in\": " << isOn(_pinPumpIn) << ", ";
+    server << "\"pump_out\": " << isOn(_pinPumpOut) << ", ";
+    server << "\"urban_network\": " << isOn(_pinUrbanNetwork) << ", ";
+    server << "\"is_tank_full\": " << isTankFull() << ", ";
+    server << "\"is_tank_empty\": " << isTankEmpty() << ", ";
+    server << "\"is_well_full\": " << isWellFull() << ", ";
+    server << "\"is_well_empty\": " << isWellEmpty() << ", ";
+    server << "\"is_motor_in_blocked\": " << isMotorInBlocked() << ", ";
+    server << "\"is_filter_in_blocked\": " << isFilterInBlocked() << ", ";
+    server << "\"last_time_pump_in_off\": " << _lastTimePumpInOff << ", ";
+    server << "\"min_flow_in\": " << minFlowIn << ", ";
+    server << "\"time_to_fill_up\": " << timeToFillUp << ", ";
+    server << "\"flow_in\": " << _flowIn << ", ";
+    server << "\"flow_out\": " << _flowOut;
     server << " }";
 }
 
@@ -198,7 +211,20 @@ void Tank::_httpRouteSet(WebServer &server)
     char key[keyLen];
     char value[valueLen];
     while (server.readPOSTparam(key, keyLen, value, valueLen)) {
-        if (strcmp(key, "TODO") == 0) {
+        if (strcmp(key, "min_flow_in") == 0) {
+            minFlowIn = String(value).toInt();
+        }
+        if (strcmp(key, "time_to_fill_up") == 0) {
+            timeToFillUp = String(value).toInt();
+        }
+        if (strcmp(key, "pump_in") == 0) {
+            _cmdPumpIn(strcmp(value, "1") == 0);
+        }
+        if (strcmp(key, "pump_out") == 0) {
+            _cmdPumpOut(strcmp(value, "1") == 0);
+        }
+        if (strcmp(key, "urban_network") == 0) {
+            _cmdUrbanNetwork(strcmp(value, "1") == 0);
         }
     }
     server.httpSuccess();
