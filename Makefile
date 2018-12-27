@@ -7,11 +7,11 @@ SSH_HOST=${RPI_USER}@${RPI_IP}
 
 .PHONY: dev_fake
 dev_fake:
-	pipenv run python server.py --port 5000 --aip localhost --aport 5001 --debug
+	pipenv run python server.py --aip localhost --aport 5001 --debug
 
 .PHONY: dev
 dev:
-	pipenv run python server.py --port 5000
+	pipenv run python server.py --debug
 
 .PHONY: fake_arduino
 fake_arduino:
@@ -20,7 +20,7 @@ fake_arduino:
 .PHONY: prod
 prod:
 	-cat pid | xargs kill
-	sudo pipenv run python server.py & echo "$$!" > pid
+	pipenv run python server.py & echo "$$!" > pid
 
 .PHONY: arduino
 arduino:

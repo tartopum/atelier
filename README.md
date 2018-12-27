@@ -22,6 +22,8 @@ To run production server:
 make prod
 ```
 
+Find the server at `0.0.0.0:5000`.
+
 ## Controllino
 
 * `make arduino`
