@@ -47,11 +47,10 @@ from atelier import app, config, scheduler
 
 
 def run_server():
-    #app.debug = True # TODO
-    app.run(host="0.0.0.0")
+    app.debug = config["server"]["debug"]
+    app.run(host="0.0.0.0", port=config["server"]["port"])
 
 
 if __name__ == "__main__":
-    config.from_cmdline()
     scheduler.run()
     run_server()

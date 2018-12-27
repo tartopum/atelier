@@ -4,7 +4,7 @@ import json
 from flask import abort, render_template, request, url_for, redirect
 import requests
 
-from . import config
+from .config import config
 
 
 def redirect_url(default="home"):
@@ -12,8 +12,8 @@ def redirect_url(default="home"):
 
 
 def build_arduino_url(endpoint):
-    ip = config.arduino["ip"]
-    port = config.arduino["port"]
+    ip = config["arduino"]["ip"]
+    port = config["arduino"]["port"]
     return f"http://{ip}:{port}/{endpoint}"
 
 
@@ -31,7 +31,7 @@ def arduino_get(f):
 def post_arduino(endpoint, data):
     resp = requests.post(
         build_arduino_url(endpoint),
-        timeout=config.arduino["timeout"],
+        timeout=config["arduino"]["timeout"],
         data=data
     )
     resp.raise_for_status()

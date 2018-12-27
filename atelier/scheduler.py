@@ -8,6 +8,7 @@ import sys
 import requests
 import schedule
 
+from .config import config
 from . import alarm, lights, workshop
 from .helpers import post_arduino
 
@@ -91,5 +92,11 @@ class SleepJob(PeriodJob):
         workshop.power_supply(1)
 
 
-lunch_job = LunchJob("13:00", "14:00")
-sleep_job = SleepJob("21:30", "06:30")
+lunch_job = LunchJob(
+    config["lunch_period"]["beginning"],
+    config["lunch_period"]["end"]
+)
+sleep_job = SleepJob(
+    config["sleep_period"]["beginning"],
+    config["sleep_period"]["end"]
+)

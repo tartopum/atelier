@@ -1,0 +1,24 @@
+{
+  "server": {
+    "port": 80
+  },
+  "arduino": {
+    "ip": "192.168.167.100",
+    "port": 80,
+    "timeout": 10
+  },
+  "lunch_period": {
+    "beginning": "13:00",
+    "end": "14:00"
+  },
+  "sleep_period": {
+    "beginning": "21:30",
+    "end": "06:30"
+  },
+  "alarm": {
+    "delay": 15
+  },
+  "lights": {
+    "press_delay": 1
+  }
+}

@@ -1,7 +1,8 @@
 from flask import Flask, render_template, request, jsonify
 import requests
 
-from . import config, scheduler, alarm, lights, fence, workshop
+from .config import config
+from . import scheduler, alarm, lights, fence, workshop
 from .helpers import build_arduino_url, arduino_get
 
 app = Flask(__name__)
@@ -14,7 +15,7 @@ app.register_blueprint(workshop.blueprint, url_prefix="/workshop")
 def update_state(x):
     data = requests.get(
         build_arduino_url(x.arduino_endpoint),
-        timeout=config.arduino["timeout"]
+        timeout=config["arduino"]["timeout"]
     ).json()
     for k, v in data.items():
         x.state[k] = v
