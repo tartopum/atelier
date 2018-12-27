@@ -1,8 +1,10 @@
 RPI_USER=pi
-RPI_IP=192.168.167.101
-NETWORK_INT=enp3s0 # The network interface to connect to the RPi
+RPI_IP_ETH=192.168.167.101
+RPI_IP_WIFI=192.168.0.166
+ETH_INT=enp3s0 # The network interface to connect to the RPi
 RPI_HOME=/home/${RPI_USER}
-SSH_HOST=${RPI_USER}@${RPI_IP}
+SSH_HOST_LOCAL=${RPI_USER}@${RPI_IP_ETH}
+SSH_HOST=${RPI_USER}@${RPI_IP_WIFI}
 
 
 .PHONY: dev_fake
@@ -34,12 +36,12 @@ ssh:
 
 .PHONY: check_network
 check_network:
-	ssh ${SSH_HOST} 'hostname -I; /sbin/iwgetid; ping -c 3 www.google.com'
+	ssh ${SSH_HOST_LOCAL} 'hostname -I; /sbin/iwgetid; ping -c 3 www.google.com'
 
-# Customize ${NETWORK_INT} before
+# Customize ${ETH_INT} before
 .PHONY: config_ip
 config_ip:
-	sudo ifconfig ${NETWORK_INT} 192.168.167.102 netmask 255.255.255.0
+	sudo ifconfig ${ETH_INT} 192.168.167.102 netmask 255.255.255.0
 
 .PHONY: download
 download:
