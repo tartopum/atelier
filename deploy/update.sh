@@ -6,4 +6,8 @@ sudo pip3.7 install --upgrade pip pipenv
 
 cd ../atelier
 git pull
-sudo reboot
+
+echo "------------"
+echo "Update finished."
+echo "Please reboot to restart the server."
+echo "------------"

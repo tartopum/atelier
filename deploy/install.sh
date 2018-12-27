@@ -25,6 +25,8 @@ then
     exit 1
 fi
 
+sudo rm -rf Python-3.7.0*
+
 # Install Pipenv
 sudo pip3.7 install --upgrade pip
 sudo pip3.7 install pipenv
