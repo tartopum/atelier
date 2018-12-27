@@ -124,3 +124,4 @@ ENV/
 .swp
 
 logs*.txt
+pid
