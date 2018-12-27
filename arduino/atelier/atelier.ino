@@ -2,6 +2,7 @@
 #include <WebServer.h> // https://github.com/sirleech/Webduino
 #include <Controllino.h>
 #include <Atelier.h>
+#include <Tank.h>
 
 byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
 IPAddress ip(192, 168, 167, 100);
@@ -40,6 +41,29 @@ Atelier atelier(
     pinsFence
 );
 
+Tank tank(
+    CONTROLLINO_RELAY_02,
+    CONTROLLINO_RELAY_03,
+    CONTROLLINO_RELAY_00,
+    CONTROLLINO_IN1,
+    CONTROLLINO_IN0,
+    CONTROLLINO_AI1,
+    CONTROLLINO_AI0,
+    CONTROLLINO_AI2,
+    CONTROLLINO_AI7,
+    CONTROLLINO_DO2,
+    CONTROLLINO_DO4
+);
+
+void flowInInterrupt()
+{
+  tank.flowInPulsed();
+}
+
+void flowOutInterrupt()
+{
+  tank.flowOutPulsed();
+}
 
 void alarmRoute(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
@@ -61,6 +85,11 @@ void atelierRoute(WebServer &server, WebServer::ConnectionType type, char *, boo
     atelier.httpRoute(server, type);
 }
 
+void tankRoute(WebServer &server, WebServer::ConnectionType type, char *, bool)
+{
+    tank.httpRoute(server, type);
+}
+
 void handleHTTP()
 {
     char buff[64];
@@ -70,15 +99,23 @@ void handleHTTP()
 
 void setup()
 {
+    sei(); // Enable interrupts
+
+    tank.flowInInterrupt = &flowInInterrupt;
+    tank.flowOutInterrupt = &flowOutInterrupt;
+    tank.attachFlowInterrupts();
+
     Ethernet.begin(mac, ip);
     webserver.addCommand("alarm", &alarmRoute);
     webserver.addCommand("lights", &lightsRoute);
     webserver.addCommand("fence", &fenceRoute);
     webserver.addCommand("workshop", &atelierRoute);
+    webserver.addCommand("tank", &tankRoute);
 }
 
 void loop()
 {
     handleHTTP();
     atelier.control();
+    tank.control();
 }
