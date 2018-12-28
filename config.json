@@ -5,7 +5,7 @@
   "arduino": {
     "ip": "192.168.167.100",
     "port": 80,
-    "timeout": 10
+    "timeout": 5
   },
   "lunch_period": {
     "beginning": "13:00",
