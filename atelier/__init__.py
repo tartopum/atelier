@@ -38,7 +38,11 @@ def config_arduino():
 @arduino.get_route
 def home():
     # TODO: display alerts
-    return render_template("fence.html", state=arduino.read_state(fence))
+    return render_template(
+        "home.html",
+        fence=arduino.read_state(fence),
+        alerts=db.list_alerts(n_days_ago=7)
+    )
 
 
 @app.route("/config", methods=["GET", "POST"])

@@ -63,6 +63,25 @@ header .nav  ul li.active {
     text-align: center;
 }
 
+#home-wrapper .quick-access > div {
+    display: inline-block;
+    vertical-align: top;
+    margin: 0 10px;
+}
+
+#home-wrapper .alerts {
+    margin-top: 50px;
+}
+
+#home-wrapper .alerts h2 img {
+    vertical-align: middle;
+}
+
+#home-wrapper .alert > div {
+    display: inline-block;
+    vertical-align: top;
+}
+
 #workshop-wrapper h2 {
     margin: 0;
     margin-bottom: 10px;

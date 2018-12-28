@@ -46,8 +46,13 @@ def add_alert(name, msg):
         )
 
 
-def list_alerts():
+def list_alerts(n_days_ago=None):
     with _connect() as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM alerts")
+        if n_days_ago is None:
+            cursor.execute("SELECT * FROM alerts")
+        else:
+            delta = datetime.timedelta(-n_days_ago)
+            time_limit = datetime.datetime.now() + delta
+            cursor.execute("SELECT * FROM alerts WHERE timestamp > ?", (time_limit,))
         return cursor.fetchall()
