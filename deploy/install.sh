@@ -29,12 +29,12 @@ sudo rm -rf Python-3.7.0*
 
 # Install Pipenv
 sudo pip3.7 install --upgrade pip
-sudo pip3.7 install pipenv gevent
+sudo pip3.7 install pipenv
 pipenv install
 
 # Run web server at startup
 crontab -r
-(crontab -l 2>/dev/null; echo "@reboot cd /home/pi/atelier && make prod") | crontab -
+(crontab -l 2>/dev/null; echo "@reboot cd /home/pi/atelier && PATH="'"$PATH:/usr/local/bin"'" && make prod") | crontab -
 
 echo "------------"
 echo "Installation finished."
