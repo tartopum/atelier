@@ -125,4 +125,6 @@ ENV/
 
 logs*.txt
 pid
+server.log
 server.err
+db.sqlite3

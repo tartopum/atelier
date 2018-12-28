@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, jsonify
 import requests
 
 from .config import config, schema
-from . import arduino, scheduler, alarm, lights, fence, tank, workshop
+from . import arduino, db, scheduler, alarm, lights, fence, tank, workshop
 
 app = Flask(__name__)
 app.register_blueprint(alarm.blueprint, url_prefix="/alarm")
@@ -15,6 +15,7 @@ app.register_blueprint(tank.blueprint, url_prefix="/tank")
 
 schema.add_ip("server", "ip")
 schema.add_port("server", "port")
+schema.add_parameter("server", "db_path", {"type": "string"})
 
 
 def config_arduino():
@@ -87,5 +88,6 @@ def receive_alert():
         msg = data["message"]
     except (json.decoder.JSONDecodeError, KeyError):
         pass
-    print("alert", name, msg)  # TODO
+    else:
+        db.add_alert(name, msg)
     return ""
