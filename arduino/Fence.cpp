@@ -30,7 +30,7 @@ bool Fence::isOn()
   return digitalRead(_pinControl) == HIGH;
 }
 
-void Fence::control() {
+void Fence::loop() {
     if (isOn()) return;
 
     // Make light blink

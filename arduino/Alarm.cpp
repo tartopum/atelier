@@ -45,7 +45,7 @@ bool Alarm::movementDetected()
     return digitalRead(_pinDetector);
 }
 
-bool Alarm::control()
+void Alarm::loop()
 {
     if (!listening()) {
         digitalWrite(_pinBuzzer, LOW);
@@ -54,26 +54,26 @@ bool Alarm::control()
         digitalWrite(_pinNotListening, HIGH);
         _breachTime = 0;
         _breachDetected = false;
-        return false;
+        return;
     }
     digitalWrite(_pinListening, HIGH);
     digitalWrite(_pinNotListening, LOW);
 
     if (!movementDetected()) {
         _breachTime = 0;
-        return false;
+        return;
     }
 
     // Breach detected!
     // We save the time it was detected at
     if (_breachTime == 0) {
         _breachTime = millis();
-        return false;
+        return;
     }
 
     // We wait a bit before raising the alert
     if (millis() - _breachTime < millisBeforeAlert) {
-        return false;
+        return;
     }
 
     _breachDetected = true;
@@ -85,7 +85,6 @@ bool Alarm::control()
         digitalWrite(_pinLightAlert, isLightOn ? LOW : HIGH);
         _lightStateChangeTime = millis();
     }
-    return true;
 }
 
 void Alarm::_httpRouteGet(WebServer &server)

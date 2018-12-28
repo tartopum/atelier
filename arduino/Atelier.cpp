@@ -20,11 +20,11 @@ void Atelier::cmdPowerSupply(bool on)
     digitalWrite(_pinPowerSupply, on ? HIGH : LOW);
 }
 
-void Atelier::control()
+void Atelier::loop()
 {
-    fence.control();
-    alarm.control();
-    lights.control();
+    fence.loop();
+    alarm.loop();
+    lights.loop();
 
     if (millis() - _lastActivityTime > inactivityDelay) {
         lights.cmdAll(false);

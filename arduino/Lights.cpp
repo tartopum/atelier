@@ -26,7 +26,7 @@ void Lights::cmdLight(int n, bool on)
     digitalWrite(_pins[n], on ? HIGH : LOW);
 }
 
-void Lights::control()
+void Lights::loop()
 {
     two_btn_state_t state = _buttons.state(); 
     if (state == UNKNOWN || state == NONE) return;

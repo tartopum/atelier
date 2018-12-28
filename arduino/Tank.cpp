@@ -111,7 +111,7 @@ void Tank::_cmdUrbanNetwork(bool on)
     digitalWrite(_pinUrbanNetwork, on ? HIGH : LOW); 
 }
 
-void Tank::control()
+void Tank::loop()
 {
     if (isMotorInBlocked()) {
         _alertMotor(true);

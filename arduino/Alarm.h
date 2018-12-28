@@ -12,7 +12,7 @@ class Alarm
         // The movement detector stays active ~ 8 seconds after we leave the room
         unsigned long millisBeforeAlert = 15000;
 
-        bool control();
+        void loop();
         bool listening();
         bool breachDetected();
         bool movementDetected();

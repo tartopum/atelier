@@ -116,6 +116,6 @@ void setup()
 void loop()
 {
     handleHTTP();
-    atelier.control();
-    tank.control();
+    atelier.loop();
+    tank.loop();
 }

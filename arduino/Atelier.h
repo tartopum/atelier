@@ -14,7 +14,7 @@ class Atelier
         Lights lights;
         Fence fence;
         unsigned long inactivityDelay;
-        void control();
+        void loop();
         void cmdPowerSupply(bool on);
         void httpRoute(WebServer &server, WebServer::ConnectionType type);
 

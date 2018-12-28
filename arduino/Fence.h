@@ -12,7 +12,7 @@ class Fence
         void on();
         void off();
         bool isOn();
-        void control();
+        void loop();
         void httpRoute(WebServer &server, WebServer::ConnectionType type);
 
     private:

@@ -18,7 +18,7 @@ class Tank
         void flowInPulsed();
         void flowOutPulsed();
 
-        void control();
+        void loop();
         bool isMotorInBlocked();
         bool isFilterInBlocked();
         bool isTankFull();
