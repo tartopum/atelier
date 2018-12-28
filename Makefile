@@ -28,7 +28,11 @@ prod:
 .PHONY: arduino
 arduino:
 	mkdir -p ~/Arduino/libraries/Atelier/
-	cd arduino; cp * ~/Arduino/libraries/Atelier/
+	cd arduino; cp *.cpp *.h ~/Arduino/libraries/Atelier/
+
+.PHONY: edit_ino
+edit_ino: arduino
+	arduino arduino/atelier/atelier.ino &
 
 .PHONY: ssh_local
 ssh_local:
