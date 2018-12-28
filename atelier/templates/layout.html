@@ -34,6 +34,9 @@
                 <li {% if page == "tank" %}class="active"{% endif %}>
                     <a href="{{ url_for('tank_route') }}">Eau</a>
                 </li>
+                <li {% if page == "config" %}class="active"{% endif %}>
+                    <a href="{{ url_for('config_route') }}">Config</a>
+                </li>
             </ul>
         </div>
     </header>

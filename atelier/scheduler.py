@@ -10,7 +10,6 @@ import schedule
 
 from .config import config
 from . import alarm, lights, workshop
-from .helpers import post_arduino
 
 logger = logging.getLogger("scheduler")
 

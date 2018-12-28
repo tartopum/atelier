@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block title %}Config - {% endblock %}
+
+{% block content %}
+<div id="config-wrapper">
+    {% for section, params in config.items() %}
+        <h2>{{ section }}</h2>
+        <form action="{{ url_for('config_route') }}" method="POST">
+            <input type="hidden" name="section" value="{{ section }}" />
+        {% for param, value in params.items() %}
+            <label>{{ param }}</label>
+            <input type="text" name="{{ param }}" value="{{ value }}" />
+            <br />
+        {% endfor %}
+        <input type="submit" value="Éditer" />
+        </form>
+    {% endfor %}
+</div>
+{% endblock %}

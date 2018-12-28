@@ -1,7 +1,11 @@
 from flask import Blueprint
 import requests
 
-from .helpers import post_arduino, register_arduino_route
+from . import arduino
+from .config import schema
+
+schema.add_section("lights")
+schema.add_int("lights", "press_delay", min=1, max=10)  # s
 
 
 state = {"0": False, "1": False, "2": False}
@@ -10,11 +14,11 @@ blueprint = Blueprint("lights", __name__, template_folder="templates")
 
 
 def activate(n, on):
-    return post_arduino(arduino_endpoint, {n: int(on)})
+    return arduino.post(arduino_endpoint, {n: int(on)})
 
 
-register_arduino_route(activate, blueprint, "/<int:n>/<int:on>")
+arduino.register_post_route(activate, blueprint, "/<int:n>/<int:on>")
 
 
 def activate_all(on):
-    return post_arduino(arduino_endpoint, {i: int(on) for i in range(3)})
+    return arduino.post(arduino_endpoint, {i: int(on) for i in range(3)})

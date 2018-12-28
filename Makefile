@@ -9,7 +9,7 @@ SSH_HOST=${RPI_USER}@${RPI_IP_WIFI}
 
 .PHONY: dev_fake
 dev_fake:
-	pipenv run python server.py --aip localhost --aport 5001 --debug
+	pipenv run python server.py --aip 127.0.0.1 --aport 5001 --debug
 
 .PHONY: dev
 dev:
