@@ -8,7 +8,7 @@ byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
 IPAddress ip(192, 168, 167, 100);
 WebServer webserver("", 80);
 
-unsigned long inactivityDelay = 15000 * 60;
+unsigned long inactivityDelay = 15000 * (long) 60;
 int pinPower = CONTROLLINO_RELAY_05;
 int pinsAlarm[6] = {
     CONTROLLINO_AI6,
