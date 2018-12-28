@@ -176,11 +176,12 @@ void Tank::_dettachFlowInterrupts()
 
 void Tank::_computeFlowRates()
 {
-    if((millis() - _oldTimeFlow) < 1000) return;
+    if((millis() - _oldTimeFlow) < flowCheckPeriod) return;
     _dettachFlowInterrupts();
 
-    _flowIn = 1000.0 / (millis() - _oldTimeFlow) * _flowInPulses;
-    _flowOut = 1000.0 / (millis() - _oldTimeFlow) * _flowOutPulses;
+    // L/min
+    _flowIn = 60000.0 / (millis() - _oldTimeFlow) * _flowInPulses;
+    _flowOut = 60000.0 / (millis() - _oldTimeFlow) * _flowOutPulses;
 
     _oldTimeFlow = millis();
     _flowInPulses = 0;

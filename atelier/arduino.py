@@ -5,24 +5,19 @@ from flask import render_template
 import requests
 from requests.exceptions import ConnectionError, ReadTimeout, HTTPError
 
-from . import config
+from .config import config, schema
 from .helpers import redirect_prev
 
-config.schema.add_section("arduino")
-config.schema.add_ip("arduino", "ip")
-config.schema.add_port("arduino", "port")
-config.schema.add_int("arduino", "timeout", min=1, max=10)
-
-
-def configure():
-    config.validate()
-    pass # TODO
+schema.add_section("arduino")
+schema.add_ip("arduino", "ip")
+schema.add_port("arduino", "port")
+schema.add_int("arduino", "timeout", min=1, max=10)
 
 
 def read_state(x):
     data = requests.get(
         build_url(x.arduino_endpoint),
-        timeout=config.config["arduino"]["timeout"]
+        timeout=config["arduino"]["timeout"]
     ).json()
     for k, v in data.items():
         x.state[k] = v
@@ -30,8 +25,8 @@ def read_state(x):
 
 
 def build_url(endpoint):
-    ip = config.config["arduino"]["ip"]
-    port = config.config["arduino"]["port"]
+    ip = config["arduino"]["ip"]
+    port = config["arduino"]["port"]
     return f"http://{ip}:{port}/{endpoint}"
 
 
@@ -49,14 +44,14 @@ def get_route(f):
 def post(endpoint, data):
     resp = requests.post(
         build_url(endpoint),
-        timeout=config.config["arduino"]["timeout"],
+        timeout=config["arduino"]["timeout"],
         data=data
     )
     resp.raise_for_status()
 
 
-def register_post_route(func, app, *route_args, **route_kwargs):
-    def route_func(*args, **kwargs):
+def post_route(func):
+    def decorated(*args, **kwargs):
         try:
             resp = func(*args, **kwargs)
         except (ConnectionError, ReadTimeout) as e:
@@ -72,6 +67,15 @@ def register_post_route(func, app, *route_args, **route_kwargs):
         if resp is not None:
             return resp
         return redirect_prev()
+
+    functools.update_wrapper(decorated, func)
+    return decorated
+
+
+def register_post_route(func, app, *route_args, **route_kwargs):
+    @post_route
+    def route_func(*args, **kwargs):
+        return func(*args, **kwargs)
 
     route_func.__name__ = func.__name__
     app.route(*route_args, **route_kwargs)(route_func)

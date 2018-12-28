@@ -14,13 +14,21 @@ class Schema(dict):
         self["type"] = "object"
         self["properties"] = {}
 
-    def add_section(self, name):
+    def add_section(self, name, required=True):
+        if required:
+            if "required" not in self:
+                self["required"] = []
+            self["required"].append(name)
         self["properties"][name] = {
             "type": "object",
+            "required": [],
             "properties": {}
         }
 
-    def add_parameter(self, section, name, schema):
+    def add_parameter(self, section, name, schema, required=True):
+        if section not in self["properties"]:
+            self.add_section(section)
+        self["properties"][section]["required"].append(name)
         self["properties"][section]["properties"][name] = schema
 
     def add_ip(self, section, parameter):

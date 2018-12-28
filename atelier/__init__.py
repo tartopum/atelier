@@ -13,9 +13,24 @@ app.register_blueprint(lights.blueprint, url_prefix="/lights")
 app.register_blueprint(workshop.blueprint, url_prefix="/workshop")
 app.register_blueprint(tank.blueprint, url_prefix="/tank")
 
-schema.add_section("server")
 schema.add_ip("server", "ip")
 schema.add_port("server", "port")
+
+
+def config_arduino():
+    config.validate()
+    arduino.post(
+        "config_api",
+        {
+            "ip": config["server"]["ip"],
+            "port": config["server"]["port"],
+            "auth_header": "",  # TODO
+        }
+    )
+    alarm.config_arduino()
+    lights.config_arduino()
+    tank.config_arduino()
+    workshop.config_arduino()
 
 
 @app.route("/")
@@ -25,19 +40,19 @@ def home():
     return render_template("fence.html", state=arduino.read_state(fence))
 
 
+@app.route("/config", methods=["GET", "POST"])
+@arduino.post_route
 def config_route():
+    # TODO
     if request.method == "POST":
         for k, v in request.form.items():
             section, param = k.split("__")
             #config[section][param] = 
 
-        arduino.configure()
+        config_arduino()
         config.save()
         return
-    return render_template("config.html", config=config.editable)
-
-
-arduino.register_post_route(config_route, app, "/config", methods=["GET", "POST"])
+    return render_template("config.html", page="config", config=config.editable)
 
 
 @app.route("/cloture")

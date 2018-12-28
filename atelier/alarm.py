@@ -2,14 +2,20 @@ from flask import Blueprint
 import requests
 
 from . import arduino
-from .config import schema
+from .config import config, schema
 
-schema.add_section("alarm")
 schema.add_int("alarm", "delay", min=0, max=60)  # s
 
 state = dict(listening=False, movement=False)
 arduino_endpoint = "alarm"
 blueprint = Blueprint("alarm", __name__, template_folder="templates")
+
+
+def config_arduino():
+    arduino.post(
+        arduino_endpoint,
+        {"ms_before_alert": config["alarm"]["delay"] * 1000}
+    )
 
 
 def listen(on):

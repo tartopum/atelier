@@ -13,13 +13,13 @@ char apiIp[20] = "192.168.167.101";
 char apiAuthHeader[100] = "";
 int apiPort = 5000;
 
-void sendAlert(const char *type, const char *message)
+void sendAlert(const char *name, const char *message)
 {
     EthernetClient client;
     if (!client.connect(apiIp, apiPort)) {
         return;
     }
-    unsigned int len = 1 + 6 + strlen(type) + 11 + strlen(message) + 1;
+    unsigned int len = 1 + 6 + strlen(name) + 11 + strlen(message) + 1;
     client.println("POST /alert HTTP/1.1");
     client.println("Content-Type: application/json");
     client.println("Connection: close");
@@ -31,8 +31,8 @@ void sendAlert(const char *type, const char *message)
     client.println();
 
     client.print("{");
-    client.print("\"type\":");
-    client.print(type);
+    client.print("\"name\":");
+    client.print(name);
     client.print(",\"message\":");
     client.print(message);
     client.println("}");
@@ -138,7 +138,7 @@ void configApiRoute(WebServer &server, WebServer::ConnectionType type, char *, b
         if (strcmp(key, "port") == 0) {
             apiPort = String(value).toInt();
         }
-        if (strcmp(key, "auth") == 0) {
+        if (strcmp(key, "auth_header") == 0) {
             strcpy(apiAuthHeader, value);
         }
     }

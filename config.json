@@ -20,7 +20,8 @@
     "delay": 15
   },
   "lights": {
-    "press_delay": 1
+    "press_delay": 1,
+    "inactivity_delay": 30
   },
   "tank": {
     "min_flow_in": 1,

@@ -25,11 +25,13 @@ def route(page):
         for k, v in request.form.items():
             if k not in data[page]:
                 return f"Invalid attribute {k} for {page}", 400
-            if v in ("0", "1"):
+            try:
                 v = int(v)
+            except ValueError:
+                pass
             data[page][k] = v
         with open(state_path, "w") as f:
-            json.dump(data, f)
+            json.dump(data, f, indent=2)
 
     return jsonify(data[page])
 

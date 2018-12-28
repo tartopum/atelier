@@ -45,7 +45,7 @@ logging.config.dictConfig(dict(
     },
 ))
 
-from atelier import app, arduino, config, scheduler
+from atelier import app, config, config_arduino, scheduler
 
 
 def run_server():
@@ -55,6 +55,6 @@ def run_server():
 
 
 if __name__ == "__main__":
-    arduino.configure()
+    config_arduino()
     scheduler.run()
     run_server()

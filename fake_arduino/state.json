@@ -1,1 +1,29 @@
-{"alarm": {"listen": 0, "movement": 0, "ms_before_alert": 15000}, "lights": {"0": 0, "1": 0, "2": 0}, "fence": {"state": 0}, "workshop": {"inactivity_delay": 1800000, "power_supply": 1}}
+{
+  "alarm": {
+    "listen": 1,
+    "movement": 0,
+    "ms_before_alert": 15000
+  },
+  "lights": {
+    "0": 1,
+    "1": 1,
+    "2": 0,
+    "press_delay": 1000
+  },
+  "fence": {
+    "state": 1
+  },
+  "workshop": {
+    "inactivity_delay": 1800000,
+    "power_supply": 1
+  },
+  "tank": {
+    "time_to_fill_up": 1800000,
+    "min_flow_in": 1
+  },
+  "config_api": {
+    "ip": "192.168.167.101",
+    "port": 5000,
+    "auth_header": ""
+  }
+}

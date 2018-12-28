@@ -9,8 +9,9 @@ class Tank
 {
     public:
         Tank(int pinPumpIn, int pinPumpOut, int pinUrbanNetwork, int pinFlowIn, int pinFlowOut, int pinWaterLimitLow, int pinWaterLimitHigh, int pinFilterInBlocked, int pinMotorInBlocked, int pinLightWater, int pinLightMotor, void (*sendAlert_)(const char *, const char *));
-        byte minFlowIn = 6; // mL/s
-        unsigned int timeToFillUp = 30; // m
+        byte minFlowIn = 1; // L/min
+        unsigned long timeToFillUp = 1800000; // ms
+        unsigned long flowCheckPeriod = 10000; // ms
 
         void (*sendAlert)(const char *, const char *);
         void attachFlowInterrupts();
@@ -42,8 +43,8 @@ class Tank
         int _pinLightWater;
         int _pinLightMotor;
 
-        unsigned int _flowIn = 0; // mL/s
-        unsigned int _flowOut = 0; // mL/s
+        unsigned int _flowIn = 0; // L/min
+        unsigned int _flowOut = 0; // L/min
         unsigned long _oldTimeFlow = 0;
         unsigned long _lastTimePumpInOff = 0;
         volatile byte _flowInPulses = 0;
