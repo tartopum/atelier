@@ -8,10 +8,11 @@
 class Tank
 {
     public:
-        Tank(int pinPumpIn, int pinPumpOut, int pinUrbanNetwork, int pinFlowIn, int pinFlowOut, int pinWaterLimitLow, int pinWaterLimitHigh, int pinFilterInBlocked, int pinMotorInBlocked, int pinLightWater, int pinLightMotor);
+        Tank(int pinPumpIn, int pinPumpOut, int pinUrbanNetwork, int pinFlowIn, int pinFlowOut, int pinWaterLimitLow, int pinWaterLimitHigh, int pinFilterInBlocked, int pinMotorInBlocked, int pinLightWater, int pinLightMotor, void (*sendAlert_)(const char *, const char *));
         byte minFlowIn = 6; // mL/s
         unsigned int timeToFillUp = 30; // m
 
+        void (*sendAlert)(const char *, const char *);
         void attachFlowInterrupts();
         void (*flowInInterrupt)();
         void (*flowOutInterrupt)();

@@ -4,8 +4,9 @@ template<class T>
 inline Print &operator <<(Print &obj, T arg)
 { obj.print(arg); return obj; }
 
-Tank::Tank(int pinPumpIn, int pinPumpOut, int pinUrbanNetwork, int pinFlowIn, int pinFlowOut, int pinWaterLimitLow, int pinWaterLimitHigh, int pinFilterInBlocked, int pinMotorInBlocked, int pinLightWater, int pinLightMotor)
+Tank::Tank(int pinPumpIn, int pinPumpOut, int pinUrbanNetwork, int pinFlowIn, int pinFlowOut, int pinWaterLimitLow, int pinWaterLimitHigh, int pinFilterInBlocked, int pinMotorInBlocked, int pinLightWater, int pinLightMotor, void (*sendAlert_)(const char *, const char *))
 {
+    sendAlert = sendAlert_;
     _pinPumpIn = pinPumpIn;
     _pinPumpOut = pinPumpOut;
     _pinUrbanNetwork = pinUrbanNetwork;
@@ -118,9 +119,10 @@ void Tank::loop()
         _cmdPumpIn(false);
         _cmdPumpOut(false);
         _cmdUrbanNetwork(true);
+        sendAlert("motor_blocked", "");
         return;
     }
-    // TODO: alertWater
+    // TODO: filter blocked
 
     _alertMotor(false);
     _alertWater(false);
@@ -131,7 +133,14 @@ void Tank::loop()
     }
 
     _computeFlowRates();
-    _cmdUrbanNetwork(isTankEmpty());
+    if (!isTankEmpty()) {
+        _cmdUrbanNetwork(false);
+    }
+    else {
+        _alertWater(true);
+        _cmdUrbanNetwork(true);
+        sendAlert("tank_empty", "");
+    }
     if (isOff(_pinPumpIn) && isWellFull()) {
         _cmdPumpIn(true);
     }
