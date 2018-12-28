@@ -30,6 +30,10 @@ arduino:
 	mkdir -p ~/Arduino/libraries/Atelier/
 	cd arduino; cp * ~/Arduino/libraries/Atelier/
 
+.PHONY: ssh_local
+ssh_local:
+	ssh ${SSH_HOST_LOCAL}
+
 .PHONY: ssh
 ssh:
 	ssh ${SSH_HOST}
