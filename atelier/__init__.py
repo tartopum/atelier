@@ -1,10 +1,12 @@
+from collections import defaultdict
 import json
 
 from flask import Flask, render_template, request, jsonify
+from jsonschema import ValidationError
 import requests
 
-from .config import config, schema
-from . import arduino, db, scheduler, alarm, lights, fence, tank, workshop
+from .config import config
+from . import arduino, db, forms, scheduler, alarm, lights, fence, tank, workshop
 
 app = Flask(__name__)
 app.register_blueprint(alarm.blueprint, url_prefix="/alarm")
@@ -12,10 +14,6 @@ app.register_blueprint(fence.blueprint, url_prefix="/fence")
 app.register_blueprint(lights.blueprint, url_prefix="/lights")
 app.register_blueprint(workshop.blueprint, url_prefix="/workshop")
 app.register_blueprint(tank.blueprint, url_prefix="/tank")
-
-schema.add_ip("server", "ip")
-schema.add_port("server", "port")
-schema.add_parameter("server", "db_path", {"type": "string"})
 
 
 def config_arduino():
@@ -37,7 +35,6 @@ def config_arduino():
 @app.route("/")
 @arduino.get_route
 def home():
-    # TODO: display alerts
     return render_template(
         "home.html",
         fence=arduino.read_state(fence),
@@ -48,16 +45,18 @@ def home():
 @app.route("/config", methods=["GET", "POST"])
 @arduino.post_route
 def config_route():
-    # TODO
-    if request.method == "POST":
-        for k, v in request.form.items():
-            section, param = k.split("__")
-            #config[section][param] = 
-
+    config_forms = forms.ConfigForms(request.form)
+    if request.method == "POST" and config_forms.validate():
+        config_forms.populate_config()
         config_arduino()
         config.save()
         return
-    return render_template("config.html", page="config", config=config.editable)
+    return render_template(
+        "config.html",
+        page="config",
+        forms=config_forms,
+        form_errors=any(form.errors for form in config_forms.values())
+    )
 
 
 @app.route("/cloture")

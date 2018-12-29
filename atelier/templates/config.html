@@ -3,17 +3,25 @@
 
 {% block content %}
 <div id="config-wrapper">
-    {% for section, params in config.items() %}
+    {% if form_errors %}
+    <div>Il y a des erreurs.</div>
+    {% endif %}
+
+    <form action="{{ url_for('config_route') }}" method="POST">
+    {% for section, form in forms.items() %}
         <h2>{{ section }}</h2>
-        <form action="{{ url_for('config_route') }}" method="POST">
-            <input type="hidden" name="section" value="{{ section }}" />
-        {% for param, value in params.items() %}
-            <label>{{ param }}</label>
-            <input type="text" name="{{ param }}" value="{{ value }}" />
-            <br />
+        {% for field in form %}
+            {% if field.errors %}
+                <ul class="errors">
+                {% for error in field.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+            <div>{{ field.label }}: {{ field() }}</div>
         {% endfor %}
-        <input type="submit" value="Éditer" />
-        </form>
     {% endfor %}
+        <input type="submit" value="Sauvegarder" />
+    </form>
 </div>
 {% endblock %}

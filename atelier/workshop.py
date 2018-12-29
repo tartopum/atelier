@@ -4,9 +4,6 @@ import requests
 from . import arduino
 from .config import config, schema
 
-schema.add_period("lunch_period")
-schema.add_period("sleep_period")
-schema.add_int("lights", "inactivity_delay", min=1, max=60)  # min
 
 state = dict(power_supply=True, inactivity_delay=(1000 * 60 * 30))
 arduino_endpoint = "workshop"

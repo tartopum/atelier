@@ -5,13 +5,8 @@ from flask import render_template
 import requests
 from requests.exceptions import ConnectionError, ReadTimeout, HTTPError
 
-from .config import config, schema
+from .config import config
 from .helpers import redirect_prev
-
-schema.add_section("arduino")
-schema.add_ip("arduino", "ip")
-schema.add_port("arduino", "port")
-schema.add_int("arduino", "timeout", min=1, max=10)
 
 
 def read_state(x):

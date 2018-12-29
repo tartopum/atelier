@@ -2,9 +2,7 @@ from flask import Blueprint
 import requests
 
 from . import arduino
-from .config import config, schema
-
-schema.add_int("lights", "press_delay", min=1, max=10)  # s
+from .config import config
 
 
 state = {"0": False, "1": False, "2": False}

@@ -1,10 +1,8 @@
 from flask import Blueprint
 import requests
 
-from . import arduino
-from .config import config, schema
-
-schema.add_int("alarm", "delay", min=0, max=60)  # s
+from . import arduino, forms
+from .config import config
 
 state = dict(listening=False, movement=False)
 arduino_endpoint = "alarm"

@@ -1,5 +1,6 @@
 import argparse
 from collections import defaultdict
+import copy
 import json
 import os
 
@@ -121,3 +122,24 @@ class Config(dict):
 
 schema = Schema()
 config = Config(schema, _PATH)
+
+schema.add_ip("server", "ip")
+schema.add_port("server", "port")
+schema.add_parameter("server", "db_path", {"type": "string"})
+
+schema.add_ip("arduino", "ip")
+schema.add_port("arduino", "port")
+schema.add_int("arduino", "timeout", min=1, max=10)  # s
+
+schema.add_period("lunch_period")
+schema.add_period("sleep_period")
+
+schema.add_int("alarm", "delay", min=0, max=60)  # s
+
+schema.add_int("lights", "press_delay", min=1, max=10)  # s
+schema.add_int("lights", "inactivity_delay", min=1, max=60)  # min
+
+schema.add_int("tank", "min_flow_in", min=0, max=100)  # L/min
+schema.add_int("tank", "time_to_fill_up", min=1, max=(60 * 24))  # min
+schema.add_int("tank", "tank_radius", min=0, max=500)  # cm
+schema.add_int("tank", "tank_height", min=0, max=500)  # cm
