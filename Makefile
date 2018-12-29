@@ -25,14 +25,9 @@ prod:
 	rm -f server.log server.err
 	pipenv run python server.py > server.log 2> server.err & echo "$$!" > pid
 
-.PHONY: arduino
-arduino:
-	mkdir -p ~/Arduino/libraries/Atelier/
-	cd arduino; cp *.cpp *.h ~/Arduino/libraries/Atelier/
-
 .PHONY: edit_ino
-edit_ino: arduino
-	arduino arduino/atelier/atelier.ino &
+edit_ino:
+	arduino arduino/arduino.ino &
 
 .PHONY: ssh_local
 ssh_local:

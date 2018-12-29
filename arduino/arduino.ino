@@ -1,8 +1,8 @@
 #include <Ethernet.h> // Make sure to use Controllino's Ethernet module (see compilation logs)
 #include <WebServer.h> // https://github.com/sirleech/Webduino
 #include <Controllino.h>
-#include <Atelier.h>
-#include <Tank.h>
+#include "Atelier.h"
+#include "Tank.h"
 
 byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
 IPAddress ip(192, 168, 167, 100);
