@@ -61,7 +61,7 @@ void Atelier::_httpRouteSet(WebServer &server)
     char value[valueLen];
     while (server.readPOSTparam(key, keyLen, value, valueLen)) {
         if (strcmp(key, "inactivity_delay") == 0) {
-            unsigned long delay = String(value).toInt();
+            unsigned long delay = atol(value);
             if (delay > 0) {
                 inactivityDelay = delay;
             } else {

@@ -222,10 +222,10 @@ void Tank::_httpRouteSet(WebServer &server)
     char value[valueLen];
     while (server.readPOSTparam(key, keyLen, value, valueLen)) {
         if (strcmp(key, "min_flow_in") == 0) {
-            minFlowIn = String(value).toInt();
+            minFlowIn = atoi(value);
         }
         if (strcmp(key, "time_to_fill_up") == 0) {
-            timeToFillUp = String(value).toInt();
+            timeToFillUp = atol(value);
         }
         if (strcmp(key, "pump_in") == 0) {
             _cmdPumpIn(strcmp(value, "1") == 0);

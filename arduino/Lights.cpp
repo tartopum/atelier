@@ -63,13 +63,15 @@ void Lights::_httpRouteSet(WebServer &server)
     const byte valueLen = 5;
     char key[keyLen];
     char value[valueLen];
+    char strIndex[3];
     while (server.readPOSTparam(key, keyLen, value, valueLen)) {
         for (int i = 0; i < _N_PINS; i++) {
-            if (strcmp(key, String(i).c_str()) == 0) {
+            sprintf(strIndex, "%i", i);
+            if (strcmp(key, strIndex) == 0) {
                 cmdLight(i, (strcmp(value, "1") == 0)); 
             }
             if (strcmp(key, "press_delay") == 0) {
-                _buttons.pressDelay = String(value).toInt();
+                _buttons.pressDelay = atol(value);
             }
         }
     }

@@ -136,7 +136,7 @@ void configApiRoute(WebServer &server, WebServer::ConnectionType type, char *, b
             strcpy(apiIp, value);
         }
         if (strcmp(key, "port") == 0) {
-            apiPort = String(value).toInt();
+            apiPort = atoi(value);
         }
         if (strcmp(key, "auth_header") == 0) {
             strcpy(apiAuthHeader, value);

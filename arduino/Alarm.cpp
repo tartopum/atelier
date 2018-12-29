@@ -108,7 +108,7 @@ void Alarm::_httpRouteSet(WebServer &server)
             _listening = (strcmp(value, "1") == 0);
         }
         if (strcmp(key, "ms_before_alert") == 0) {
-            millisBeforeAlert = String(value).toInt();
+            millisBeforeAlert = atol(value);
         }
     }
     server.httpSuccess();
