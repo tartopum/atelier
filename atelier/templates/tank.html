@@ -3,6 +3,7 @@
 {% block title %}Eau - {% endblock %}
 
 {% block content %}
+<svg id="schema"></svg>
 <pre style="text-align: left;">
 {
 {% for k, v in state.items() %}
@@ -10,4 +11,16 @@
 {% endfor %}
 }
 </pre>
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/rough.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/tank.js') }}"></script>
+<script>
+    Tank(document.getElementById("schema"), {
+        waterLevel: 0.3,
+        flowIn: 30,
+        flowOut: 60
+    });
+</script>
 {% endblock %}
