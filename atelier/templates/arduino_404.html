@@ -1,11 +1,12 @@
+{% set page = 'arduino_error' %}
 {% extends "layout.html" %}
+{% block title %}Arduino 404 - {% endblock %}
+
 {% block content %}
-<div class="arduino-error">
-    <img src="{{ url_for('static', filename='img/arduino_404.png') }}" alt="Fil électrique cassé" />
-    <h1>
-        <img src="{{ url_for('static', filename='img/controllino.png') }}" alt="Controllino" />
-        ne répond pas...
-    </h1>
-    <pre class="logs">{{ logs }}</pre>
-</div>
+<img src="{{ url_for('static', filename='img/arduino_404.png') }}" alt="Fil électrique cassé" />
+<h1>
+    <img src="{{ url_for('static', filename='img/controllino.png') }}" alt="Controllino" />
+    ne répond pas...
+</h1>
+<pre class="logs">{{ logs }}</pre>
 {% endblock %}

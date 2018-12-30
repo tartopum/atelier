@@ -63,49 +63,49 @@ header .nav  ul li.active {
     text-align: center;
 }
 
-#home-wrapper .quick-access > div {
+#content.home .quick-access > div {
     display: inline-block;
     vertical-align: top;
     margin: 0 10px;
 }
 
-#home-wrapper .alerts {
+#content.home .alerts {
     margin-top: 50px;
 }
 
-#home-wrapper .alerts h2 img {
+#content.home .alerts h2 img {
     vertical-align: middle;
 }
 
-#home-wrapper .alert > div {
+#content.home .alert > div {
     display: inline-block;
     vertical-align: top;
 }
 
-#workshop-wrapper h2 {
+#content.workshop h2 {
     margin: 0;
     margin-bottom: 10px;
 }
 
-#workshop-wrapper .sep {
+#content.workshop .sep {
     border-bottom: 1px solid #e7edf2;
     width: 300px;
     margin: 15px auto;
 }
 
-#workshop-wrapper .lights > div,
-#workshop-wrapper .alarm > div
+#content.workshop .lights > div,
+#content.workshop .alarm > div
 {
     display: inline-block;
     vertical-align: top;
     margin: 20px 30px;
 }
 
-.arduino-error h1 img {
+#content.arduino_error h1 img {
     vertical-align: middle;
 }
 
-.arduino-error .logs {
+#content.arduino_error .logs {
     font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, Courier, monospace;
     display: inline-block;
     margin: auto;

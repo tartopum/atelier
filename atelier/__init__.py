@@ -55,7 +55,6 @@ def config_route():
         return
     return render_template(
         "config.html",
-        page="config",
         forms=config_forms,
         form_errors=any(form.errors for form in config_forms.values())
     )
@@ -64,7 +63,7 @@ def config_route():
 @app.route("/cloture")
 @arduino.get_route
 def fence_route():
-    return render_template("fence.html", page="fence", state=arduino.read_state(fence))
+    return render_template("fence.html", state=arduino.read_state(fence))
 
 
 @app.route("/atelier")
@@ -72,7 +71,6 @@ def fence_route():
 def workshop_route():
     return render_template(
         "workshop.html",
-        page="workshop",
         alarm=arduino.read_state(alarm),
         lights=arduino.read_state(lights),
         workshop=arduino.read_state(workshop),
@@ -82,7 +80,7 @@ def workshop_route():
 @app.route("/eau")
 @arduino.get_route
 def tank_route():
-    return render_template("tank.html", page="tank", state=arduino.read_state(tank))
+    return render_template("tank.html", state=arduino.read_state(tank))
 
 
 @app.route("/alert", methods=["POST"])

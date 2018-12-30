@@ -1,27 +1,26 @@
+{% set page = 'config' %}
 {% extends "layout.html" %}
 {% block title %}Config - {% endblock %}
 
 {% block content %}
-<div id="config-wrapper">
-    {% if form_errors %}
-    <div>Il y a des erreurs.</div>
-    {% endif %}
+{% if form_errors %}
+<div>Il y a des erreurs.</div>
+{% endif %}
 
-    <form action="{{ url_for('config_route') }}" method="POST">
-    {% for section, form in forms.items() %}
-        <h2>{{ section }}</h2>
-        {% for field in form %}
-            {% if field.errors %}
-                <ul class="errors">
-                {% for error in field.errors %}
-                    <li>{{ error }}</li>
-                {% endfor %}
-                </ul>
-            {% endif %}
-            <div>{{ field.label }}: {{ field() }}</div>
-        {% endfor %}
+<form action="{{ url_for('config_route') }}" method="POST">
+{% for section, form in forms.items() %}
+    <h2>{{ section }}</h2>
+    {% for field in form %}
+        {% if field.errors %}
+            <ul class="errors">
+            {% for error in field.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+        <div>{{ field.label }}: {{ field() }}</div>
     {% endfor %}
-        <input type="submit" value="Sauvegarder" />
-    </form>
-</div>
+{% endfor %}
+    <input type="submit" value="Sauvegarder" />
+</form>
 {% endblock %}

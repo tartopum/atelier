@@ -1,15 +1,16 @@
+{% set page = 'arduino_error' %}
 {% extends "layout.html" %}
+{% block title %}Arduino 400 - {% endblock %}
+
 {% block content %}
-<div class="arduino-error">
-    <img src="{{ url_for('static', filename='img/arduino_404.png') }}" alt="Fil électrique cassé" />
-    <h1>
-        <img src="{{ url_for('static', filename='img/controllino.png') }}" alt="Controllino" />
-        a reçu une requête invalide...
-    </h1>
-    <pre class="logs">{{ req }}</pre>
-    {% if resp %}
-    <br />
-    <pre class="logs">{{ resp }}</pre>
-    {% endif %}
-</div>
+<img src="{{ url_for('static', filename='img/arduino_404.png') }}" alt="Fil électrique cassé" />
+<h1>
+    <img src="{{ url_for('static', filename='img/controllino.png') }}" alt="Controllino" />
+    a reçu une requête invalide...
+</h1>
+<pre class="logs">{{ req }}</pre>
+{% if resp %}
+<br />
+<pre class="logs">{{ resp }}</pre>
+{% endif %}
 {% endblock %}

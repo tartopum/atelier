@@ -1,34 +1,33 @@
+{% set page = 'home' %}
 {% extends "layout.html" %}
 
 {% block content %}
-<div id="home-wrapper">
-    <div class="quick-access">
-        <div>
-        {% if fence["state"] %}
-            <h2>Clôture allumée</h2>
-            <a href="{{ url_for('fence.activate', on="0") }}">
-                <img src="{{ url_for('static', filename='img/fence_on_small.png') }}" alt="Allumée. Cliquer pour éteindre." />
-            </a>
-        {% else %}
-            <h2>Clôture éteinte</h2>
-            <a href="{{ url_for('fence.activate', on="1") }}">
-                <img src="{{ url_for('static', filename='img/fence_off_small.png') }}" alt="Eteinte. Cliquer pour allumer." />
-            </a>
-        {% endif %}
+<div class="quick-access">
+    <div>
+    {% if fence["state"] %}
+        <h2>Clôture allumée</h2>
+        <a href="{{ url_for('fence.activate', on="0") }}">
+            <img src="{{ url_for('static', filename='img/fence_on_small.png') }}" alt="Allumée. Cliquer pour éteindre." />
+        </a>
+    {% else %}
+        <h2>Clôture éteinte</h2>
+        <a href="{{ url_for('fence.activate', on="1") }}">
+            <img src="{{ url_for('static', filename='img/fence_off_small.png') }}" alt="Eteinte. Cliquer pour allumer." />
+        </a>
+    {% endif %}
+    </div>
+</div>
+<div class="alerts">
+    <h2>
+        <img src="{{ url_for('static', filename='img/alert.png') }}" alt="Alerte" />
+        Alertes récentes
+    </h2>
+    {% for alert in alerts %}
+        <div class="alert">
+            <div class="time">{{ alert[0].strftime("%Y-%m-%d %H:%M") }}</div>
+            <div class="name">{{ alert[1] }}</div>
+            <div class="message">{{ alert[2] }}</div>
         </div>
-    </div>
-    <div class="alerts">
-        <h2>
-            <img src="{{ url_for('static', filename='img/alert.png') }}" alt="Alerte" />
-            Alertes récentes
-        </h2>
-        {% for alert in alerts %}
-            <div class="alert">
-                <div class="time">{{ alert[0].strftime("%Y-%m-%d %H:%M") }}</div>
-                <div class="name">{{ alert[1] }}</div>
-                <div class="message">{{ alert[2] }}</div>
-            </div>
-        {% endfor %}
-    </div>
+    {% endfor %}
 </div>
 {% endblock %}
