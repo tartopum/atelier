@@ -60,11 +60,14 @@ def list_alerts(n_days_ago=None):
     with _connect() as conn:
         cursor = conn.cursor()
         if n_days_ago is None:
-            cursor.execute("SELECT * FROM alerts")
+            cursor.execute("SELECT * FROM alerts ORDER BY timestamp DESC")
         else:
             delta = datetime.timedelta(-n_days_ago)
             time_limit = datetime.datetime.now() + delta
-            cursor.execute("SELECT * FROM alerts WHERE timestamp > ?", (time_limit,))
+            cursor.execute(
+                "SELECT * FROM alerts WHERE timestamp > ? ORDER BY timestamp DESC",
+                (time_limit,)
+            )
         return cursor.fetchall()
 
 
