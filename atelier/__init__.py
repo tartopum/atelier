@@ -6,6 +6,7 @@ from jsonschema import ValidationError
 import requests
 
 from .config import config
+from .helpers import raise_alert
 from . import arduino, db, forms, scheduler, alarm, lights, fence, tank, workshop
 
 app = Flask(__name__)
@@ -50,6 +51,7 @@ def config_route():
         config_forms.populate_config()
         config_arduino()
         config.save()
+        # TODO: update scheduler
         return
     return render_template(
         "config.html",
@@ -92,5 +94,5 @@ def receive_alert():
     except (json.decoder.JSONDecodeError, KeyError):
         pass
     else:
-        db.add_alert(name, msg)
+        raise_alert(name, msg)
     return ""

@@ -2,7 +2,7 @@
   "alarm": {
     "listen": 1,
     "movement": 0,
-    "ms_before_alert": 15000
+    "ms_before_alert": 16000
   },
   "lights": {
     "0": 1,
@@ -11,15 +11,27 @@
     "press_delay": 1000
   },
   "fence": {
-    "state": 1
+    "state": 0
   },
   "workshop": {
     "inactivity_delay": 1800000,
     "power_supply": 1
   },
   "tank": {
+    "pump_in": 0,
+    "pump_out": 1,
+    "urban_network": 0,
+    "is_tank_full": 0,
+    "is_tank_empty": 0,
+    "is_well_full": 0,
+    "is_well_empty": 0,
+    "is_motor_in_blocked": 0,
+    "is_filter_in_blocked": 0,
+    "last_time_pump_in_off": 10000,
     "time_to_fill_up": 1800000,
-    "min_flow_in": 1
+    "min_flow_in": 1,
+    "flow_in": 0,
+    "flow_out": 0
   },
   "config_api": {
     "ip": "192.168.167.101",

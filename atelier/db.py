@@ -35,6 +35,16 @@ def create_tables():
              message TEXT
         )
         """)
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS tank_state(
+             timestamp TIMESTAMP,
+             urban_network BOOLEAN,
+             flow_in REAL,
+             flow_out REAL,
+             is_tank_full BOOLEAN,
+             is_tank_empty BOOLEAN
+        )
+        """)
 
 
 def add_alert(name, msg):
@@ -56,3 +66,15 @@ def list_alerts(n_days_ago=None):
             time_limit = datetime.datetime.now() + delta
             cursor.execute("SELECT * FROM alerts WHERE timestamp > ?", (time_limit,))
         return cursor.fetchall()
+
+
+def add_tank_state(data):
+    data["now"] = datetime.datetime.now()
+    with _connect() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO tank_state VALUES("
+            ":now, :urban_network, :flow_in, :flow_out, :is_tank_full, :is_tank_empty"
+            ")",
+            data
+        )

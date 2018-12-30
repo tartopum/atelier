@@ -6,10 +6,12 @@ import traceback
 import sys
 
 import requests
+from requests.exceptions import ConnectionError, ReadTimeout
 import schedule
 
 from .config import config
-from . import alarm, lights, workshop
+from .helpers import raise_alert
+from . import alarm, arduino, db, lights, tank, workshop
 
 logger = logging.getLogger("scheduler")
 
@@ -56,6 +58,10 @@ class PeriodJob(abc.ABC):
             f()
         except requests.exceptions.RequestException as e:
             logger.error(e)
+            raise_alert(
+                "arduino_connection_error",
+                "La Controllino est injoignable."
+            )
 
     def _safe_beginning(self):
         self._make_job_safe(self.beginning)
@@ -91,6 +97,19 @@ class SleepJob(PeriodJob):
         workshop.power_supply(1)
 
 
+def read_tank_state():
+    try:
+        state = arduino.read_state(tank)
+    except (ConnectionError, ReadTimeout) as e:
+        logger.error(e)
+        raise_alert(
+            "arduino_connection_error",
+            "Impossible de récupérer l'état de la cuve."
+        )
+    else:
+        db.add_tank_state(state)
+
+
 lunch_job = LunchJob(
     config["lunch_period"]["beginning"],
     config["lunch_period"]["end"]
@@ -99,3 +118,4 @@ sleep_job = SleepJob(
     config["sleep_period"]["beginning"],
     config["sleep_period"]["end"]
 )
+schedule.every(config["tank"]["read_state_period"]).seconds.do(read_tank_state)

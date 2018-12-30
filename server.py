@@ -28,7 +28,7 @@ logging.config.dictConfig(dict(
             "filename": os.path.join(HERE, "logs.txt"),
             "formatter": "date",
             "level": logging.WARNING,
-            "maxBytes": 1024,
+            "maxBytes": 50000,
             "backupCount": 3
 
         },
