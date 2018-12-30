@@ -2,4 +2,11 @@
 {% block title %}Eau - {% endblock %}
 
 {% block content %}
+<pre style="text-align: left;">
+{
+{% for k, v in state.items() %}
+    "{{ k }}": {{ v }},
+{% endfor %}
+}
+</pre>
 {% endblock %}

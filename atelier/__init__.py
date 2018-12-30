@@ -82,7 +82,7 @@ def workshop_route():
 @app.route("/eau")
 @arduino.get_route
 def tank_route():
-    return render_template("tank.html", page="tank")
+    return render_template("tank.html", page="tank", state=arduino.read_state(tank))
 
 
 @app.route("/alert", methods=["POST"])
