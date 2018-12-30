@@ -41,12 +41,12 @@ Tank::Tank(int pinPumpIn, int pinPumpOut, int pinUrbanNetwork, int pinFlowIn, in
 
 bool isOn(int pin)
 {
-  return digitalRead(pin) == HIGH;
+    return digitalRead(pin) == HIGH;
 }
 
 bool isOff(int pin)
 {
-  return digitalRead(pin) == LOW;
+    return digitalRead(pin) == LOW;
 }
 
 /*
@@ -54,32 +54,39 @@ bool isOff(int pin)
  */
 bool Tank::isMotorInBlocked()
 {
-  return isOn(_pinMotorInBlocked);
+    return isOn(_pinMotorInBlocked);
 }
 
 bool Tank::isFilterInBlocked()
 {
-  return isOn(_pinFilterInBlocked);
+    return isOn(_pinFilterInBlocked);
 }
 
 bool Tank::isTankFull()
 {
-  return isOn(_pinWaterLimitHigh);
+    return isOn(_pinWaterLimitHigh);
 }
 
 bool Tank::isTankEmpty()
 {
-  return isOff(_pinWaterLimitLow);
+    return isOff(_pinWaterLimitLow);
 }
 
 bool Tank::isWellFull()
 {
-  return (millis() - _lastTimePumpInOff) > timeToFillUp;
+    return (millis() - _lastTimePumpInOff) > timeToFillUp;
 }
 
 bool Tank::isWellEmpty()
 {
-  return _flowIn < minFlowIn;
+    // Wait a bit for the pump to start
+    // We need to wait for two checking periods to avoid this:
+    // 1. Flow rate = 0
+    // 2. At (flowCheckPeriod - delta), start pump
+    // 3. At flowCheckPeriod, compute flowIn: 0
+    // 4. At (2*flowCheckPeriod - delta), read flowIn below: still 0
+    if ((millis() - _timePumpInStarted) < (2 * flowCheckPeriod)) return false;
+    return _flowIn < minFlowIn;
 }
 
 /*
@@ -99,6 +106,7 @@ void Tank::_cmdPumpIn(bool on)
 {
     if (isTankFull() and on) return;
     if (!on && isOn(_pinPumpIn)) _lastTimePumpInOff = millis();
+    if (on && !isOn(_pinPumpIn)) _timePumpInStarted = millis();
     digitalWrite(_pinPumpIn, on ? HIGH : LOW); 
 }
 
@@ -122,7 +130,11 @@ void Tank::loop()
         sendAlert("motor_blocked", "");
         return;
     }
-    // TODO: filter blocked
+    if (isFilterInBlocked()) {
+        // TODO
+        sendAlert("filter_in_blocked", "");
+        return;
+    }
 
     _alertMotor(false);
     _alertWater(false);
@@ -139,6 +151,7 @@ void Tank::loop()
     else {
         _alertWater(true);
         _cmdUrbanNetwork(true);
+        // TODO: pump out off?
         sendAlert("tank_empty", "");
     }
     if (isOff(_pinPumpIn) && isWellFull()) {
@@ -177,8 +190,11 @@ void Tank::_dettachFlowInterrupts()
 void Tank::_computeFlowRates()
 {
     if((millis() - _oldTimeFlow) < flowCheckPeriod) return;
+    // We detach interrupts to avoid editing millis() and _flowInPulses during
+    // the computations
     _dettachFlowInterrupts();
 
+    // 1 pulse = 1L
     // L/min
     _flowIn = 60000.0 / (millis() - _oldTimeFlow) * _flowInPulses;
     _flowOut = 60000.0 / (millis() - _oldTimeFlow) * _flowOutPulses;
@@ -206,7 +222,7 @@ void Tank::_httpRouteGet(WebServer &server)
     server << "\"is_well_empty\": " << isWellEmpty() << ", ";
     server << "\"is_motor_in_blocked\": " << isMotorInBlocked() << ", ";
     server << "\"is_filter_in_blocked\": " << isFilterInBlocked() << ", ";
-    server << "\"last_time_pump_in_off\": " << _lastTimePumpInOff << ", ";
+    server << "\"last_time_pump_in_off\": " << (millis() - _lastTimePumpInOff) << ", ";
     server << "\"min_flow_in\": " << minFlowIn << ", ";
     server << "\"time_to_fill_up\": " << timeToFillUp << ", ";
     server << "\"flow_in\": " << _flowIn << ", ";

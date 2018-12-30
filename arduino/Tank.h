@@ -43,10 +43,11 @@ class Tank
         int _pinLightWater;
         int _pinLightMotor;
 
-        unsigned int _flowIn = 0; // L/min
-        unsigned int _flowOut = 0; // L/min
+        float _flowIn = 0.0; // L/min
+        float _flowOut = 0.0; // L/min
         unsigned long _oldTimeFlow = 0;
         unsigned long _lastTimePumpInOff = 0;
+        unsigned long _timePumpInStarted = 0;
         volatile byte _flowInPulses = 0;
         volatile byte _flowOutPulses = 0;
 
