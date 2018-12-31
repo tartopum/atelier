@@ -77,7 +77,6 @@ var Tank = function(svg, state) {
     function drawPump(xCenter, yCenter, isOn, isBlocked) {
         let bg = "white"
         if (isBlocked) bg = "rgb(255, 105, 97)"
-        else if (isOn) bg = waterColor
         let pump = rc.circle(xCenter, yCenter, pumpDiameter, {
             roughness: 0,
             strokeWidth,
@@ -192,7 +191,7 @@ var Tank = function(svg, state) {
 
     function elbow(x, y, angleStart, angleEnd, full) {
         // To fill the blank when there is water
-        let angleDelta = 0.2
+        let angleDelta = 0.1
         if (full) {
             let water = rc.arc(
                 x,
@@ -258,8 +257,13 @@ var Tank = function(svg, state) {
 
     function drawUrbanConnection(x, y, pumpOutEnabled) {
         if (pumpOutEnabled) return
-        line = rc.line(x, y, x, y + pipeWidth, { roughness: 0, strokeWidth })
-        svg.appendChild(line)
+        elbow(
+            x,
+            y,
+            Math.PI / 2.0,
+            Math.PI,
+            true
+        )
     }
 
     function drawLabel(x, yMiddle, text, fontSize = 16, centerY = false) {
@@ -290,7 +294,7 @@ var Tank = function(svg, state) {
     // TODO: read args from template
     //drawFlowmeter(xFlowmeterIn, yFlowmeterIn, 0)
     //drawPump(xTank - _x(150), false)
-    let tank = drawTank(_x(450), state.waterLevel)
+    let tank = drawTank(_x(500), state.waterLevel)
     const xTankTopGate = tank.xLeft + _x(20)
     if (state.flowIn) {
         drawFallingWater(tank);
@@ -298,7 +302,7 @@ var Tank = function(svg, state) {
     //drawTankWaterBorder(tank, xTankTopGate, state.waterLevel);
     let pipeH1 = drawHPipe(
         _x(10),
-        tank.xLeft - _x(50),
+        tank.xLeft - _x(125),
         tank.yBottom - pipeWidth - _y(5),
         state.flowIn > 0
     )
@@ -349,7 +353,7 @@ var Tank = function(svg, state) {
     )
     let pipeOutH2 = drawHPipe(
         pipeOutH1.xRight,
-        _x(75),
+        _x(80),
         pipeH1.yTop,
         state.pumpOut
     )
@@ -360,11 +364,11 @@ var Tank = function(svg, state) {
         true
     )
 
-    drawPump(tank.xLeft - _x(200), pipeH1.yMiddle, state.pumpIn, state.isMotorInBlocked)
+    drawPump(tank.xLeft - _x(400), pipeH1.yMiddle, state.pumpIn, state.isMotorInBlocked)
     drawPump(pipeOutH1.xRight, pipeOutH1.yMiddle, state.pumpOut, state.isMotorOutBlocked)
 
     let flowmeterIn = drawFlowmeter(
-        tank.xLeft - _x(160),
+        tank.xLeft - _x(240),
         yFlowmeter,
         pipeH1.yTop,
         state.flowIn
@@ -376,25 +380,12 @@ var Tank = function(svg, state) {
         state.flowOut
     )
     let pipeUrbanV = drawVPipe(
-        pipeOutH2.xRight,
+        pipeOutH2.xRight - pipeWidth,
         _y(200),
         pipeOutH1.yTop - _y(198),
         !state.pumpOut
     )
-    let pipeUrbanH = drawHPipe(
-        pipeUrbanV.xRight,
-        _x(950) - pipeUrbanV.xRight,
-        pipeUrbanV.yTop - pipeWidth,
-        !state.pumpOut
-    )
-    elbow(
-        pipeUrbanV.xRight,
-        pipeUrbanV.yTop,
-        Math.PI,
-        3 * Math.PI / 2,
-        !state.pumpOut
-    )
-    drawUrbanConnection(pipeUrbanV.xLeft, pipeOutH2.yTop, state.pumpOut)
+    drawUrbanConnection(pipeUrbanV.xRight, pipeOutH3.yTop, state.pumpOut)
     drawLabel(pipeOutH3.xRight + _x(10), pipeOutH1.yMiddle, "Ferme")
-    drawLabel(pipeUrbanH.xRight + _x(10), pipeUrbanH.yMiddle, "Ville")
+    drawLabel(pipeUrbanV.xMiddle, pipeUrbanV.yTop - _y(20), "Ville", 16, true)
 };
