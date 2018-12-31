@@ -4,7 +4,7 @@ var Tank = function(svg, state) {
     const _heightRef = 400 + 2 * padding
     // TODO
     var _width = _widthRef,
-        _height = 300
+        _height = 400
     svg.setAttribute("width", _width + "px")
     svg.setAttribute("height", _height + "px")
     svg.style.border = "1px solid #000" // TODO
@@ -74,14 +74,19 @@ var Tank = function(svg, state) {
         };
     }
 
-    function drawPump(x, running) {
-        // TODO: running
-        // TODO: motor blocked
-        // TODO: filter blocked
-        let pump = rc.circle(x, heightToBottom(pumpDiameter / 2.0), pumpDiameter, {
-            roughness: 0.5,
+    function drawPump(xCenter, yCenter, isOn, isBlocked) {
+        let bg = "white"
+        if (isBlocked) bg = "rgb(255, 105, 97)"
+        else if (isOn) bg = waterColor
+        let pump = rc.circle(xCenter, yCenter, pumpDiameter, {
+            roughness: 0,
+            strokeWidth,
+            fill: bg,
+            fillStyle: "solid"
         })
+
         svg.appendChild(pump)
+        drawLabel(xCenter + _x(2), yCenter + _y(3), "P", _y(40), true);
     }
 
     function drawFlowmeter(x, y, yArrow, val) {
@@ -252,23 +257,18 @@ var Tank = function(svg, state) {
     }
 
     function drawUrbanConnection(x, y, pumpOutEnabled) {
-        let line
-        let style = { roughness: 0, strokeWidth }
-        if (pumpOutEnabled) {
-            line = rc.line(x, y, x + pipeWidth, y, style)
-        } else {
-            line = rc.line(x, y, x, y + pipeWidth, style)
-        }
-
+        if (pumpOutEnabled) return
+        line = rc.line(x, y, x, y + pipeWidth, { roughness: 0, strokeWidth })
         svg.appendChild(line)
     }
 
-    function drawLabel(x, yMiddle, text) {
+    function drawLabel(x, yMiddle, text, fontSize = 16, centerY = false) {
         let txt = document.createElementNS("http://www.w3.org/2000/svg", "text")
         txt.setAttributeNS(null, "font-family", "Slabo")
         txt.setAttributeNS(null, "font-weight", "bold")
-        txt.setAttributeNS(null, "font-size", "16px")
+        txt.setAttributeNS(null, "font-size", fontSize + "px")
         txt.setAttributeNS(null, "dominant-baseline", "middle")
+        if (centerY) txt.setAttributeNS(null, "text-anchor", "middle")
         txt.setAttributeNS(null, "x", x)
         txt.setAttributeNS(null, "y", yMiddle)
 
@@ -285,6 +285,7 @@ var Tank = function(svg, state) {
     const yFlowmeter = _y(250)
     const wFlowmeter = _x(100)
     const hFlowmeter = _y(50)
+    const pumpDiameter = _y(60)
 
     // TODO: read args from template
     //drawFlowmeter(xFlowmeterIn, yFlowmeterIn, 0)
@@ -297,7 +298,7 @@ var Tank = function(svg, state) {
     //drawTankWaterBorder(tank, xTankTopGate, state.waterLevel);
     let pipeH1 = drawHPipe(
         _x(10),
-        tank.xLeft - _x(100),
+        tank.xLeft - _x(50),
         tank.yBottom - pipeWidth - _y(5),
         state.flowIn > 0
     )
@@ -340,15 +341,30 @@ var Tank = function(svg, state) {
         2 * Math.PI,
         state.flowIn
     )
-
     let pipeOutH1 = drawHPipe(
         tank.xRight - _x(3),
-        _x(950) - tank.xRight,
+        _x(175),
         pipeH1.yTop,
         true
     )
+    let pipeOutH2 = drawHPipe(
+        pipeOutH1.xRight,
+        _x(75),
+        pipeH1.yTop,
+        state.pumpOut
+    )
+    let pipeOutH3 = drawHPipe(
+        pipeOutH2.xRight - _x(2),
+        _x(950) - pipeOutH2.xRight,
+        pipeH1.yTop,
+        true
+    )
+
+    drawPump(tank.xLeft - _x(200), pipeH1.yMiddle, state.pumpIn, state.isMotorInBlocked)
+    drawPump(pipeOutH1.xRight, pipeOutH1.yMiddle, state.pumpOut, state.isMotorOutBlocked)
+
     let flowmeterIn = drawFlowmeter(
-        tank.xLeft - _x(230),
+        tank.xLeft - _x(160),
         yFlowmeter,
         pipeH1.yTop,
         state.flowIn
@@ -360,25 +376,25 @@ var Tank = function(svg, state) {
         state.flowOut
     )
     let pipeUrbanV = drawVPipe(
-        tank.xRight + _x(250),
+        pipeOutH2.xRight,
         _y(200),
         pipeOutH1.yTop - _y(198),
-        true
+        !state.pumpOut
     )
     let pipeUrbanH = drawHPipe(
         pipeUrbanV.xRight,
         _x(950) - pipeUrbanV.xRight,
         pipeUrbanV.yTop - pipeWidth,
-        true
+        !state.pumpOut
     )
     elbow(
         pipeUrbanV.xRight,
         pipeUrbanV.yTop,
         Math.PI,
         3 * Math.PI / 2,
-        true
+        !state.pumpOut
     )
-    drawUrbanConnection(pipeUrbanV.xLeft, pipeOutH1.yTop, state.pumpOut)
-    drawLabel(pipeOutH1.xRight + _x(10), pipeOutH1.yMiddle, "Ferme")
+    drawUrbanConnection(pipeUrbanV.xLeft, pipeOutH2.yTop, state.pumpOut)
+    drawLabel(pipeOutH3.xRight + _x(10), pipeOutH1.yMiddle, "Ferme")
     drawLabel(pipeUrbanH.xRight + _x(10), pipeUrbanH.yMiddle, "Ville")
 };
