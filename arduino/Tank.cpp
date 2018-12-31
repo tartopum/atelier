@@ -168,12 +168,6 @@ void Tank::loop()
     _alertFatal(isMotorInBlocked() || isMotorOutBlocked() || isOverpressured());
     _alertWarning(isFilterInBlocked() || isTankEmpty());
 
-    _motorInBlockedAlert.raise(isMotorInBlocked());
-    _motorOutBlockedAlert.raise(isMotorOutBlocked());
-    _filterInBlockedAlert.raise(isFilterInBlocked());
-    _overpressureAlert.raise(isOverpressured());
-    _tankEmptyAlert.raise(isTankEmpty());
-
     if (isMotorInBlocked()) {
         _cmdPumpIn(false);
     }
@@ -183,8 +177,13 @@ void Tank::loop()
     if (isOverpressured()) {
         _cmdPumpIn(false);
         _enablePumpOut(false);
-        return;
     }
+
+    _motorInBlockedAlert.raise(isMotorInBlocked());
+    _motorOutBlockedAlert.raise(isMotorOutBlocked());
+    _filterInBlockedAlert.raise(isFilterInBlocked());
+    _overpressureAlert.raise(isOverpressured());
+    _tankEmptyAlert.raise(isTankEmpty());
 
     _computeFlowRates();
 
