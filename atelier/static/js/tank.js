@@ -1,4 +1,6 @@
 var Tank = function(svg, state, links) {
+    const maxVolume = 5 // m3
+    const volumeScaleStep = 1
     const padding = 5
     const _widthRef = 1000 + 2 * padding
     const _heightRef = 400 + 2 * padding
@@ -49,6 +51,20 @@ var Tank = function(svg, state, links) {
         svg.appendChild(water)
     }
 
+    function drawTankVolumeScale(x, yTop, h) {
+        let xDelta = _w(5)
+        let yStep = h / maxVolume
+        for (var i = volumeScaleStep; i < maxVolume; i += volumeScaleStep) {
+            let y = yTop + h - i * yStep
+            let tick = rc.line(x - xDelta, y, x + xDelta, y, {
+                roughness: 0.5,
+                strokeWidth: 2
+            })
+            svg.appendChild(tick)
+            drawLabel(x - xDelta - _w(15), y, i)
+        }
+    }
+
     function drawTank(x, waterVolumeRatio) {
         let w = _w(150),
             y = _y(50),
@@ -80,6 +96,8 @@ var Tank = function(svg, state, links) {
         svg.appendChild(wave)
         
         svg.appendChild(tank)
+
+        drawTankVolumeScale(x, y, h)
 
         return {
             xLeft: x,
