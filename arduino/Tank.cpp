@@ -20,11 +20,10 @@ Tank::Tank(
     byte pinLightFatal,
     void (*sendAlert)(const char *, const char *)
 ) :
-    // 900000 = 15min
-    _motorInBlockedAlert("tank", "Le moteur de la pompe est en panne.", sendAlert, 900000),
-    _motorOutBlockedAlert("tank", "Le moteur du surpresseur est en panne.", sendAlert, 900000),
+    _motorInBlockedAlert("tank", "Le moteur de la pompe est en panne.", sendAlert, 15),
+    _motorOutBlockedAlert("tank", "Le moteur du surpresseur est en panne.", sendAlert, 15),
     _filterInBlockedAlert("tank", "Le filtre est encrassé.", sendAlert),
-    _overpressureAlert("tank", "Le système est en surpression.", sendAlert, 900000),
+    _overpressureAlert("tank", "Le système est en surpression.", sendAlert, 15),
     _tankEmptyAlert("tank", "La cuve est vide.", sendAlert)
 {
     _pinPumpIn = pinPumpIn;

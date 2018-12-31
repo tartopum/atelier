@@ -4,13 +4,13 @@ Alert::Alert(
     const char *name,
     const char *msg,
     void (*send)(const char *, const char *),
-    unsigned long reminderDelay
+    unsigned int reminderDelay
 )
 {
     strcpy(_name, name);
     strcpy(_msg, msg);
     _send = send;
-    _reminderDelay = reminderDelay;
+    _reminderDelay = (unsigned long)reminderDelay * 60 * 1000;
 }
 
 void Alert::raise(bool problemDetected)
