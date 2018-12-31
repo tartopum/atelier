@@ -4,6 +4,19 @@
 
 {% block content %}
 <svg id="schema"></svg>
+
+<div>
+    Pompe entrée :
+    <a href="{{ url_for('tank.pump_in', on=1) }}">On</a> /
+    <a href="{{ url_for('tank.pump_in', on=0) }}">Off</a>
+</div>
+
+<div>
+    Pompe sortie:
+    <a href="{{ url_for('tank.pump_out', on=1) }}">On</a> /
+    <a href="{{ url_for('tank.pump_out', on=0) }}">Off</a>
+</div>
+
 <pre style="text-align: left;">
 {
 {% for k, v in state.items() %}

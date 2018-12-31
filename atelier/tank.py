@@ -18,3 +18,15 @@ def config_arduino():
             "min_flow_in": config["tank"]["min_flow_in"],
         }
     )
+
+
+def pump_in(on):
+    return arduino.post(arduino_endpoint, {"pump_in": int(on)})
+
+
+def pump_out(on):
+    return arduino.post(arduino_endpoint, {"pump_out": int(on)})
+
+
+arduino.register_post_route(pump_in, blueprint, "/pump_in/<int:on>")
+arduino.register_post_route(pump_out, blueprint, "/pump_out/<int:on>")
