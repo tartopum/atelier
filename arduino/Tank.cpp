@@ -267,6 +267,8 @@ void Tank::_httpRouteGet(WebServer &server)
     server << "\"is_well_full\": " << isWellFull() << ", ";
     server << "\"is_well_empty\": " << isWellEmpty() << ", ";
     server << "\"is_motor_in_blocked\": " << isMotorInBlocked() << ", ";
+    server << "\"is_motor_out_blocked\": " << isMotorOutBlocked() << ", ";
+    server << "\"is_overpressured\": " << isOverpressured() << ", ";
     server << "\"is_filter_in_blocked\": " << isFilterInBlocked() << ", ";
     server << "\"last_time_pump_in_off\": " << (millis() - _lastTimePumpInOff) << ", ";
     server << "\"min_flow_in\": " << minFlowIn << ", ";

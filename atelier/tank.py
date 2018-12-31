@@ -10,6 +10,14 @@ arduino_endpoint = "tank"
 blueprint = Blueprint("tank", __name__, template_folder="templates")
 
 
+def water_level():
+    return 0.3 # TODO
+
+
+def time_to_well_full():
+    return 15 # TODO
+
+
 def config_arduino():
     arduino.post(
         arduino_endpoint,

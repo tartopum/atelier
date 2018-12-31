@@ -31,9 +31,18 @@
 <script src="{{ url_for('static', filename='js/tank.js') }}"></script>
 <script>
     Tank(document.getElementById("schema"), {
-        waterLevel: 0.3,
-        flowIn: 30,
-        flowOut: 60
+        waterLevel: {{ water_level }},
+        flowIn: {{ state["flow_in"] }},
+        flowOut: {{ state["flow_out"] }},
+        pumpIn: {{ state["pump_in"] }},
+        pumpOut: {{ state["pump_out"] }},
+        isMotorInBlocked: {{ state["is_motor_in_blocked"] }},
+        isMotorOutBlocked: {{ state["is_motor_out_blocked"] }},
+        isFilterInBlocked: {{ state["is_filter_in_blocked"] }},
+        isOverpressured: {{ state["is_overpressured"] }},
+        isTankFull: {{ state["is_tank_full"] }},
+        isTankEmpty: {{ state["is_tank_empty"] }},
+        timeToWellFull: {{ time_to_well_full }},
     });
 </script>
 {% endblock %}
