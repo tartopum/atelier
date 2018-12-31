@@ -16,12 +16,20 @@ var Tank = function(svg, state) {
     const innerHeight = _height - 2 * padding
     const waterColor = "rgb(127, 127, 255)"
 
+    function _w(w) {
+        return (w / _widthRef) * innerWight
+    }
+
     function _x(x) {
-        return (x / _widthRef) * innerWight
+        return _w(x) + padding
+    }
+
+    function _h(h) {
+        return (h / _heightRef) * innerHeight
     }
 
     function _y(y) {
-        return (y / _heightRef) * innerHeight
+        return _h(y) + padding
     }
 
     function drawWater(x, y, w, h, roughness = 0) {
@@ -35,9 +43,9 @@ var Tank = function(svg, state) {
     }
 
     function drawTank(x, waterVolumeRatio) {
-        let w = _x(150),
+        let w = _w(150),
             y = _y(50),
-            h = _y(340),
+            h = _h(340),
             yWater = y + (1 - waterVolumeRatio) * h
 
         let tank = rc.rectangle(x, y, w, h, {
@@ -74,6 +82,32 @@ var Tank = function(svg, state) {
         };
     }
 
+    function drawPumpVibs(x, y) {
+        let angleProps = [0.3, 0.1]
+        for (let i = 0; i < angleProps.length; i++) {
+            let angleLen = angleProps[i] * Math.PI / 2.0
+            let style = { roughness: 0, strokeWidth: 2 }
+            let diameter = pumpDiameter + _w(15) + i * _w(10)
+
+            for (var j = 0; j < 4; j++) {
+                let start = j * Math.PI / 2.0
+                let angleMargin = (Math.PI / 2.0 - angleLen) / 2.0 
+
+                let vib = rc.arc(
+                    x,
+                    y,
+                    diameter,
+                    diameter,
+                    start + angleMargin,
+                    start + angleMargin + angleLen,
+                    false,
+                    style
+                )
+                svg.appendChild(vib)
+            }
+        }
+    }
+
     function drawPump(xCenter, yCenter, isOn, isBlocked) {
         let bg = "white"
         if (isBlocked) bg = "rgb(255, 105, 97)"
@@ -85,7 +119,8 @@ var Tank = function(svg, state) {
         })
 
         svg.appendChild(pump)
-        drawLabel(xCenter + _x(2), yCenter + _y(3), "P", _y(40), true);
+        drawLabel(xCenter + _w(2), yCenter + _h(3), "P", _h(40), true);
+        if (isOn) drawPumpVibs(xCenter, yCenter)
     }
 
     function drawFlowmeter(x, y, yArrow, val) {
@@ -249,9 +284,9 @@ var Tank = function(svg, state) {
     function drawFallingWater(tank) {
         drawWater(
             xTankTopGate,
-            tank.yTop - _y(5),
+            tank.yTop - _h(5),
             pipeWidth,
-            tank.yBottom - tank.yTop - _y(5)
+            tank.yBottom - tank.yTop - _h(5)
         );
     }
 
@@ -285,31 +320,27 @@ var Tank = function(svg, state) {
         svg.appendChild(g)
     }
     
-    const pipeWidth = _y(25)
+    const pipeWidth = _h(25)
     const yFlowmeter = _y(250)
-    const wFlowmeter = _x(100)
-    const hFlowmeter = _y(50)
-    const pumpDiameter = _y(60)
+    const wFlowmeter = _w(100)
+    const hFlowmeter = _h(50)
+    const pumpDiameter = _h(60)
 
-    // TODO: read args from template
-    //drawFlowmeter(xFlowmeterIn, yFlowmeterIn, 0)
-    //drawPump(xTank - _x(150), false)
     let tank = drawTank(_x(500), state.waterLevel)
-    const xTankTopGate = tank.xLeft + _x(20)
+    const xTankTopGate = tank.xLeft + _w(20)
     if (state.flowIn) {
         drawFallingWater(tank);
     }
-    //drawTankWaterBorder(tank, xTankTopGate, state.waterLevel);
     let pipeH1 = drawHPipe(
-        _x(10),
-        tank.xLeft - _x(125),
-        tank.yBottom - pipeWidth - _y(5),
+        _x(50),
+        tank.xLeft - _w(160),
+        tank.yBottom - pipeWidth - _h(5),
         state.flowIn > 0
     )
     let pipeV2 = drawVPipe(
         xTankTopGate,
-        tank.yTop - _y(20),
-        _y(22),
+        tank.yTop - _h(20),
+        _h(22),
         state.flowIn > 0
     )
     let pipeV1 = drawVPipe(
@@ -346,46 +377,47 @@ var Tank = function(svg, state) {
         state.flowIn
     )
     let pipeOutH1 = drawHPipe(
-        tank.xRight - _x(3),
-        _x(175),
+        tank.xRight - _w(3),
+        _w(175),
         pipeH1.yTop,
         true
     )
     let pipeOutH2 = drawHPipe(
         pipeOutH1.xRight,
-        _x(80),
+        _w(80),
         pipeH1.yTop,
         state.pumpOut
     )
     let pipeOutH3 = drawHPipe(
-        pipeOutH2.xRight - _x(2),
+        pipeOutH2.xRight - _w(2),
         _x(950) - pipeOutH2.xRight,
         pipeH1.yTop,
         true
     )
 
-    drawPump(tank.xLeft - _x(400), pipeH1.yMiddle, state.pumpIn, state.isMotorInBlocked)
+    drawPump(_x(100), pipeH1.yMiddle, state.pumpIn, state.isMotorInBlocked)
     drawPump(pipeOutH1.xRight, pipeOutH1.yMiddle, state.pumpOut, state.isMotorOutBlocked)
 
     let flowmeterIn = drawFlowmeter(
-        tank.xLeft - _x(240),
+        tank.xLeft - _w(240),
         yFlowmeter,
         pipeH1.yTop,
         state.flowIn
     )
     let flowmeterOut = drawFlowmeter(
-        tank.xRight + _x(30),
+        tank.xRight + _w(30),
         yFlowmeter,
         pipeOutH1.yTop,
         state.flowOut
     )
     let pipeUrbanV = drawVPipe(
         pipeOutH2.xRight - pipeWidth,
-        _y(200),
-        pipeOutH1.yTop - _y(198),
+        _h(200),
+        pipeOutH1.yTop - _h(198),
         !state.pumpOut
     )
     drawUrbanConnection(pipeUrbanV.xRight, pipeOutH3.yTop, state.pumpOut)
-    drawLabel(pipeOutH3.xRight + _x(10), pipeOutH1.yMiddle, "Ferme")
-    drawLabel(pipeUrbanV.xMiddle, pipeUrbanV.yTop - _y(20), "Ville", 16, true)
+    drawLabel(_x(0), pipeH1.yMiddle, "Puits")
+    drawLabel(pipeOutH3.xRight + _w(10), pipeOutH1.yMiddle, "Ferme")
+    drawLabel(pipeUrbanV.xMiddle, pipeUrbanV.yTop - _h(20), "Ville", 16, true)
 };
