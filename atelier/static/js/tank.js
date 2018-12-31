@@ -130,8 +130,31 @@ var Tank = function(svg, state, links) {
         }
         svg.appendChild(pump)
 
-        drawLabel(xCenter + _w(2), yCenter + _h(3), "P", _h(40), true, href);
+        drawLabel(xCenter + _w(2), yCenter + _h(3), "P", _h(40), true, href)
         if (isOn) drawPumpVibs(xCenter, yCenter)
+    }
+
+    function drawFilter(xCenter, yCenter, full, blocked) {
+        let yTop = yCenter - hFilter / 2.0
+        let xLeft = xCenter - wFilter / 2.0
+        let filter = rc.rectangle(xLeft, yTop, wFilter, hFilter, {
+            roughness: 0,
+            strokeWidth,
+            fill: full ? waterColor : "white",
+            fillStyle: "solid"
+        })
+        svg.appendChild(filter)
+        drawLabel(xCenter, yTop - _h(10), "Filtre", _h(14), true)
+        if (!blocked) return
+
+        let dust = rc.rectangle(xLeft, yTop, wFilter, hFilter, {
+            roughness: 1,
+            strokeWidth: 1,
+            fill: "black",
+            fillStyle: "dots",
+            fillWeight: 1
+        })
+        svg.appendChild(dust)
     }
 
     function drawFlowmeter(x, y, yArrow, val) {
@@ -338,6 +361,8 @@ var Tank = function(svg, state, links) {
     const wFlowmeter = _w(100)
     const hFlowmeter = _h(50)
     const pumpDiameter = _h(60)
+    const wFilter = _w(50)
+    const hFilter = 1.5 * pipeWidth
 
     let tank = drawTank(_x(500), state.waterLevel)
     const xTankTopGate = tank.xLeft + _w(20)
@@ -421,6 +446,12 @@ var Tank = function(svg, state, links) {
         state.pumpOut,
         state.isMotorOutBlocked,
         state.isMotorOutBlocked ? null : (state.pumpOut ? links.pumpOutOff : links.pumpOutOn)
+    )
+    drawFilter(
+        tank.xLeft - _w(280),
+        pipeOutH1.yMiddle,
+        state.flowIn,
+        state.isFilterInBlocked
     )
 
     let flowmeterIn = drawFlowmeter(
