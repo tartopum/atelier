@@ -356,7 +356,7 @@ var Tank = function(svg, state, links) {
         svg.appendChild(g)
     }
     
-    const pipeWidth = _h(25)
+    const pipeWidth = _h(15)
     const yFlowmeter = _y(250)
     const wFlowmeter = _w(100)
     const hFlowmeter = _h(50)
@@ -416,7 +416,7 @@ var Tank = function(svg, state, links) {
     )
     let pipeOutH1 = drawHPipe(
         tank.xRight - _w(3),
-        _w(175),
+        _w(75),
         pipeH1.yTop,
         true
     )
@@ -461,7 +461,7 @@ var Tank = function(svg, state, links) {
         state.flowIn
     )
     let flowmeterOut = drawFlowmeter(
-        tank.xRight + _w(30),
+        tank.xRight + _w(200),
         yFlowmeter,
         pipeOutH1.yTop,
         state.flowOut
