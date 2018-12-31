@@ -2,8 +2,9 @@
 #define Tank_h
 #define WEBDUINO_NO_IMPLEMENTATION
 
-#include "Arduino.h"
-#include "WebServer.h"
+#include <Arduino.h>
+#include <WebServer.h>
+#include "Alert.h"
 
 class Tank
 {
@@ -22,13 +23,12 @@ class Tank
             byte pinOverpressure,
             byte pinLightWarning,
             byte pinLightFatal,
-            void (*sendAlert_)(const char *, const char *)
+            void (*sendAlert)(const char *, const char *)
         );
         byte minFlowIn = 1; // L/min
         unsigned long timeToFillUp = 1800000; // ms
         unsigned long flowCheckPeriod = 10000; // ms
 
-        void (*sendAlert)(const char *, const char *);
         void attachFlowInterrupts();
         void (*flowInInterrupt)();
         void (*flowOutInterrupt)();
@@ -76,7 +76,11 @@ class Tank
         void _enablePumpOut(bool);
         void _cmdUrbanNetwork(bool);
 
-        void _sendAlert(const char *);
+        Alert _motorInBlockedAlert;
+        Alert _motorOutBlockedAlert;
+        Alert _filterInBlockedAlert;
+        Alert _overpressureAlert;
+        Alert _tankEmptyAlert;
         void _alertWarning(bool);
         void _alertFatal(bool);
 

@@ -4,7 +4,15 @@ template<class T>
 inline Print &operator <<(Print &obj, T arg)
 { obj.print(arg); return obj; }
 
-Atelier::Atelier(int pinPowerSupply, unsigned long inactivityDelay_, int pinsAlarm[5], int pinsLigth[3], int pinsLightBtn[2], int pinsFence[2], void (*sendAlert_)(const char *, const char *)) :
+Atelier::Atelier(
+    int pinPowerSupply,
+    unsigned long inactivityDelay_,
+    int pinsAlarm[5],
+    int pinsLigth[3],
+    int pinsLightBtn[2],
+    int pinsFence[2],
+    void (*sendAlert_)(const char *, const char *)
+) :
     alarm(pinsAlarm[0], pinsAlarm[1], pinsAlarm[2], pinsAlarm[3], pinsAlarm[4], pinsAlarm[5]),
     lights(pinsLigth, pinsLightBtn[0], pinsLightBtn[1]),
     fence(pinsFence[0], pinsFence[1])
@@ -36,7 +44,7 @@ void Atelier::loop()
     if (alarm.breachDetected()) {
         lights.cmdLight(0, true);
         if (!_breach) { // The breach was just detected
-            sendAlert("breach", "");
+            sendAlert("alarm", "Une intrusion a été détectée.");
         }
         _breach = true;
     } else {

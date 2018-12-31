@@ -18,10 +18,15 @@ Tank::Tank(
     byte pinOverpressure,
     byte pinLightWarning,
     byte pinLightFatal,
-    void (*sendAlert_)(const char *, const char *)
-)
+    void (*sendAlert)(const char *, const char *)
+) :
+    // 900000 = 15min
+    _motorInBlockedAlert("tank", "Le moteur de la pompe est en panne.", sendAlert, 900000),
+    _motorOutBlockedAlert("tank", "Le moteur du surpresseur est en panne.", sendAlert, 900000),
+    _filterInBlockedAlert("tank", "Le filtre est encrassé.", sendAlert),
+    _overpressureAlert("tank", "Le système est en surpression.", sendAlert, 900000),
+    _tankEmptyAlert("tank", "La cuve est vide.", sendAlert)
 {
-    sendAlert = sendAlert_;
     _pinPumpIn = pinPumpIn;
     _pinPumpOut = pinPumpOut;
     _pinUrbanNetwork = pinUrbanNetwork;
@@ -164,22 +169,21 @@ void Tank::loop()
     _alertFatal(isMotorInBlocked() || isMotorOutBlocked() || isOverpressured());
     _alertWarning(isFilterInBlocked() || isTankEmpty());
 
-    // TODO: send alert only on detection
+    _motorInBlockedAlert.raise(isMotorInBlocked());
+    _motorOutBlockedAlert.raise(isMotorOutBlocked());
+    _filterInBlockedAlert.raise(isFilterInBlocked());
+    _overpressureAlert.raise(isOverpressured());
+    _tankEmptyAlert.raise(isTankEmpty());
+
     if (isMotorInBlocked()) {
         _cmdPumpIn(false);
-        _sendAlert("Le moteur de la pompe est en panne.");
     }
     if (isMotorOutBlocked()) {
         _enablePumpOut(false);
-        _sendAlert("Le moteur du surpresseur est en panne.");
-    }
-    if (isFilterInBlocked()) {
-        _sendAlert("Le filtre est encrassé.");
     }
     if (isOverpressured()) {
         _cmdPumpIn(false);
         _enablePumpOut(false);
-        _sendAlert("Le système est en surpression.");
         return;
     }
 
@@ -194,7 +198,6 @@ void Tank::loop()
     // Command pump-out and urban network
     if (isTankEmpty()) {
         _enablePumpOut(false);
-        _sendAlert("La cuve est vide.");
     } else {
         _enablePumpOut(true);
     }
@@ -254,11 +257,6 @@ void Tank::_computeFlowRates()
 /*
  * HTTP
  */
-void Tank::_sendAlert(const char *msg)
-{
-    sendAlert("tank", msg);
-}
-
 void Tank::_httpRouteGet(WebServer &server)
 {
     server.httpSuccess("application/json");
