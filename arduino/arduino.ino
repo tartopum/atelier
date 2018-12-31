@@ -85,6 +85,8 @@ Tank tank(
     CONTROLLINO_AI0,
     CONTROLLINO_AI2,
     CONTROLLINO_AI7,
+    CONTROLLINO_AI7, // TODO: make the difference in the circuit
+    CONTROLLINO_AI8,
     CONTROLLINO_DO2,
     CONTROLLINO_DO4,
     &sendAlert

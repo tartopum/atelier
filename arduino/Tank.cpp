@@ -4,7 +4,22 @@ template<class T>
 inline Print &operator <<(Print &obj, T arg)
 { obj.print(arg); return obj; }
 
-Tank::Tank(int pinPumpIn, int pinPumpOut, int pinUrbanNetwork, int pinFlowIn, int pinFlowOut, int pinWaterLimitLow, int pinWaterLimitHigh, int pinFilterInBlocked, int pinMotorInBlocked, int pinLightWater, int pinLightMotor, void (*sendAlert_)(const char *, const char *))
+Tank::Tank(
+    byte pinPumpIn,
+    byte pinPumpOut,
+    byte pinUrbanNetwork,
+    byte pinFlowIn,
+    byte pinFlowOut,
+    byte pinWaterLimitLow,
+    byte pinWaterLimitHigh,
+    byte pinFilterInBlocked,
+    byte pinMotorInBlocked,
+    byte pinMotorOutBlocked,
+    byte pinOverpressure,
+    byte pinLightWarning,
+    byte pinLightFatal,
+    void (*sendAlert_)(const char *, const char *)
+)
 {
     sendAlert = sendAlert_;
     _pinPumpIn = pinPumpIn;
@@ -16,8 +31,10 @@ Tank::Tank(int pinPumpIn, int pinPumpOut, int pinUrbanNetwork, int pinFlowIn, in
     _pinWaterLimitHigh = pinWaterLimitHigh;
     _pinFilterInBlocked = pinFilterInBlocked;
     _pinMotorInBlocked = pinMotorInBlocked;
-    _pinLightWater = pinLightWater;
-    _pinLightMotor = pinLightMotor;
+    _pinMotorOutBlocked = pinMotorOutBlocked;
+    _pinOverpressure = pinOverpressure;
+    _pinLightWarning = pinLightWarning;
+    _pinLightFatal = pinLightFatal;
 
     pinMode(_pinFlowIn, INPUT);
     pinMode(_pinFlowOut, INPUT);
@@ -25,18 +42,20 @@ Tank::Tank(int pinPumpIn, int pinPumpOut, int pinUrbanNetwork, int pinFlowIn, in
     pinMode(_pinWaterLimitHigh, INPUT);
     pinMode(_pinFilterInBlocked, INPUT);
     pinMode(_pinMotorInBlocked, INPUT);
+    pinMode(_pinMotorOutBlocked, INPUT);
+    pinMode(_pinOverpressure, INPUT);
 
     pinMode(_pinPumpIn, OUTPUT);
     pinMode(_pinPumpOut, OUTPUT);
     pinMode(_pinUrbanNetwork, OUTPUT);
-    pinMode(_pinLightWater, OUTPUT);
-    pinMode(_pinLightMotor, OUTPUT);
+    pinMode(_pinLightWarning, OUTPUT);
+    pinMode(_pinLightFatal, OUTPUT);
 
     _cmdPumpIn(false);
-    _cmdPumpOut(true);
+    _enablePumpOut(true);
     _cmdUrbanNetwork(false);
-    _alertWater(false);
-    _alertMotor(false);
+    _alertWarning(false);
+    _alertFatal(false);
 }
 
 bool isOn(int pin)
@@ -55,6 +74,16 @@ bool isOff(int pin)
 bool Tank::isMotorInBlocked()
 {
     return isOn(_pinMotorInBlocked);
+}
+
+bool Tank::isMotorOutBlocked()
+{
+    return isOn(_pinMotorOutBlocked);
+}
+
+bool Tank::isOverpressured()
+{
+    return isOn(_pinOverpressure);
 }
 
 bool Tank::isFilterInBlocked()
@@ -92,27 +121,35 @@ bool Tank::isWellEmpty()
 /*
  * Output
  */
-void Tank::_alertWater(bool on)
+void Tank::_alertWarning(bool on)
 {
-    digitalWrite(_pinLightWater, on ? HIGH : LOW); 
+    digitalWrite(_pinLightWarning, on ? HIGH : LOW); 
 }
 
-void Tank::_alertMotor(bool on)
+void Tank::_alertFatal(bool on)
 {
-    digitalWrite(_pinLightWater, on ? HIGH : LOW); 
+    digitalWrite(_pinLightWarning, on ? HIGH : LOW); 
 }
 
 void Tank::_cmdPumpIn(bool on)
 {
-    if (isTankFull() and on) return;
+    if (isOverpressured()) on = false;
+    if (isMotorInBlocked()) on = false;
+    if (isTankFull()) on = false;
+
     if (!on && isOn(_pinPumpIn)) _lastTimePumpInOff = millis();
     if (on && !isOn(_pinPumpIn)) _timePumpInStarted = millis();
+
     digitalWrite(_pinPumpIn, on ? HIGH : LOW); 
 }
 
-void Tank::_cmdPumpOut(bool on)
+void Tank::_enablePumpOut(bool on)
 {
+    if (isOverpressured()) on = false;
+    if (isMotorOutBlocked()) on = false;
+
     digitalWrite(_pinPumpIn, on ? HIGH : LOW); 
+    _cmdUrbanNetwork(!on);
 }
 
 void Tank::_cmdUrbanNetwork(bool on)
@@ -122,42 +159,50 @@ void Tank::_cmdUrbanNetwork(bool on)
 
 void Tank::loop()
 {
+    // TODO: different signals based on the problem
+    // e.g. constant light vs blinking
+    _alertFatal(isMotorInBlocked() || isMotorOutBlocked() || isOverpressured());
+    _alertWarning(isFilterInBlocked() || isTankEmpty());
+
+    // TODO: send alert only on detection
     if (isMotorInBlocked()) {
-        _alertMotor(true);
         _cmdPumpIn(false);
-        _cmdPumpOut(false);
-        _cmdUrbanNetwork(true);
-        sendAlert("motor_blocked", "");
-        return;
+        _sendAlert("Le moteur de la pompe est en panne.");
+    }
+    if (isMotorOutBlocked()) {
+        _enablePumpOut(false);
+        _sendAlert("Le moteur du surpresseur est en panne.");
     }
     if (isFilterInBlocked()) {
-        // TODO
-        sendAlert("filter_in_blocked", "");
-        return;
+        _sendAlert("Le filtre est encrassé.");
     }
-
-    _alertMotor(false);
-    _alertWater(false);
-
-    if (isTankFull()) {
+    if (isOverpressured()) {
         _cmdPumpIn(false);
+        _enablePumpOut(false);
+        _sendAlert("Le système est en surpression.");
         return;
     }
 
     _computeFlowRates();
-    if (!isTankEmpty()) {
-        _cmdUrbanNetwork(false);
+
+    if (isTankFull()) {
+        _cmdPumpIn(false);
+        _enablePumpOut(true);
+        return;
     }
-    else {
-        _alertWater(true);
-        _cmdUrbanNetwork(true);
-        // TODO: pump out off?
-        sendAlert("tank_empty", "");
+
+    // Command pump-out and urban network
+    if (isTankEmpty()) {
+        _enablePumpOut(false);
+        _sendAlert("La cuve est vide.");
+    } else {
+        _enablePumpOut(true);
     }
-    if (isOff(_pinPumpIn) && isWellFull()) {
+
+    // Command pump-in
+    if (isWellFull()) {
         _cmdPumpIn(true);
-    }
-    else if (isOn(_pinPumpIn) && isWellEmpty()) {
+    } else if (isWellEmpty()) {
         _cmdPumpIn(false);
     }
 }
@@ -209,6 +254,11 @@ void Tank::_computeFlowRates()
 /*
  * HTTP
  */
+void Tank::_sendAlert(const char *msg)
+{
+    sendAlert("tank", msg);
+}
+
 void Tank::_httpRouteGet(WebServer &server)
 {
     server.httpSuccess("application/json");
@@ -247,7 +297,7 @@ void Tank::_httpRouteSet(WebServer &server)
             _cmdPumpIn(strcmp(value, "1") == 0);
         }
         if (strcmp(key, "pump_out") == 0) {
-            _cmdPumpOut(strcmp(value, "1") == 0);
+            _enablePumpOut(strcmp(value, "1") == 0);
         }
         if (strcmp(key, "urban_network") == 0) {
             _cmdUrbanNetwork(strcmp(value, "1") == 0);
