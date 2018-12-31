@@ -7,7 +7,7 @@ var Tank = function(svg, state) {
         _height = 300
     svg.setAttribute("width", _width + "px")
     svg.setAttribute("height", _height + "px")
-    //svg.style.border = "1px solid #000" // TODO
+    svg.style.border = "1px solid #000" // TODO
 
     const roughness = 0.5
     const strokeWidth = 2
@@ -24,10 +24,6 @@ var Tank = function(svg, state) {
         return (y / _heightRef) * innerHeight
     }
 
-    function heightToBottom(y) {
-        return innerHeight - y
-    }
-
     function drawWater(x, y, w, h, roughness = 0) {
         let water = rc.rectangle(x, y, w, h, {
             fill: waterColor,
@@ -41,7 +37,7 @@ var Tank = function(svg, state) {
     function drawTank(x, waterVolumeRatio) {
         let w = _x(150),
             y = _y(50),
-            h = heightToBottom(y),
+            h = _y(340),
             yWater = y + (1 - waterVolumeRatio) * h
 
         let tank = rc.rectangle(x, y, w, h, {
@@ -254,9 +250,38 @@ var Tank = function(svg, state) {
             tank.yBottom - tank.yTop - _y(5)
         );
     }
+
+    function drawUrbanConnection(x, y, pumpOutEnabled) {
+        let line
+        let style = { roughness: 0, strokeWidth }
+        if (pumpOutEnabled) {
+            line = rc.line(x, y, x + pipeWidth, y, style)
+        } else {
+            line = rc.line(x, y, x, y + pipeWidth, style)
+        }
+
+        svg.appendChild(line)
+    }
+
+    function drawLabel(x, yMiddle, text) {
+        let txt = document.createElementNS("http://www.w3.org/2000/svg", "text")
+        txt.setAttributeNS(null, "font-family", "Slabo")
+        txt.setAttributeNS(null, "font-weight", "bold")
+        txt.setAttributeNS(null, "font-size", "16px")
+        txt.setAttributeNS(null, "dominant-baseline", "middle")
+        txt.setAttributeNS(null, "x", x)
+        txt.setAttributeNS(null, "y", yMiddle)
+
+        var textNode = document.createTextNode(text)
+        txt.appendChild(textNode)
+
+        let g = document.createElementNS("http://www.w3.org/2000/svg", "g")
+        g.appendChild(txt)
+
+        svg.appendChild(g)
+    }
     
     const pipeWidth = _y(25)
-
     const yFlowmeter = _y(250)
     const wFlowmeter = _x(100)
     const hFlowmeter = _y(50)
@@ -264,7 +289,7 @@ var Tank = function(svg, state) {
     // TODO: read args from template
     //drawFlowmeter(xFlowmeterIn, yFlowmeterIn, 0)
     //drawPump(xTank - _x(150), false)
-    let tank = drawTank(_x(550), state.waterLevel)
+    let tank = drawTank(_x(450), state.waterLevel)
     const xTankTopGate = tank.xLeft + _x(20)
     if (state.flowIn) {
         drawFallingWater(tank);
@@ -273,7 +298,7 @@ var Tank = function(svg, state) {
     let pipeH1 = drawHPipe(
         _x(10),
         tank.xLeft - _x(100),
-        _y(370),
+        tank.yBottom - pipeWidth - _y(5),
         state.flowIn > 0
     )
     let pipeV2 = drawVPipe(
@@ -316,9 +341,9 @@ var Tank = function(svg, state) {
         state.flowIn
     )
 
-    let pipeH3 = drawHPipe(
-        tank.xRight - _x(5),
-        _x(200),
+    let pipeOutH1 = drawHPipe(
+        tank.xRight - _x(3),
+        _x(950) - tank.xRight,
         pipeH1.yTop,
         true
     )
@@ -331,7 +356,29 @@ var Tank = function(svg, state) {
     let flowmeterOut = drawFlowmeter(
         tank.xRight + _x(30),
         yFlowmeter,
-        pipeH3.yTop,
+        pipeOutH1.yTop,
         state.flowOut
     )
+    let pipeUrbanV = drawVPipe(
+        tank.xRight + _x(250),
+        _y(200),
+        pipeOutH1.yTop - _y(198),
+        true
+    )
+    let pipeUrbanH = drawHPipe(
+        pipeUrbanV.xRight,
+        _x(950) - pipeUrbanV.xRight,
+        pipeUrbanV.yTop - pipeWidth,
+        true
+    )
+    elbow(
+        pipeUrbanV.xRight,
+        pipeUrbanV.yTop,
+        Math.PI,
+        3 * Math.PI / 2,
+        true
+    )
+    drawUrbanConnection(pipeUrbanV.xLeft, pipeOutH1.yTop, state.pumpOut)
+    drawLabel(pipeOutH1.xRight + _x(10), pipeOutH1.yMiddle, "Ferme")
+    drawLabel(pipeUrbanH.xRight + _x(10), pipeUrbanH.yMiddle, "Ville")
 };
