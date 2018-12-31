@@ -5,18 +5,6 @@
 {% block content %}
 <svg id="schema"></svg>
 
-<div>
-    Pompe entrée :
-    <a href="{{ url_for('tank.pump_in', on=1) }}">On</a> /
-    <a href="{{ url_for('tank.pump_in', on=0) }}">Off</a>
-</div>
-
-<div>
-    Pompe sortie:
-    <a href="{{ url_for('tank.pump_out', on=1) }}">On</a> /
-    <a href="{{ url_for('tank.pump_out', on=0) }}">Off</a>
-</div>
-
 <pre style="text-align: left;">
 {
 {% for k, v in state.items() %}
@@ -43,6 +31,11 @@
         isTankFull: {{ state["is_tank_full"] }},
         isTankEmpty: {{ state["is_tank_empty"] }},
         timeToWellFull: {{ time_to_well_full }},
+    }, {
+        pumpInOn: "{{ url_for('tank.pump_in', on=1) }}",
+        pumpInOff: "{{ url_for('tank.pump_in', on=0) }}",
+        pumpOutOn: "{{ url_for('tank.pump_out', on=1) }}",
+        pumpOutOff: "{{ url_for('tank.pump_out', on=0) }}",
     });
 </script>
 {% endblock %}

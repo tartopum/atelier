@@ -1,4 +1,4 @@
-var Tank = function(svg, state) {
+var Tank = function(svg, state, links) {
     const padding = 5
     const _widthRef = 1000 + 2 * padding
     const _heightRef = 400 + 2 * padding
@@ -30,6 +30,13 @@ var Tank = function(svg, state) {
 
     function _y(y) {
         return _h(y) + padding
+    }
+
+    function wrapIntoLink(el, href) {
+        var link = document.createElementNS("http://www.w3.org/2000/svg", "a")
+        link.setAttributeNS(null, "href", href)
+        link.appendChild(el)
+        return link
     }
 
     function drawWater(x, y, w, h, roughness = 0) {
@@ -108,7 +115,7 @@ var Tank = function(svg, state) {
         }
     }
 
-    function drawPump(xCenter, yCenter, isOn, isBlocked) {
+    function drawPump(xCenter, yCenter, isOn, isBlocked, href) {
         let bg = "white"
         if (isBlocked) bg = "rgb(255, 105, 97)"
         let pump = rc.circle(xCenter, yCenter, pumpDiameter, {
@@ -118,8 +125,12 @@ var Tank = function(svg, state) {
             fillStyle: "solid"
         })
 
+        if (href) {
+            pump = wrapIntoLink(pump, href)
+        }
         svg.appendChild(pump)
-        drawLabel(xCenter + _w(2), yCenter + _h(3), "P", _h(40), true);
+
+        drawLabel(xCenter + _w(2), yCenter + _h(3), "P", _h(40), true, href);
         if (isOn) drawPumpVibs(xCenter, yCenter)
     }
 
@@ -301,7 +312,7 @@ var Tank = function(svg, state) {
         )
     }
 
-    function drawLabel(x, yMiddle, text, fontSize = 16, centerY = false) {
+    function drawLabel(x, yMiddle, text, fontSize = 16, centerY = false, href = "") {
         let txt = document.createElementNS("http://www.w3.org/2000/svg", "text")
         txt.setAttributeNS(null, "font-family", "Slabo")
         txt.setAttributeNS(null, "font-weight", "bold")
@@ -313,6 +324,8 @@ var Tank = function(svg, state) {
 
         var textNode = document.createTextNode(text)
         txt.appendChild(textNode)
+        
+        if (href) txt = wrapIntoLink(txt, href)
 
         let g = document.createElementNS("http://www.w3.org/2000/svg", "g")
         g.appendChild(txt)
@@ -395,8 +408,20 @@ var Tank = function(svg, state) {
         true
     )
 
-    drawPump(_x(100), pipeH1.yMiddle, state.pumpIn, state.isMotorInBlocked)
-    drawPump(pipeOutH1.xRight, pipeOutH1.yMiddle, state.pumpOut, state.isMotorOutBlocked)
+    drawPump(
+        _x(100),
+        pipeH1.yMiddle,
+        state.pumpIn,
+        state.isMotorInBlocked,
+        state.isMotorInBlocked ? null : (state.pumpIn ? links.pumpInOff : links.pumpInOn)
+    )
+    drawPump(
+        pipeOutH1.xRight,
+        pipeOutH1.yMiddle,
+        state.pumpOut,
+        state.isMotorOutBlocked,
+        state.isMotorOutBlocked ? null : (state.pumpOut ? links.pumpOutOff : links.pumpOutOn)
+    )
 
     let flowmeterIn = drawFlowmeter(
         tank.xLeft - _w(240),
