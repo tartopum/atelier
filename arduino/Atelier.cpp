@@ -1,5 +1,8 @@
 #include "Atelier.h"
 
+#define LIGHT_IN1 1
+#define LIGHT_IN2 2
+
 template<class T>
 inline Print &operator <<(Print &obj, T arg)
 { obj.print(arg); return obj; }
@@ -36,7 +39,8 @@ void Atelier::loop()
     lights.loop();
 
     if (millis() - _lastActivityTime > inactivityDelay) {
-        lights.cmdAll(false);
+        lights.cmdLight(LIGHT_IN1, false);
+        lights.cmdLight(LIGHT_IN2, false);
     }
     if (alarm.movementDetected()) {
         _lastActivityTime = millis();
