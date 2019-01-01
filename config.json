@@ -4,7 +4,10 @@
     "port": 5000,
     "db_path": "db.sqlite3",
     "debug": 0,
-    "credentials": ["", ""]
+    "credentials": [
+      "test",
+      "test"
+    ]
   },
   "arduino": {
     "ip": "192.168.167.100",
@@ -27,7 +30,7 @@
     "inactivity_delay": 30
   },
   "tank": {
-    "read_state_period": 10,
+    "flow_check_period": 30,
     "min_flow_in": 1,
     "time_to_fill_up": 30
   }

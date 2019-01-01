@@ -118,4 +118,4 @@ sleep_job = SleepJob(
     config["sleep_period"]["beginning"],
     config["sleep_period"]["end"]
 )
-schedule.every(config["tank"]["read_state_period"]).seconds.do(read_tank_state)
+schedule.every(config["tank"]["flow_check_period"]).seconds.do(read_tank_state)

@@ -276,9 +276,9 @@ void Tank::_httpRouteGet(WebServer &server)
     server << "\"is_motor_out_blocked\": " << isMotorOutBlocked() << ", ";
     server << "\"is_overpressured\": " << isOverpressured() << ", ";
     server << "\"is_filter_in_blocked\": " << isFilterInBlocked() << ", ";
-    server << "\"last_time_pump_in_off\": " << (millis() - _lastTimePumpInOff) << ", ";
     server << "\"min_flow_in\": " << minFlowIn << ", ";
     server << "\"time_to_fill_up\": " << timeToFillUp << ", ";
+    server << "\"flow_check_period\": " << flowCheckPeriod << ", ";
     server << "\"flow_in\": " << _flowIn << ", ";
     server << "\"flow_out\": " << _flowOut;
     server << " }";
@@ -299,6 +299,9 @@ void Tank::_httpRouteSet(WebServer &server)
         }
         if (strcmp(key, "time_to_fill_up") == 0) {
             timeToFillUp = atol(value);
+        }
+        if (strcmp(key, "flow_check_period") == 0) {
+            flowCheckPeriod = atol(value);
         }
         if (strcmp(key, "pump_in") == 0) {
             _cmdPumpIn(strcmp(value, "1") == 0);

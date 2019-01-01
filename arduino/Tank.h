@@ -27,7 +27,7 @@ class Tank
         );
         byte minFlowIn = 1; // L/min
         unsigned long timeToFillUp = 1800000; // ms
-        unsigned long flowCheckPeriod = 10000; // ms
+        unsigned long flowCheckPeriod = 30000; // ms
 
         void attachFlowInterrupts();
         void (*flowInInterrupt)();

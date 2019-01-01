@@ -32,6 +32,7 @@
     "is_overpressured": 0,
     "last_time_pump_in_off": 10000,
     "time_to_fill_up": 1800000,
+    "flow_check_period": 30000,
     "min_flow_in": 1,
     "flow_in": 1,
     "flow_out": 0

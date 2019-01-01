@@ -24,6 +24,7 @@ def config_arduino():
         {
             "time_to_fill_up": config["tank"]["time_to_fill_up"] * 60 * 1000,
             "min_flow_in": config["tank"]["min_flow_in"],
+            "flow_check_period": config["tank"]["flow_check_period"] * 1000,
         }
     )
 
