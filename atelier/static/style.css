@@ -100,6 +100,45 @@ header .nav  ul li.active {
     min-width: 220px;
 }
 
+#content.tank .mode {
+    margin-bottom: 20px;
+    font-family: Slabo, Helvetica, Arial, sans-serif;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+#content.tank .mode a {
+    text-decoration: none;
+}
+
+#content.tank .mode .switch {
+    color: #FFF;
+    padding: 5px 10px;
+    display: inline-block;
+    vertical-align: middle;
+    border-radius: 20px;
+}
+
+#content.tank .mode .switch .btn {
+    vertical-align: top;
+    display: inline-block;
+    position: relative;
+    top: 2px;
+    width: 20px;
+    height: 20px;
+    background: #FFF;
+    border-radius: 20px;
+}
+
+#content.tank .mode .switch.on {
+    background: #77dd77;
+}
+
+#content.tank .mode .switch.off {
+    background: #ff6961;
+}
+
 #content.arduino_error h1 img {
     vertical-align: middle;
 }

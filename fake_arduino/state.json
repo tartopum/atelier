@@ -18,7 +18,7 @@
     "power_supply": 1
   },
   "tank": {
-    "emergency_stop": 1,
+    "manual_mode": 1,
     "pump_in": 1,
     "pump_out": 1,
     "urban_network": 0,

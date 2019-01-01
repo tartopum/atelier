@@ -24,7 +24,8 @@ Tank::Tank(
     _motorOutBlockedAlert("tank", "Le moteur du surpresseur est en panne.", sendAlert, 15),
     _filterInBlockedAlert("tank", "Le filtre est encrassé.", sendAlert),
     _overpressureAlert("tank", "Le système est en surpression.", sendAlert, 15),
-    _tankEmptyAlert("tank", "La cuve est vide.", sendAlert)
+    _tankEmptyAlert("tank", "La cuve est vide.", sendAlert),
+    _manualModeAlert("tank", "La cuve est en mode manuel.", sendAlert)
 {
     _pinPumpIn = pinPumpIn;
     _pinPumpOut = pinPumpOut;
@@ -57,6 +58,7 @@ Tank::Tank(
 
     _cmdPumpIn(false);
     _enablePumpOut(false);
+    _cmdUrbanNetwork(false);
 }
 
 bool isOn(int pin)
@@ -160,9 +162,8 @@ void Tank::_cmdUrbanNetwork(bool on)
 
 void Tank::loop()
 {
-    if (_emergencyStop) {
-        _cmdPumpIn(false);
-        _enablePumpOut(false);
+    _manualModeAlert.raise(_manualMode);
+    if (_manualMode) {
         _alertFatal(true);
         return;
     }
@@ -263,7 +264,7 @@ void Tank::_httpRouteGet(WebServer &server)
 {
     server.httpSuccess("application/json");
     server << "{ ";
-    server << "\"emergency_stop\": " << _emergencyStop << ", ";
+    server << "\"manual_mode\": " << _manualMode << ", ";
     server << "\"pump_in\": " << isOn(_pinPumpIn) << ", ";
     server << "\"pump_out\": " << isOn(_pinPumpOut) << ", ";
     server << "\"urban_network\": " << isOn(_pinUrbanNetwork) << ", ";
@@ -290,8 +291,8 @@ void Tank::_httpRouteSet(WebServer &server)
     char key[keyLen];
     char value[valueLen];
     while (server.readPOSTparam(key, keyLen, value, valueLen)) {
-        if (strcmp(key, "emergency_stop") == 0) {
-            _emergencyStop = (strcmp(value, "1") == 0);
+        if (strcmp(key, "manual_mode") == 0) {
+            _manualMode = (strcmp(value, "1") == 0);
         }
         if (strcmp(key, "min_flow_in") == 0) {
             minFlowIn = atoi(value);
