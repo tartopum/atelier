@@ -32,6 +32,8 @@ sudo pip3.7 install --upgrade pip
 sudo pip3.7 install pipenv
 pipenv install
 
+python3 credentials.py
+
 # Run web server at startup
 crontab -r
 (crontab -l 2>/dev/null; echo "@reboot cd /home/pi/atelier && PATH="'"$PATH:/usr/local/bin"'" && make prod") | crontab -

@@ -54,6 +54,10 @@ download:
 install:
 	ssh ${SSH_HOST} 'cd ${RPI_HOME}/atelier/deploy; ./install.sh'
 
+.PHONY: credentials
+credentials:
+	ssh ${SSH_HOST} 'cd ${RPI_HOME}/atelier/deploy; python3 credentials.py'
+	
 .PHONY: update
 update:
 	ssh ${SSH_HOST} 'cd ${RPI_HOME}/atelier/deploy; ./update.sh'
