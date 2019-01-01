@@ -32,6 +32,9 @@ sudo pip3.7 install --upgrade pip
 sudo pip3.7 install pipenv
 pipenv install
 
+git config --global user.email "you@example.com"
+git config --global user.name "Your Name"
+
 python3 credentials.py
 
 # Run web server at startup
