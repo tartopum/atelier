@@ -6,7 +6,7 @@ import requests
 from requests.exceptions import ConnectionError, ReadTimeout, HTTPError
 
 from .config import config
-from .helpers import redirect_prev
+from .helpers import auth, redirect_prev
 
 
 def read_state(x):
@@ -26,6 +26,7 @@ def build_url(endpoint):
 
 
 def get_route(f):
+    @auth.login_required
     def decorated(*args, **kwargs):
         try:
             return f(*args, **kwargs)
@@ -46,6 +47,7 @@ def post(endpoint, data):
 
 
 def post_route(func):
+    @auth.login_required
     def decorated(*args, **kwargs):
         try:
             resp = func(*args, **kwargs)

@@ -12,6 +12,7 @@ schedule = "*"
 gevent = "*"
 jsonschema = "*"
 wtforms = "*"
+flask-httpauth = "*"
 
 [requires]
 python_version = "3.7"

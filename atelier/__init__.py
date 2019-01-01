@@ -1,3 +1,4 @@
+from base64 import b64encode
 from collections import defaultdict
 import json
 
@@ -6,7 +7,7 @@ from jsonschema import ValidationError
 import requests
 
 from .config import config
-from .helpers import raise_alert
+from .helpers import auth, raise_alert
 from . import arduino, db, forms, scheduler, alarm, lights, fence, tank, workshop
 
 app = Flask(__name__)
@@ -18,13 +19,16 @@ app.register_blueprint(tank.blueprint, url_prefix="/tank")
 
 
 def config_arduino():
+    credentials = b64encode(
+        bytes(":".join(config["server"]["credentials"]), "utf8")
+    ).decode("utf8")
     config.validate()
     arduino.post(
         "config_api",
         {
             "ip": config["server"]["ip"],
             "port": config["server"]["port"],
-            "auth_header": "",  # TODO
+            "auth_header": f"Authorization: Basic {credentials}",
         }
     )
     alarm.config_arduino()
@@ -89,6 +93,7 @@ def tank_route():
 
 
 @app.route("/alert", methods=["POST"])
+@auth.login_required
 def receive_alert():
     try:
         data = request.get_json()

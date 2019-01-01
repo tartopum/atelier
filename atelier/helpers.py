@@ -1,6 +1,19 @@
 from flask import request, url_for, redirect
+from flask_httpauth import HTTPBasicAuth
 
 from . import db
+from .config import config
+
+
+auth = HTTPBasicAuth()
+
+
+@auth.get_password
+def get_pw(username):
+    user, pwd = config["server"]["credentials"]
+    if user != username:
+        return None
+    return pwd
 
 
 def redirect_url(default="home"):
