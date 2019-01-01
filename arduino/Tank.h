@@ -25,7 +25,7 @@ class Tank
             byte pinLightFatal,
             void (*sendAlert)(const char *, const char *)
         );
-        byte minFlowIn = 1; // L/min
+        byte minFlowIn = 10; // L/min
         unsigned long timeToFillUp = 1800000; // ms
         unsigned long flowCheckPeriod = 30000; // ms
 

@@ -31,7 +31,7 @@
   },
   "tank": {
     "flow_check_period": 30,
-    "min_flow_in": 1,
+    "min_flow_in": 10,
     "time_to_fill_up": 30
   }
 }
