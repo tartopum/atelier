@@ -95,13 +95,12 @@ def tank_route():
 @app.route("/debug")
 @arduino.get_route
 def debug_route():
-    return render_template(
-        "debug.html",
-        states={
-            component.__name__.split(".")[1]: arduino.read_state(component)
-            for component in [alarm, fence, lights, workshop, tank]
-        }
-    )
+    states = {
+        component.__name__.split(".")[1]: arduino.read_state(component)
+        for component in [alarm, fence, lights, workshop, tank]
+    }
+    states["api"] = arduino.get("config_api")
+    return render_template("debug.html", states=states)
 
 
 @app.route("/alert", methods=["POST"])

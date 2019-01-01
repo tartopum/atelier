@@ -4,6 +4,10 @@
 #include "Atelier.h"
 #include "Tank.h"
 
+template<class T>
+inline Print &operator <<(Print &obj, T arg)
+{ obj.print(arg); return obj; }
+
 byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
 IPAddress ip(192, 168, 167, 100);
 WebServer webserver("", 80);
@@ -15,10 +19,13 @@ int apiPort = 5000;
 
 void sendAlert(const char *name, const char *message)
 {
+    Serial.println("ALERT: start");
     EthernetClient client;
     if (!client.connect(apiIp, apiPort)) {
         return;
     }
+    Serial.println("ALERT: connected");
+
     unsigned int len = 1 + 6 + strlen(name) + 11 + strlen(message) + 1;
     client.println("POST /alert HTTP/1.1");
     client.println("Content-Type: application/json");
@@ -129,6 +136,16 @@ void tankRoute(WebServer &server, WebServer::ConnectionType type, char *, bool)
 
 void configApiRoute(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
+    if (type == WebServer::GET) {
+        server.httpSuccess("application/json");
+        server << "{ ";
+        server << "\"ip\": \"" << apiIp << "\",";
+        server << "\"port\": " << apiPort << ",";
+        server << "\"auth_header\": \"" << apiAuthHeader << "\"";
+        server << " }";
+        return;
+    }
+
     const byte keyLen = 20;
     const byte valueLen = 100;
     char key[keyLen];
@@ -156,6 +173,8 @@ void handleHTTP()
 
 void setup()
 {
+    Serial.begin(9600); // TODO
+
     sei(); // Enable interrupts
 
     tank.flowInInterrupt = &flowInInterrupt;

@@ -9,12 +9,15 @@ from .config import config
 from .helpers import auth, redirect_prev
 
 
-def read_state(x):
-    data = requests.get(
-        build_url(x.arduino_endpoint),
+def get(endpoint):
+    return requests.get(
+        build_url(endpoint),
         timeout=config["arduino"]["timeout"]
     ).json()
-    for k, v in data.items():
+
+
+def read_state(x):
+    for k, v in get(x.arduino_endpoint).items():
         x.state[k] = v
     return x.state
 
