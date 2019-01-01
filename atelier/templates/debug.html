@@ -1,0 +1,18 @@
+{% set page = 'debug' %}
+{% extends "layout.html" %}
+{% block title %}Debug - {% endblock %}
+
+{% block content %}
+{% for component, state in states.items() %}
+<div>
+    <h2>{{ component }}</h2>
+<pre style="text-align: left;">
+{
+{% for k, v in state.items() %}
+    "{{ k }}": {{ v }},
+{% endfor %}
+}
+</pre>
+</div>
+{% endfor %}
+{% endblock %}

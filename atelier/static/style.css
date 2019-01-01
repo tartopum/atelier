@@ -114,3 +114,9 @@ header .nav  ul li.active {
     text-align: left;
     margin-bottom: 5px;
 }
+
+#content.debug > div {
+    display: inline-block;
+    vertical-align: top;
+    width: 300px;
+}

@@ -37,6 +37,9 @@
                 <li {% if page == "config" %}class="active"{% endif %}>
                     <a href="{{ url_for('config_route') }}">Config</a>
                 </li>
+                <li {% if page == "debug" %}class="active"{% endif %}>
+                    <a href="{{ url_for('debug_route') }}">Debug</a>
+                </li>
             </ul>
         </div>
     </header>
