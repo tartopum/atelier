@@ -62,6 +62,7 @@ class Tank
         byte _pinLightWarning;
         byte _pinLightFatal;
 
+        bool _emergencyStop = true;
         float _flowIn = 0.0; // L/min
         float _flowOut = 0.0; // L/min
         unsigned long _oldTimeFlow = 0;

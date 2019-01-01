@@ -36,5 +36,10 @@ def pump_out(on):
     return arduino.post(arduino_endpoint, {"pump_out": int(on)})
 
 
+def emergency_stop(on):
+    return arduino.post(arduino_endpoint, {"emergency_stop": int(on)})
+
+
 arduino.register_post_route(pump_in, blueprint, "/pump_in/<int:on>")
 arduino.register_post_route(pump_out, blueprint, "/pump_out/<int:on>")
+arduino.register_post_route(emergency_stop, blueprint, "/emergency_stop/<int:on>")

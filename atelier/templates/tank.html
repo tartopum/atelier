@@ -3,15 +3,18 @@
 {% block title %}Eau - {% endblock %}
 
 {% block content %}
+{% if state["emergency_stop"] %}
+    <p>Le système est éteint.</p>
+    <p>
+        <a href="{{ url_for('tank.emergency_stop', on=0) }}">Allumer</a>
+    </p>
+{% else %}
+    <p>Le système est allumé.</p>
+    <p>
+        <a href="{{ url_for('tank.emergency_stop', on=1) }}">Eteindre</a>
+    </p>
+{% endif %}
 <svg id="schema"></svg>
-
-<pre style="text-align: left;">
-{
-{% for k, v in state.items() %}
-    "{{ k }}": {{ v }},
-{% endfor %}
-}
-</pre>
 {% endblock %}
 
 {% block js %}

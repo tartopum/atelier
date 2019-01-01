@@ -56,10 +56,7 @@ Tank::Tank(
     pinMode(_pinLightFatal, OUTPUT);
 
     _cmdPumpIn(false);
-    _enablePumpOut(true);
-    _cmdUrbanNetwork(false);
-    _alertWarning(false);
-    _alertFatal(false);
+    _enablePumpOut(false);
 }
 
 bool isOn(int pin)
@@ -163,6 +160,12 @@ void Tank::_cmdUrbanNetwork(bool on)
 
 void Tank::loop()
 {
+    if (_emergencyStop) {
+        _cmdPumpIn(false);
+        _enablePumpOut(false);
+        return;
+    }
+
     // TODO: different signals based on the problem
     // e.g. constant light vs blinking
     _alertFatal(isMotorInBlocked() || isMotorOutBlocked() || isOverpressured());
@@ -259,6 +262,7 @@ void Tank::_httpRouteGet(WebServer &server)
 {
     server.httpSuccess("application/json");
     server << "{ ";
+    server << "\"emergency_stop\": " << _emergencyStop << ", ";
     server << "\"pump_in\": " << isOn(_pinPumpIn) << ", ";
     server << "\"pump_out\": " << isOn(_pinPumpOut) << ", ";
     server << "\"urban_network\": " << isOn(_pinUrbanNetwork) << ", ";
@@ -285,6 +289,9 @@ void Tank::_httpRouteSet(WebServer &server)
     char key[keyLen];
     char value[valueLen];
     while (server.readPOSTparam(key, keyLen, value, valueLen)) {
+        if (strcmp(key, "emergency_stop") == 0) {
+            _emergencyStop = (strcmp(value, "1") == 0);
+        }
         if (strcmp(key, "min_flow_in") == 0) {
             minFlowIn = atoi(value);
         }

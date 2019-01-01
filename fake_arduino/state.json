@@ -1,6 +1,6 @@
 {
   "alarm": {
-    "listen": 1,
+    "listen": 0,
     "movement": 0,
     "ms_before_alert": 16000
   },
@@ -18,8 +18,9 @@
     "power_supply": 1
   },
   "tank": {
-    "pump_in": 0,
-    "pump_out": 0,
+    "emergency_stop": 1,
+    "pump_in": 1,
+    "pump_out": 1,
     "urban_network": 0,
     "is_tank_full": 0,
     "is_tank_empty": 0,
@@ -32,12 +33,12 @@
     "last_time_pump_in_off": 10000,
     "time_to_fill_up": 1800000,
     "min_flow_in": 1,
-    "flow_in": 0,
+    "flow_in": 1,
     "flow_out": 0
   },
   "config_api": {
     "ip": "192.168.167.101",
     "port": 5000,
-    "auth_header": ""
+    "auth_header": "Authorization: Basic dGVzdDp0ZXN0"
   }
 }
