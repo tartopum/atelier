@@ -149,7 +149,7 @@ void Tank::_enablePumpOut(bool on)
     if (isOverpressured()) on = false;
     if (isMotorOutBlocked()) on = false;
 
-    digitalWrite(_pinPumpIn, on ? HIGH : LOW); 
+    digitalWrite(_pinPumpOut, on ? HIGH : LOW); 
     _cmdUrbanNetwork(!on);
 }
 
