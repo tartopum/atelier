@@ -55,8 +55,17 @@ def config_route():
         config_forms.populate_config()
         config_arduino()
         config.save()
-        # TODO: update scheduler
+
+        scheduler.lunch_job.time_range = (
+            config["lunch_period"]["beginning"],
+            config["lunch_period"]["end"],
+        )
+        scheduler.sleep_job.time_range = (
+            config["sleep_period"]["beginning"],
+            config["sleep_period"]["end"],
+        )
         return
+
     return render_template(
         "config.html",
         forms=config_forms,
