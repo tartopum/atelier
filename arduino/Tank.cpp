@@ -163,6 +163,7 @@ void Tank::loop()
     if (_emergencyStop) {
         _cmdPumpIn(false);
         _enablePumpOut(false);
+        _alertFatal(true);
         return;
     }
 
