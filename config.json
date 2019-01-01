@@ -3,6 +3,7 @@
     "ip": "192.168.167.101",
     "port": 5000,
     "db_path": "db.sqlite3",
+    "debug": 0,
     "credentials": ["", ""]
   },
   "arduino": {
@@ -12,35 +13,22 @@
   },
   "lunch_period": {
     "beginning": "13:00",
-    "end": "14:00",
-    "lunch_period-beginning": "13:00",
-    "lunch_period-end": "14:00"
+    "end": "14:00"
   },
   "sleep_period": {
     "beginning": "21:30",
-    "end": "06:30",
-    "sleep_period-beginning": "21:30",
-    "sleep_period-end": "06:30"
+    "end": "06:30"
   },
   "alarm": {
-    "delay": 16,
-    "alarm-delay": 16
+    "delay": 16
   },
   "lights": {
     "press_delay": 1,
-    "inactivity_delay": 30,
-    "lights-press_delay": 1,
-    "lights-inactivity_delay": 30
+    "inactivity_delay": 30
   },
   "tank": {
     "read_state_period": 10,
     "min_flow_in": 1,
-    "time_to_fill_up": 30,
-    "tank_radius": 150,
-    "tank_height": 250,
-    "tank-min_flow_in": 1,
-    "tank-time_to_fill_up": 30,
-    "tank-tank_radius": 150,
-    "tank-tank_height": 250
+    "time_to_fill_up": 30
   }
 }

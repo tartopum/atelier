@@ -13,6 +13,7 @@ _PATH = os.path.join(_HERE, "..", "config.json")
 class Schema(dict):
     def __init__(self):
         self["type"] = "object"
+        self["additionalProperties"] = False
         self["properties"] = {}
 
     def add_section(self, name, required=True):
@@ -22,6 +23,7 @@ class Schema(dict):
             self["required"].append(name)
         self["properties"][name] = {
             "type": "object",
+            "additionalProperties": False,
             "required": [],
             "properties": {}
         }
@@ -77,7 +79,7 @@ class Config(dict):
         parser.add_argument("--aport", type=int, help="Arduino HTTP port")
         args = parser.parse_args()
 
-        self["server"]["debug"] = args.debug
+        self["server"]["debug"] = int(args.debug)
         if args.port is not None:
             self["server"]["port"] = args.port
 
@@ -121,7 +123,6 @@ class Config(dict):
 
 
 schema = Schema()
-config = Config(schema, _PATH)
 
 schema.add_ip("server", "ip")
 schema.add_port("server", "port")
@@ -134,6 +135,7 @@ schema.add_parameter("server", "credentials", {
         "type": "string"
     }
 })
+schema.add_int("server", "debug", min=0, max=1)
 
 schema.add_ip("arduino", "ip")
 schema.add_port("arduino", "port")
@@ -150,5 +152,5 @@ schema.add_int("lights", "inactivity_delay", min=1, max=60)  # min
 schema.add_int("tank", "read_state_period", min=1, max=600)  # s
 schema.add_int("tank", "min_flow_in", min=0, max=100)  # L/min
 schema.add_int("tank", "time_to_fill_up", min=1, max=(60 * 24))  # min
-schema.add_int("tank", "tank_radius", min=0, max=500)  # cm
-schema.add_int("tank", "tank_height", min=0, max=500)  # cm
+
+config = Config(schema, _PATH)
