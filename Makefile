@@ -61,3 +61,7 @@ credentials:
 .PHONY: update
 update:
 	ssh ${SSH_HOST} 'cd ${RPI_HOME}/atelier/deploy; ./update.sh'
+
+.PHONY: shutdown
+shutdown:
+	ssh ${SSH_HOST} 'sudo shutdown -h now'
