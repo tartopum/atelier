@@ -31,10 +31,12 @@
 <script>
     Tank(document.getElementById("schema"), {
         waterLevel: {{ water_level }},
+        manualMode: {{ state["manual_mode"] }},
         flowIn: {{ state["flow_in"] }},
         flowOut: {{ state["flow_out"] }},
         pumpIn: {{ state["pump_in"] }},
         pumpOut: {{ state["pump_out"] }},
+        urbanNetwork: {{ state["urban_network"] }},
         isMotorInBlocked: {{ state["is_motor_in_blocked"] }},
         isMotorOutBlocked: {{ state["is_motor_out_blocked"] }},
         isFilterInBlocked: {{ state["is_filter_in_blocked"] }},
@@ -47,6 +49,8 @@
         pumpInOff: "{{ url_for('tank.pump_in', on=0) }}",
         pumpOutOn: "{{ url_for('tank.pump_out', on=1) }}",
         pumpOutOff: "{{ url_for('tank.pump_out', on=0) }}",
+        urbanNetworkOff: "{{ url_for('tank.urban_network', on=0) }}",
+        urbanNetworkOn: "{{ url_for('tank.urban_network', on=1) }}",
     });
 </script>
 {% endblock %}

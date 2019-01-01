@@ -4,12 +4,12 @@ var Tank = function(svg, state, links) {
     const padding = 5
     const _widthRef = 1000 + 2 * padding
     const _heightRef = 400 + 2 * padding
-    // TODO
+    // TODO: adapt to screen
     var _width = _widthRef,
         _height = 400
     svg.setAttribute("width", _width + "px")
     svg.setAttribute("height", _height + "px")
-    svg.style.border = "1px solid #000" // TODO
+    //svg.style.border = "1px solid #000" // TODO
 
     const roughness = 0.5
     const strokeWidth = 2
@@ -34,11 +34,19 @@ var Tank = function(svg, state, links) {
         return _h(y) + padding
     }
 
-    function wrapIntoLink(el, href) {
+    function addLink(x, y, w, h, href, showBorder) {
+        let padding = _w(5)
+        var rect = rc.rectangle(x - padding, y - padding, w + 2 * padding, h + 2 * padding, {
+            roughness: 0.5,
+            strokeWidth: showBorder ? 2 : 0,
+            stroke: "rgb(255, 105, 97)",
+            fill: "rgba(0, 0, 0, 0)",
+            fillStyle: "solid",
+        })
         var link = document.createElementNS("http://www.w3.org/2000/svg", "a")
         link.setAttributeNS(null, "href", href)
-        link.appendChild(el)
-        return link
+        link.appendChild(rect)
+        svg.appendChild(link)
     }
 
     function drawWater(x, y, w, h, roughness = 0) {
@@ -133,7 +141,7 @@ var Tank = function(svg, state, links) {
         }
     }
 
-    function drawPump(xCenter, yCenter, isOn, isBlocked, href) {
+    function drawPump(xCenter, yCenter, isOn, isBlocked) {
         let bg = "white"
         if (isBlocked) bg = "rgb(255, 105, 97)"
         let pump = rc.circle(xCenter, yCenter, pumpDiameter, {
@@ -143,13 +151,19 @@ var Tank = function(svg, state, links) {
             fillStyle: "solid"
         })
 
-        if (href) {
-            pump = wrapIntoLink(pump, href)
-        }
         svg.appendChild(pump)
 
-        drawLabel(xCenter + _w(2), yCenter + _h(3), "P", _h(40), true, href)
+        drawLabel(xCenter + _w(2), yCenter + _h(3), "P", _h(40), true)
         if (isOn) drawPumpVibs(xCenter, yCenter)
+
+        return {
+            xLeft: xCenter - pumpDiameter / 2.0,
+            xRight: xCenter + pumpDiameter / 2.0,
+            xMiddle: xCenter,
+            yTop: yCenter - pumpDiameter / 2.0,
+            yBottom: yCenter + pumpDiameter / 2.0,
+            yMiddle: yCenter,
+        }
     }
 
     function drawFilter(xCenter, yCenter, full, blocked) {
@@ -191,6 +205,7 @@ var Tank = function(svg, state, links) {
         text.setAttributeNS(null, "x", xMiddle)
         text.setAttributeNS(null, "y", yMiddle)
 
+        val = parseInt(val)
         val = (val > 9) ? val : "0" + val
         var textNode = document.createTextNode(val + " L/m")
         text.appendChild(textNode)
@@ -342,8 +357,8 @@ var Tank = function(svg, state, links) {
         );
     }
 
-    function drawUrbanConnection(x, y, pumpOutEnabled) {
-        if (pumpOutEnabled) return
+    function drawUrbanConnection(x, y, urbanOn) {
+        if (!urbanOn) return
         elbow(
             x,
             y,
@@ -353,7 +368,7 @@ var Tank = function(svg, state, links) {
         )
     }
 
-    function drawLabel(x, yMiddle, text, fontSize = 16, centerY = false, href = "") {
+    function drawLabel(x, yMiddle, text, fontSize = 16, centerY = false) {
         let txt = document.createElementNS("http://www.w3.org/2000/svg", "text")
         txt.setAttributeNS(null, "font-family", "Slabo")
         txt.setAttributeNS(null, "font-weight", "bold")
@@ -366,12 +381,18 @@ var Tank = function(svg, state, links) {
         var textNode = document.createTextNode(text)
         txt.appendChild(textNode)
         
-        if (href) txt = wrapIntoLink(txt, href)
-
         let g = document.createElementNS("http://www.w3.org/2000/svg", "g")
         g.appendChild(txt)
 
         svg.appendChild(g)
+        let bbox = g.getBBox()
+
+        return {
+            xLeft: bbox.x,
+            xRight: bbox.x + bbox.width,
+            yTop: bbox.y,
+            yBottom: bbox.y + bbox.height,
+        }
     }
     
     const pipeWidth = _h(15)
@@ -448,22 +469,20 @@ var Tank = function(svg, state, links) {
         pipeOutH2.xRight - _w(2),
         _x(950) - pipeOutH2.xRight,
         pipeH1.yTop,
-        true
+        state.urbanNetwork || state.pumpOut
     )
 
-    drawPump(
+    let pumpIn = drawPump(
         _x(100),
         pipeH1.yMiddle,
         state.pumpIn,
         state.isMotorInBlocked,
-        state.isMotorInBlocked ? null : (state.pumpIn ? links.pumpInOff : links.pumpInOn)
     )
-    drawPump(
+    let pumpOut = drawPump(
         pipeOutH1.xRight,
         pipeOutH1.yMiddle,
         state.pumpOut,
         state.isMotorOutBlocked,
-        state.isMotorOutBlocked ? null : (state.pumpOut ? links.pumpOutOff : links.pumpOutOn)
     )
     drawFilter(
         tank.xLeft - _w(280),
@@ -488,10 +507,45 @@ var Tank = function(svg, state, links) {
         pipeOutH2.xRight - pipeWidth,
         _h(200),
         pipeOutH1.yTop - _h(198),
-        !state.pumpOut
+        state.urbanNetwork
     )
-    drawUrbanConnection(pipeUrbanV.xRight, pipeOutH3.yTop, state.pumpOut)
+    drawUrbanConnection(pipeUrbanV.xRight, pipeOutH3.yTop, state.urbanNetwork)
     drawLabel(_x(0), pipeH1.yMiddle, "Puits")
     drawLabel(pipeOutH3.xRight + _w(10), pipeOutH1.yMiddle, "Ferme")
-    drawLabel(pipeUrbanV.xMiddle, pipeUrbanV.yTop - _h(20), "Ville", 16, true)
+    let urbanLabel = drawLabel(pipeUrbanV.xMiddle, pipeUrbanV.yTop - _h(20), "Ville", 16, true)
+
+    if (!state.manualMode) {
+        drawLabel(_x(0), _y(20), "Cliquer sur la pompe du puits pour la commander.")
+    }
+    
+    if (!state.isMotorInBlocked) {
+        addLink(
+            pumpIn.xLeft,
+            pumpIn.yTop,
+            pumpIn.xRight - pumpIn.xLeft,
+            pumpIn.yBottom - pumpIn.yTop,
+            state.pumpIn ? links.pumpInOff : links.pumpInOn,
+            state.manualMode
+        )
+    }
+    if (!state.isMotorOutBlocked && state.manualMode) {
+        addLink(
+            pumpOut.xLeft,
+            pumpOut.yTop,
+            pumpOut.xRight - pumpOut.xLeft,
+            pumpOut.yBottom - pumpOut.yTop,
+            state.pumpOut ? links.pumpOutOff : links.pumpOutOn,
+            state.manualMode
+        )
+    }
+    if (state.manualMode) {
+        addLink(
+            urbanLabel.xLeft,
+            urbanLabel.yTop,
+            urbanLabel.xRight - urbanLabel.xLeft,
+            urbanLabel.yBottom - urbanLabel.yTop,
+            state.urbanNetwork ? links.urbanNetworkOff : links.urbanNetworkOn,
+            state.manualMode
+        )
+    }
 };
