@@ -309,6 +309,9 @@ void Tank::_httpRouteSet(WebServer &server)
         if (strcmp(key, "pump_out") == 0) {
             _enablePumpOut(strcmp(value, "1") == 0);
         }
+        if (strcmp(key, "urban_network") == 0) {
+            _cmdUrbanNetwork(strcmp(value, "1") == 0);
+        }
     }
     server.httpSuccess();
 }
