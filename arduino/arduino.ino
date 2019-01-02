@@ -13,20 +13,18 @@ IPAddress ip(192, 168, 167, 100);
 WebServer webserver("", 80);
 
 // To be sent by the server
-char apiIp[20] = "192.168.167.101";
+byte apiIp[] = { 192, 168, 167, 101 };
 char apiAuthHeader[100] = "";
 int apiPort = 5000;
 
 void sendAlert(const char *name, const char *message)
 {
-    Serial.print("ALERT: start ");
-    Serial.print(message);
-    Serial.print(" ");
-    Serial.println(apiIp);
-    Serial.println(apiAuthHeader);
-    Serial.println("");
+    Serial.print("ALERT: ");
+    Serial.println(message);
     EthernetClient client;
-    if (!client.connect(apiIp, apiPort)) {
+    int connect = client.connect(apiIp, apiPort);
+    Serial.println(connect);
+    if (connect != 1) {
         return;
     }
     Serial.println("ALERT: connected");
@@ -99,8 +97,8 @@ Tank tank(
     CONTROLLINO_AI7,
     CONTROLLINO_AI8,
     CONTROLLINO_AI9,
-    CONTROLLINO_DO4,
     CONTROLLINO_DO2,
+    CONTROLLINO_DO4,
     &sendAlert
 );
 
@@ -139,12 +137,21 @@ void tankRoute(WebServer &server, WebServer::ConnectionType type, char *, bool)
     tank.httpRoute(server, type);
 }
 
+void parseIp(char *ip)
+{
+    char *token = strtok(ip, ".");
+    for (byte i = 0; i < 4; i++) {
+        apiIp[i] = atoi(token);
+        token = strtok(0, ".");
+    }
+}
+
 void configApiRoute(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
     if (type == WebServer::GET) {
         server.httpSuccess("application/json");
         server << "{ ";
-        server << "\"ip\": \"" << apiIp << "\",";
+        server << "\"ip\": \"" << apiIp[0] << "." << apiIp[1] << "." << apiIp[2] << "." << apiIp[3] << "\",";
         server << "\"port\": " << apiPort << ",";
         server << "\"auth_header\": \"" << apiAuthHeader << "\"";
         server << " }";
@@ -157,14 +164,12 @@ void configApiRoute(WebServer &server, WebServer::ConnectionType type, char *, b
     char value[valueLen];
     while (server.readPOSTparam(key, keyLen, value, valueLen)) {
         if (strcmp(key, "ip") == 0) {
-            strcpy(apiIp, value);
+            parseIp(value);
         }
         if (strcmp(key, "port") == 0) {
             apiPort = atoi(value);
         }
         if (strcmp(key, "auth_header") == 0) {
-            Serial.print("received auth header: ");
-            Serial.println(value);
             strcpy(apiAuthHeader, value);
         }
     }
