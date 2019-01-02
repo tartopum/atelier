@@ -297,6 +297,9 @@ void Tank::_httpRouteGet(WebServer &server)
     server << "{ ";
     server << "\"manual_mode\": " << _manualMode << ", ";
     server << "\"pump_in\": " << isOn(_pinPumpIn) << ", ";
+    server << "\"millis\": " << millis() << ", ";
+    server << "\"last_time_pump_in_off\": " << _lastTimePumpInOff << ", ";
+    server << "\"last_time_pump_in_started\": " << _timePumpInStarted << ", ";
     server << "\"pump_out\": " << isOn(_pinPumpOut) << ", ";
     server << "\"urban_network\": " << isOn(_pinUrbanNetwork) << ", ";
     server << "\"is_tank_full\": " << isTankFull() << ", ";
