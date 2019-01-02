@@ -191,7 +191,17 @@ var Tank = function(svg, state, links) {
         })
         svg.appendChild(filter)
         drawLabel(xCenter, yTop - _h(10), "Filtre", _h(14), true)
-        if (!blocked) return
+    
+        let coords = {
+            xLeft: xLeft,
+            xRight: xLeft + wFilter,
+            yTop: yTop,
+            yBottom: yTop + hFilter,
+        }
+
+        if (!blocked) {
+            return coords
+        }
 
         let dust = rc.rectangle(xLeft, yTop, wFilter, hFilter, {
             roughness: 1,
@@ -201,6 +211,8 @@ var Tank = function(svg, state, links) {
             fillWeight: 1
         })
         svg.appendChild(dust)
+
+        return coords
     }
 
     function drawFlowmeter(x, y, yArrow, val) {
@@ -523,7 +535,7 @@ var Tank = function(svg, state, links) {
         state.pumpOut,
         state.isMotorOutBlocked,
     )
-    drawFilter(
+    let filter = drawFilter(
         tank.xLeft - _w(280),
         pipeOutH1.yMiddle,
         state.flowIn,
@@ -587,6 +599,25 @@ var Tank = function(svg, state, links) {
             urbanLabel.xRight - urbanLabel.xLeft,
             urbanLabel.yBottom - urbanLabel.yTop,
             state.urbanNetwork ? links.urbanNetworkOff : links.urbanNetworkOn,
+            state.manualMode
+        )
+    }
+    if (!state.manualMode) {
+        addLink(
+            filter.xLeft,
+            filter.yTop,
+            filter.xRight - filter.xLeft,
+            filter.yBottom - filter.yTop,
+            links.filterCleaningOn,
+            state.manualMode
+        )
+    } else {
+        addLink(
+            filter.xLeft,
+            filter.yTop,
+            filter.xRight - filter.xLeft,
+            filter.yBottom - filter.yTop,
+            state.filterCleaning ? links.filterCleaningOff : links.filterCleaningOn,
             state.manualMode
         )
     }

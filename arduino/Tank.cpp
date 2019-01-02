@@ -309,6 +309,7 @@ void Tank::_httpRouteGet(WebServer &server)
     server << "\"min_flow_in\": " << minFlowIn << ", ";
     server << "\"volume_before_tank_ready\": " << _volumeBeforeTankReady << ", ";
     server << "\"volume_collected_since_empty \": " << _volumeCollectedSinceEmpty << ", ";
+    server << "\"filter_cleaning\": " << isOn(_pinFilterCleaning) << ", ";
     server << "\"filter_cleaning_period\": " << filterCleaningPeriod << ", ";
     server << "\"filter_cleaning_duration\": " << filterCleaningDuration << ", ";
     server << "\"time_to_fill_up\": " << timeToFillUp << ", ";

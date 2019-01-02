@@ -37,6 +37,7 @@
         pumpIn: {{ state["pump_in"] }},
         pumpOut: {{ state["pump_out"] }},
         urbanNetwork: {{ state["urban_network"] }},
+        filterCleaning: {{ state["filter_cleaning"] }},
         isMotorInBlocked: {{ state["is_motor_in_blocked"] }},
         isMotorOutBlocked: {{ state["is_motor_out_blocked"] }},
         isFilterInBlocked: {{ state["is_filter_in_blocked"] }},
@@ -51,6 +52,8 @@
         pumpOutOff: "{{ url_for('tank.pump_out', on=0) }}",
         urbanNetworkOff: "{{ url_for('tank.urban_network', on=0) }}",
         urbanNetworkOn: "{{ url_for('tank.urban_network', on=1) }}",
+        filterCleaningOn: "{{ url_for('tank.filter_cleaning', on=1) }}",
+        filterCleaningOff: "{{ url_for('tank.filter_cleaning', on=0) }}",
     });
 </script>
 {% endblock %}

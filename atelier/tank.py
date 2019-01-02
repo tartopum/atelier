@@ -25,6 +25,9 @@ def config_arduino():
             "time_to_fill_up": config["tank"]["time_to_fill_up"] * 60 * 1000,
             "min_flow_in": config["tank"]["min_flow_in"],
             "flow_check_period": config["tank"]["flow_check_period"] * 1000,
+            "volume_before_tank_ready": config["tank"]["volume_before_tank_ready"],
+            "filter_cleaning_period": config["tank"]["filter_cleaning_period"] * 60 * 1000,
+            "filter_cleaning_duration": config["tank"]["filter_cleaning_duration"] * 1000,
         }
     )
 
@@ -51,3 +54,9 @@ def manual_mode(on):
 @arduino.post_route
 def urban_network(on):
     return arduino.post(arduino_endpoint, {"urban_network": int(on)})
+
+
+@blueprint.route("/filter_cleaning/<int:on>")
+@arduino.post_route
+def filter_cleaning(on):
+    return arduino.post(arduino_endpoint, {"filter_cleaning": int(on)})
