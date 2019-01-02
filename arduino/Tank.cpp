@@ -16,6 +16,7 @@ Tank::Tank(
     byte pinMotorInBlocked,
     byte pinMotorOutBlocked,
     byte pinOverpressure,
+    byte pinFilterCleaning,
     byte pinLightWarning,
     byte pinLightFatal,
     void (*sendAlert)(const char *, const char *)
@@ -38,6 +39,7 @@ Tank::Tank(
     _pinMotorInBlocked = pinMotorInBlocked;
     _pinMotorOutBlocked = pinMotorOutBlocked;
     _pinOverpressure = pinOverpressure;
+    _pinFilterCleaning = pinFilterCleaning;
     _pinLightWarning = pinLightWarning;
     _pinLightFatal = pinLightFatal;
 
@@ -55,6 +57,7 @@ Tank::Tank(
     pinMode(_pinUrbanNetwork, OUTPUT);
     pinMode(_pinLightWarning, OUTPUT);
     pinMode(_pinLightFatal, OUTPUT);
+    pinMode(_pinFilterCleaning, OUTPUT);
 
     _cmdPumpIn(false);
     _enablePumpOut(false);
@@ -121,6 +124,14 @@ bool Tank::isWellEmpty()
     return _flowIn < minFlowIn;
 }
 
+bool Tank::canCleanFilter()
+{
+    return (
+        (millis() - _lastFilterCleaningTime > filterCleaningPeriod) &&
+        isOn(_pinPumpIn)
+    );
+}
+
 /*
  * Output
  */
@@ -162,6 +173,12 @@ void Tank::_cmdUrbanNetwork(bool on)
     digitalWrite(_pinUrbanNetwork, on ? HIGH : LOW); 
 }
 
+void Tank::_cmdFilterCleaning(bool on)
+{
+    if (on) _lastFilterCleaningTime = millis();
+    digitalWrite(_pinFilterCleaning, on ? HIGH : LOW); 
+}
+
 void Tank::loop()
 {
     _manualModeAlert.raise(_manualMode);
@@ -197,6 +214,14 @@ void Tank::loop()
 
     if (_manualMode) {
         return;
+    }
+
+    // Clean filter
+    if (canCleanFilter()) {
+        _cmdFilterCleaning(true);
+    }
+    if (millis() - _lastFilterCleaningTime > filterCleaningDuration) {
+        _cmdFilterCleaning(false);
     }
 
     // Command pump-out and urban network
@@ -284,6 +309,8 @@ void Tank::_httpRouteGet(WebServer &server)
     server << "\"min_flow_in\": " << minFlowIn << ", ";
     server << "\"volume_before_tank_ready\": " << _volumeBeforeTankReady << ", ";
     server << "\"volume_collected_since_empty \": " << _volumeCollectedSinceEmpty << ", ";
+    server << "\"filter_cleaning_period\": " << filterCleaningPeriod << ", ";
+    server << "\"filter_cleaning_duration\": " << filterCleaningDuration << ", ";
     server << "\"time_to_fill_up\": " << timeToFillUp << ", ";
     server << "\"flow_check_period\": " << flowCheckPeriod << ", ";
     server << "\"flow_in\": " << _flowIn << ", ";
@@ -318,6 +345,15 @@ void Tank::_httpRouteSet(WebServer &server)
         }
         if (strcmp(key, "pump_out") == 0) {
             _enablePumpOut(strcmp(value, "1") == 0);
+        }
+        if (strcmp(key, "filter_cleaning") == 0) {
+            _cmdFilterCleaning(strcmp(value, "1") == 0);
+        }
+        if (strcmp(key, "filter_cleaning_period") == 0) {
+            filterCleaningPeriod = atol(value);
+        }
+        if (strcmp(key, "filter_cleaning_duration") == 0) {
+            filterCleaningDuration = atol(value);
         }
         if (strcmp(key, "urban_network") == 0) {
             _cmdUrbanNetwork(strcmp(value, "1") == 0);

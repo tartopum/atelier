@@ -21,6 +21,7 @@ class Tank
             byte pinMotorInBlocked,
             byte pinMotorOutBlocked,
             byte pinOverpressure,
+            byte pinFilterCleaning,
             byte pinLightWarning,
             byte pinLightFatal,
             void (*sendAlert)(const char *, const char *)
@@ -28,6 +29,8 @@ class Tank
         byte minFlowIn = 10; // L/min
         unsigned long timeToFillUp = 1800000; // ms
         unsigned long flowCheckPeriod = 30000; // ms
+        unsigned long filterCleaningPeriod = 86400000; // ms
+        unsigned long filterCleaningDuration = 10000; // ms
 
         void attachFlowInterrupts();
         void (*flowInInterrupt)();
@@ -44,6 +47,7 @@ class Tank
         bool isTankEmpty();
         bool isWellFull();
         bool isWellEmpty();
+        bool canCleanFilter();
 
         void httpRoute(WebServer &server, WebServer::ConnectionType type);
 
@@ -59,6 +63,7 @@ class Tank
         byte _pinMotorInBlocked;
         byte _pinMotorOutBlocked;
         byte _pinOverpressure;
+        byte _pinFilterCleaning;
         byte _pinLightWarning;
         byte _pinLightFatal;
 
@@ -72,12 +77,14 @@ class Tank
         volatile byte _flowOutPulses = 0; // L
         unsigned int _volumeBeforeTankReady = 500; // L
         unsigned int _volumeCollectedSinceEmpty = 0;
+        unsigned long _lastFilterCleaningTime = 0;
 
         void _dettachFlowInterrupts();
         void _computeFlowRates();
         void _cmdPumpIn(bool);
         void _enablePumpOut(bool);
         void _cmdUrbanNetwork(bool);
+        void _cmdFilterCleaning(bool);
 
         Alert _motorInBlockedAlert;
         Alert _motorOutBlockedAlert;
