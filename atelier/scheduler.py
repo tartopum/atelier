@@ -36,7 +36,38 @@ def run(interval=10):
     return cease_continuous_run
 
 
-class PeriodJob(abc.ABC):
+class ArduinoConnectionJob:
+    REMINDER_DELAY = 15 * 60
+
+    def __init__(self):
+        self.alert_raised = False
+        self.last_raise_time = None
+    
+    def _can_raise(self):
+        return (
+            not self.alert_raised or
+            time.time() - self.last_raise_time > self.REMINDER_DELAY
+        )
+
+    def _run_job_safely(self, f):
+        try:
+            f()
+        except requests.exceptions.RequestException as e:
+            if not self._can_raise():
+                return
+            self.alert_raised = True
+            self.last_raise_time = time.time()
+
+            logger.error(e)
+            raise_alert(
+                "arduino_connection_error",
+                "La Controllino est injoignable."
+            )
+        else:
+            self.alert_raised = False
+
+
+class PeriodJob(ArduinoConnectionJob, metaclass=abc.ABCMeta):
     def __init__(self, btime, etime):
         self._time_range = None
         self.time_range = (btime, etime)
@@ -53,21 +84,11 @@ class PeriodJob(abc.ABC):
         schedule.every().day.at(btime).do(self._safe_beginning)
         schedule.every().day.at(etime).do(self._safe_end)
 
-    def _make_job_safe(self, f):
-        try:
-            f()
-        except requests.exceptions.RequestException as e:
-            logger.error(e)
-            raise_alert(
-                "arduino_connection_error",
-                "La Controllino est injoignable."
-            )
-
     def _safe_beginning(self):
-        self._make_job_safe(self.beginning)
+        self._run_job_safely(self.beginning)
 
     def _safe_end(self):
-        self._make_job_safe(self.end)
+        self._run_job_safely(self.end)
 
     @abc.abstractmethod
     def beginning(self):
@@ -97,17 +118,27 @@ class SleepJob(PeriodJob):
         workshop.power_supply(1)
 
 
-def read_tank_state():
-    try:
+class TankJob(ArduinoConnectionJob):
+    def __init__(self, every):
+        self._every = None
+        self.every = every
+
+    @property
+    def every(self):
+        self._every
+
+    @every.setter
+    def every(self, val):
+        self._every = val
+        schedule.cancel_job(self.job)
+        schedule.every(self._every).seconds.do(self.job)
+
+    def _unsafe_job(self):
         state = arduino.read_state(tank)
-    except (ConnectionError, ReadTimeout) as e:
-        logger.error(e)
-        raise_alert(
-            "arduino_connection_error",
-            "Impossible de récupérer l'état de la cuve."
-        )
-    else:
         db.add_tank_state(state)
+
+    def job(self):
+        self._run_job_safely(self._unsafe_job)
 
 
 lunch_job = LunchJob(
@@ -118,4 +149,5 @@ sleep_job = SleepJob(
     config["sleep_period"]["beginning"],
     config["sleep_period"]["end"]
 )
-schedule.every(config["tank"]["flow_check_period"]).seconds.do(read_tank_state)
+
+tank_job = TankJob(config["tank"]["flow_check_period"])

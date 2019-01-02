@@ -64,6 +64,7 @@ def config_route():
             config["sleep_period"]["beginning"],
             config["sleep_period"]["end"],
         )
+        scheduler.tank_job.every = config["tank"]["flow_check_period"]
         return
 
     return render_template(
