@@ -7,7 +7,7 @@ sudo pip3.7 install --upgrade pip pipenv
 git stash
 git pull
 git stash apply
-pipenv update
+pipenv install
 
 echo "------------"
 echo "Update finished."
