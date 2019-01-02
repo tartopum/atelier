@@ -34,7 +34,7 @@ logging.config.dictConfig(dict(
         },
     },
     root = {
-        "handlers": ["console"],
+        "handlers": ["file"],
         "level": logging.DEBUG,
     },
     loggers = {
