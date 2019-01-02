@@ -29,8 +29,8 @@ class Tank
         byte minFlowIn = 10; // L/min
         unsigned long timeToFillUp = 1800000; // ms
         unsigned long flowCheckPeriod = 30000; // ms
-        unsigned long filterCleaningPeriod = 86400000; // ms
-        unsigned long filterCleaningDuration = 10000; // ms
+        unsigned long filterCleaningPeriod = 3600000; // ms
+        unsigned long filterCleaningDuration = 30000; // ms
 
         void attachFlowInterrupts();
         void (*flowInInterrupt)();
@@ -75,8 +75,9 @@ class Tank
         unsigned long _timePumpInStarted = 0;
         volatile byte _flowInPulses = 0; // L
         volatile byte _flowOutPulses = 0; // L
-        unsigned int _volumeBeforeTankReady = 500; // L
+        unsigned int _volumeBeforePumpOut = 500; // L
         unsigned int _volumeCollectedSinceEmpty = 0;
+        bool _canEnablePumpOut = true;
         unsigned long _lastFilterCleaningTime = 0;
 
         void _dettachFlowInterrupts();

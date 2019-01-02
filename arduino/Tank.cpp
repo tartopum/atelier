@@ -226,13 +226,13 @@ void Tank::loop()
 
     // Command pump-out and urban network
     if (isTankEmpty()) {
+        _canEnablePumpOut = false;
         _enablePumpOut(false);
         _volumeCollectedSinceEmpty = 0;
-    } else if (_volumeCollectedSinceEmpty > _volumeBeforeTankReady) {
+    } else if (_canEnablePumpOut) {
         _enablePumpOut(true);
-    } else {
-        _enablePumpOut(false);
-        _volumeCollectedSinceEmpty += _flowIn * (flowCheckPeriod / 60000.0);
+    } else if (_volumeCollectedSinceEmpty > _volumeBeforePumpOut) {
+        _canEnablePumpOut = true;
     }
 
     // Command pump-in
@@ -249,6 +249,7 @@ void Tank::loop()
 void Tank::flowInPulsed()
 {
     _flowInPulses++;
+    _volumeCollectedSinceEmpty++;
 }
 
 void Tank::flowOutPulsed()
@@ -307,7 +308,7 @@ void Tank::_httpRouteGet(WebServer &server)
     server << "\"is_overpressured\": " << isOverpressured() << ", ";
     server << "\"is_filter_in_blocked\": " << isFilterInBlocked() << ", ";
     server << "\"min_flow_in\": " << minFlowIn << ", ";
-    server << "\"volume_before_tank_ready\": " << _volumeBeforeTankReady << ", ";
+    server << "\"volume_before_pump_out\": " << _volumeBeforePumpOut << ", ";
     server << "\"volume_collected_since_empty \": " << _volumeCollectedSinceEmpty << ", ";
     server << "\"filter_cleaning\": " << isOn(_pinFilterCleaning) << ", ";
     server << "\"filter_cleaning_period\": " << filterCleaningPeriod << ", ";
@@ -321,8 +322,8 @@ void Tank::_httpRouteGet(WebServer &server)
 
 void Tank::_httpRouteSet(WebServer &server)
 {
-    const byte keyLen = 20;
-    const byte valueLen = 5;
+    const byte keyLen = 50;
+    const byte valueLen = 50;
     char key[keyLen];
     char value[valueLen];
     while (server.readPOSTparam(key, keyLen, value, valueLen)) {
@@ -338,8 +339,8 @@ void Tank::_httpRouteSet(WebServer &server)
         if (strcmp(key, "flow_check_period") == 0) {
             flowCheckPeriod = atol(value);
         }
-        if (strcmp(key, "volume_before_tank_ready") == 0) {
-            _volumeBeforeTankReady = atoi(value);
+        if (strcmp(key, "volume_before_pump_out") == 0) {
+            _volumeBeforePumpOut = atoi(value);
         }
         if (strcmp(key, "pump_in") == 0) {
             _cmdPumpIn(strcmp(value, "1") == 0);

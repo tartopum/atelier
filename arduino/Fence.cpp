@@ -51,8 +51,8 @@ void Fence::_httpRouteGet(WebServer &server)
 
 void Fence::_httpRouteSet(WebServer &server)
 {
-    const byte keyLen = 10;
-    const byte valueLen = 5;
+    const byte keyLen = 50;
+    const byte valueLen = 50;
     char key[keyLen];
     char value[valueLen];
     while (server.readPOSTparam(key, keyLen, value, valueLen)) {

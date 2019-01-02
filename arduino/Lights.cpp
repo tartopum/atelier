@@ -59,8 +59,8 @@ void Lights::_httpRouteGet(WebServer &server)
 
 void Lights::_httpRouteSet(WebServer &server)
 {
-    const byte keyLen = 15;
-    const byte valueLen = 5;
+    const byte keyLen = 50;
+    const byte valueLen = 50;
     char key[keyLen];
     char value[valueLen];
     char strIndex[3];

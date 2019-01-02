@@ -1,6 +1,7 @@
 from base64 import b64encode
 from collections import defaultdict
 import json
+import logging
 
 from flask import Flask, render_template, request, jsonify
 from jsonschema import ValidationError
@@ -9,6 +10,8 @@ import requests
 from .config import config
 from .helpers import auth, raise_alert
 from . import arduino, db, forms, scheduler, alarm, lights, fence, tank, workshop
+
+logger = logging.getLogger()
 
 app = Flask(__name__)
 app.register_blueprint(alarm.blueprint, url_prefix="/alarm")
@@ -120,8 +123,8 @@ def receive_alert():
         data = request.get_json()
         name = data["name"]
         msg = data["message"]
-    except (json.decoder.JSONDecodeError, KeyError):
-        pass
+    except (json.decoder.JSONDecodeError, KeyError) as e:
+        logger.error(e)
     else:
         raise_alert(name, msg)
     return ""

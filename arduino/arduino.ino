@@ -19,16 +19,10 @@ int apiPort = 5000;
 
 void sendAlert(const char *name, const char *message)
 {
-    Serial.print("ALERT: ");
-    Serial.println(message);
     EthernetClient client;
-    int connect = client.connect(apiIp, apiPort);
-    Serial.print("connect ret: ");
-    Serial.println(connect);
-    if (connect != 1) {
+    if (client.connect(apiIp, apiPort) != 1) {
         return;
     }
-    Serial.println("ALERT: connected");
 
     unsigned int len = 1 + 6 + strlen(name) + 11 + strlen(message) + 1;
     client.println("POST /alert HTTP/1.1");
@@ -42,11 +36,11 @@ void sendAlert(const char *name, const char *message)
     client.println();
 
     client.print("{");
-    client.print("\"name\":");
+    client.print("\"name\": \"");
     client.print(name);
-    client.print(",\"message\":");
+    client.print("\", \"message\": \"");
     client.print(message);
-    client.println("}");
+    client.println("\"}");
 
     client.println();
     client.stop();

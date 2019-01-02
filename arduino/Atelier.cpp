@@ -67,8 +67,8 @@ void Atelier::_httpRouteGet(WebServer &server)
 
 void Atelier::_httpRouteSet(WebServer &server)
 {
-    const byte keyLen = 20;
-    const byte valueLen = 5;
+    const byte keyLen = 50;
+    const byte valueLen = 50;
     char key[keyLen];
     char value[valueLen];
     while (server.readPOSTparam(key, keyLen, value, valueLen)) {
