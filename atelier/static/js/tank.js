@@ -1,6 +1,9 @@
 var Tank = function(svg, state, links) {
+
     const maxVolume = 5 // m3
     const volumeScaleStep = 1
+    const lowSensorRelPos = 0.35 / 5
+    const highSensorRelPos = 4.8 / maxVolume
     const padding = 5
     const _widthRef = 1000 + 2 * padding
     const _heightRef = 400 + 2 * padding
@@ -73,11 +76,21 @@ var Tank = function(svg, state, links) {
         }
     }
 
-    function drawTank(x, waterVolumeRatio) {
+    function drawTank(x, waterVolumeRatio, empty, full) {
         let w = _w(150),
             y = _y(50),
-            h = _h(340),
-            yWater = y + (1 - waterVolumeRatio) * h
+            h = _h(340)
+        let yWater
+
+        if (empty) {
+            yWater = (y + h) - h * lowSensorRelPos + _h(7)
+        } else if(full) {
+            yWater = (y + h) - h * highSensorRelPos - _h(2)
+        } else {
+            let highPos = (y + h) - h * highSensorRelPos
+            let lowPos = (y + h) - h * lowSensorRelPos 
+            yWater = lowPos - (lowPos - highPos) * waterVolumeRatio
+        }
 
         let tank = rc.rectangle(x, y, w, h, {
             roughness: 0.5,
@@ -86,7 +99,8 @@ var Tank = function(svg, state, links) {
         drawWater(
             x,
             yWater,
-            w, waterVolumeRatio * h
+            w,
+            (y + h) - yWater
         )
 
         // Draw waves
@@ -427,7 +441,7 @@ var Tank = function(svg, state, links) {
     const wFilter = _w(50)
     const hFilter = 1.5 * pipeWidth
 
-    let tank = drawTank(_x(500), state.waterLevel)
+    let tank = drawTank(_x(500), state.waterLevel, state.isTankEmpty, state.isTankFull)
 
     const xTankTopGate = tank.xLeft + _w(20)
     if (state.flowIn) {
@@ -436,7 +450,7 @@ var Tank = function(svg, state, links) {
     let pipeH1 = drawHPipe(
         _x(50),
         tank.xLeft - _w(160),
-        tank.yBottom - pipeWidth - _h(5),
+        tank.yBottom - pipeWidth - _h(4),
         state.flowIn > 0
     )
     let pipeV2 = drawVPipe(
@@ -539,8 +553,8 @@ var Tank = function(svg, state, links) {
     drawLabel(pipeOutH3.xRight + _w(10), pipeOutH1.yMiddle, "Ferme")
     let urbanLabel = drawLabel(pipeUrbanV.xMiddle, pipeUrbanV.yTop - _h(20), "Ville", 16, true)
 
-    drawWaterVolumeSensor(tank, 0.35 / 5, !state.isTankEmpty)
-    drawWaterVolumeSensor(tank, 4.8 / 5, state.isTankFull)
+    drawWaterVolumeSensor(tank, lowSensorRelPos, !state.isTankEmpty)
+    drawWaterVolumeSensor(tank, highSensorRelPos, state.isTankFull)
 
     if (!state.manualMode) {
         drawLabel(_x(0), _y(20), "Cliquer sur la pompe du puits pour la commander.")
