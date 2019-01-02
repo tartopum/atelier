@@ -19,7 +19,12 @@ int apiPort = 5000;
 
 void sendAlert(const char *name, const char *message)
 {
-    Serial.println("ALERT: start");
+    Serial.print("ALERT: start ");
+    Serial.print(message);
+    Serial.print(" ");
+    Serial.println(apiIp);
+    Serial.println(apiAuthHeader);
+    Serial.println("");
     EthernetClient client;
     if (!client.connect(apiIp, apiPort)) {
         return;
@@ -92,10 +97,10 @@ Tank tank(
     CONTROLLINO_AI0,
     CONTROLLINO_AI2,
     CONTROLLINO_AI7,
-    CONTROLLINO_AI7, // TODO: make the difference in the circuit
     CONTROLLINO_AI8,
-    CONTROLLINO_DO2,
+    CONTROLLINO_AI9,
     CONTROLLINO_DO4,
+    CONTROLLINO_DO2,
     &sendAlert
 );
 
@@ -158,6 +163,8 @@ void configApiRoute(WebServer &server, WebServer::ConnectionType type, char *, b
             apiPort = atoi(value);
         }
         if (strcmp(key, "auth_header") == 0) {
+            Serial.print("received auth header: ");
+            Serial.println(value);
             strcpy(apiAuthHeader, value);
         }
     }

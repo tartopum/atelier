@@ -101,7 +101,7 @@ bool Tank::isTankFull()
 
 bool Tank::isTankEmpty()
 {
-    return isOff(_pinWaterLimitLow);
+    return isOn(_pinWaterLimitLow);
 }
 
 bool Tank::isWellFull()
@@ -152,7 +152,9 @@ void Tank::_enablePumpOut(bool on)
     if (isMotorOutBlocked()) on = false;
 
     digitalWrite(_pinPumpOut, on ? HIGH : LOW); 
-    _cmdUrbanNetwork(!on);
+    if (!_manualMode) {
+        _cmdUrbanNetwork(!on);
+    }
 }
 
 void Tank::_cmdUrbanNetwork(bool on)
@@ -163,6 +165,14 @@ void Tank::_cmdUrbanNetwork(bool on)
 void Tank::loop()
 {
     _manualModeAlert.raise(_manualMode);
+    _motorInBlockedAlert.raise(isMotorInBlocked());
+    _motorOutBlockedAlert.raise(isMotorOutBlocked());
+    _filterInBlockedAlert.raise(isFilterInBlocked());
+    _overpressureAlert.raise(isOverpressured());
+    _tankEmptyAlert.raise(isTankEmpty());
+
+    _computeFlowRates();
+
     if (_manualMode) {
         _alertFatal(true);
         return;
@@ -183,14 +193,6 @@ void Tank::loop()
         _cmdPumpIn(false);
         _enablePumpOut(false);
     }
-
-    _motorInBlockedAlert.raise(isMotorInBlocked());
-    _motorOutBlockedAlert.raise(isMotorOutBlocked());
-    _filterInBlockedAlert.raise(isFilterInBlocked());
-    _overpressureAlert.raise(isOverpressured());
-    _tankEmptyAlert.raise(isTankEmpty());
-
-    _computeFlowRates();
 
     if (isTankFull()) {
         _cmdPumpIn(false);
