@@ -120,7 +120,7 @@ bool Tank::isWellEmpty()
     // 2. At (flowCheckPeriod - delta), start pump
     // 3. At flowCheckPeriod, compute flowIn: 0
     // 4. At (2*flowCheckPeriod - delta), read flowIn below: still 0
-    if ((millis() - _timePumpInStarted) < (2 * flowCheckPeriod)) return false;
+    if ((millis() - _timePumpInStarted) < (_pumpInStartDuration + flowCheckPeriod)) return false;
     return _flowIn < minFlowIn;
 }
 
@@ -300,6 +300,7 @@ void Tank::_httpRouteGet(WebServer &server)
     server << "\"millis\": " << millis() << ", ";
     server << "\"last_time_pump_in_off\": " << _lastTimePumpInOff << ", ";
     server << "\"last_time_pump_in_started\": " << _timePumpInStarted << ", ";
+    server << "\"pump_in_start_duration\": " << _pumpInStartDuration << ", ";
     server << "\"pump_out\": " << isOn(_pinPumpOut) << ", ";
     server << "\"urban_network\": " << isOn(_pinUrbanNetwork) << ", ";
     server << "\"is_tank_full\": " << isTankFull() << ", ";
@@ -338,6 +339,9 @@ void Tank::_httpRouteSet(WebServer &server)
         }
         if (strcmp(key, "time_to_fill_up") == 0) {
             timeToFillUp = atol(value);
+        }
+        if (strcmp(key, "pump_in_start_duration") == 0) {
+            _pumpInStartDuration = atol(value);
         }
         if (strcmp(key, "flow_check_period") == 0) {
             flowCheckPeriod = atol(value);

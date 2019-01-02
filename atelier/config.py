@@ -154,6 +154,7 @@ schema.add_int("tank", "min_flow_in", min=0, max=100)  # L/min
 schema.add_int("tank", "time_to_fill_up", min=1, max=(60 * 24))  # min
 schema.add_int("tank", "volume_before_pump_out", min=1, max=10000)  # L
 schema.add_int("tank", "filter_cleaning_period", min=1, max=(60 * 24 * 7))  # min
-schema.add_int("tank", "filter_cleaning_duration", min=1, max=30)  # s 
+schema.add_int("tank", "filter_cleaning_duration", min=1, max=30)  # s
+schema.add_int("tank", "pump_in_start_duration", min=1, max=300)  # s
 
 config = Config(schema, _PATH)

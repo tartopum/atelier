@@ -71,14 +71,15 @@ class Tank
         float _flowIn = 0.0; // L/min
         float _flowOut = 0.0; // L/min
         unsigned long _oldTimeFlow = 0;
-        unsigned long _lastTimePumpInOff = 0;
-        unsigned long _timePumpInStarted = 0;
+        unsigned long _lastTimePumpInOff = 0; // ms
+        unsigned long _timePumpInStarted = 0; // ms
+        unsigned long _pumpInStartDuration = 60000; // ms
         volatile byte _flowInPulses = 0; // L
         volatile byte _flowOutPulses = 0; // L
         unsigned int _volumeBeforePumpOut = 500; // L
-        unsigned int _volumeCollectedSinceEmpty = 0;
+        unsigned int _volumeCollectedSinceEmpty = 0; // L
         bool _canEnablePumpOut = true;
-        unsigned long _lastFilterCleaningTime = 0;
+        unsigned long _lastFilterCleaningTime = 0; // ms
 
         void _dettachFlowInterrupts();
         void _computeFlowRates();
