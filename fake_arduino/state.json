@@ -2,6 +2,7 @@
   "alarm": {
     "listen": 0,
     "movement": 0,
+    "breach": 0,
     "ms_before_alert": 16000
   },
   "lights": {
@@ -33,10 +34,10 @@
     "is_overpressured": 0,
     "last_time_pump_in_off": 10000,
     "time_to_fill_up": 1800000,
-    "volume_before_tank_ready": 500,
+    "volume_before_pump_out": 500,
     "flow_check_period": 30000,
-    "filter_cleaning_period": 86400000,
-    "filter_cleaning_duration": 10000,
+    "filter_cleaning_period": 3600000,
+    "filter_cleaning_duration": 3000,
     "min_flow_in": 10,
     "flow_in": 1,
     "flow_out": 0

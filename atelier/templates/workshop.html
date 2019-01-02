@@ -18,16 +18,14 @@
     {% endif %}
     </div>
     <div>
-    {% if not alarm["movement"] %}
-        <h2>Aucune présence</h2>
+    {% if alarm["breach"] or alarm["listen"] and alarm["movement"] %}
+        <h2>Intrusion détectée !</h2>
+        <img src="{{ url_for('static', filename='img/alarm_breach_on.png') }}" alt="Intrusion détectée !" />
+    {% elif alarm["movement"] %}
+        <h2>Bricoleur détecté</h2>
+        <img src="{{ url_for('static', filename='img/alarm_movement_on.png') }}" alt="Présence dans l'atelier" />
     {% else %}
-        {% if alarm["listen"] %}
-            <h2>Intrusion détectée !</h2>
-            <img src="{{ url_for('static', filename='img/alarm_breach_on.png') }}" alt="Intrusion détectée !" />
-        {% else %}
-            <h2>Bricoleur détecté</h2>
-            <img src="{{ url_for('static', filename='img/alarm_movement_on.png') }}" alt="Présence dans l'atelier" />
-        {% endif %}
+        <h2>Aucune présence</h2>
     {% endif %}
     </div>
     <div>

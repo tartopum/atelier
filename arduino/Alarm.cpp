@@ -92,6 +92,7 @@ void Alarm::_httpRouteGet(WebServer &server)
     server.httpSuccess("application/json");
     server << "{ ";
     server << "\"listen\": " << listening() << ", ";
+    server << "\"breach\": " << breachDetected() << ", ";
     server << "\"ms_before_alert\": " << millisBeforeAlert << ", ";
     server << "\"movement\": " << movementDetected();
     server << " }";
