@@ -236,9 +236,10 @@ void Tank::loop()
     }
 
     // Command pump-in
-    if (isWellFull()) {
+    if (isOff(_pinPumpIn) && isWellFull()) {
         _cmdPumpIn(true);
-    } else if (isWellEmpty()) {
+    }
+    if (isOn(_pinPumpIn) && isWellEmpty()) {
         _cmdPumpIn(false);
     }
 }
