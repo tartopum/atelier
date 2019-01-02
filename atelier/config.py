@@ -152,5 +152,6 @@ schema.add_int("lights", "inactivity_delay", min=1, max=60)  # min
 schema.add_int("tank", "flow_check_period", min=5, max=120)  # s
 schema.add_int("tank", "min_flow_in", min=0, max=100)  # L/min
 schema.add_int("tank", "time_to_fill_up", min=1, max=(60 * 24))  # min
+schema.add_int("tank", "volume_before_tank_ready", min=1, max=10000)  # L
 
 config = Config(schema, _PATH)

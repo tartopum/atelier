@@ -310,6 +310,9 @@ void Tank::_httpRouteSet(WebServer &server)
         if (strcmp(key, "flow_check_period") == 0) {
             flowCheckPeriod = atol(value);
         }
+        if (strcmp(key, "volume_before_tank_ready") == 0) {
+            _volumeBeforeTankReady = atoi(value);
+        }
         if (strcmp(key, "pump_in") == 0) {
             _cmdPumpIn(strcmp(value, "1") == 0);
         }

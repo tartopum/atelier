@@ -18,9 +18,9 @@
     "power_supply": 1
   },
   "tank": {
-    "manual_mode": 1,
+    "manual_mode": 0,
     "pump_in": 1,
-    "pump_out": 1,
+    "pump_out": 0,
     "urban_network": 0,
     "is_tank_full": 0,
     "is_tank_empty": 0,
@@ -32,8 +32,9 @@
     "is_overpressured": 0,
     "last_time_pump_in_off": 10000,
     "time_to_fill_up": 1800000,
+    "volume_before_tank_ready": 500,
     "flow_check_period": 30000,
-    "min_flow_in": 1,
+    "min_flow_in": 10,
     "flow_in": 1,
     "flow_out": 0
   },
