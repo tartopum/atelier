@@ -202,8 +202,12 @@ void Tank::loop()
     // Command pump-out and urban network
     if (isTankEmpty()) {
         _enablePumpOut(false);
-    } else {
+        _volumeCollectedSinceEmpty = 0;
+    } else if (_volumeCollectedSinceEmpty > _volumeBeforeTankReady) {
         _enablePumpOut(true);
+    } else {
+        _enablePumpOut(false);
+        _volumeCollectedSinceEmpty += _flowIn * (flowCheckPeriod / 60000.0);
     }
 
     // Command pump-in
@@ -278,6 +282,8 @@ void Tank::_httpRouteGet(WebServer &server)
     server << "\"is_overpressured\": " << isOverpressured() << ", ";
     server << "\"is_filter_in_blocked\": " << isFilterInBlocked() << ", ";
     server << "\"min_flow_in\": " << minFlowIn << ", ";
+    server << "\"volume_before_tank_ready\": " << _volumeBeforeTankReady << ", ";
+    server << "\"volume_collected_since_empty \": " << _volumeCollectedSinceEmpty << ", ";
     server << "\"time_to_fill_up\": " << timeToFillUp << ", ";
     server << "\"flow_check_period\": " << flowCheckPeriod << ", ";
     server << "\"flow_in\": " << _flowIn << ", ";

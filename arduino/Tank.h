@@ -70,6 +70,8 @@ class Tank
         unsigned long _timePumpInStarted = 0;
         volatile byte _flowInPulses = 0; // L
         volatile byte _flowOutPulses = 0; // L
+        unsigned long _volumeBeforeTankReady = 500; // L
+        unsigned long _volumeCollectedSinceEmpty = 0;
 
         void _dettachFlowInterrupts();
         void _computeFlowRates();

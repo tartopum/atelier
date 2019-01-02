@@ -23,6 +23,7 @@ void sendAlert(const char *name, const char *message)
     Serial.println(message);
     EthernetClient client;
     int connect = client.connect(apiIp, apiPort);
+    Serial.print("connect ret: ");
     Serial.println(connect);
     if (connect != 1) {
         return;
