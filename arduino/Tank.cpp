@@ -131,7 +131,7 @@ void Tank::_alertWarning(bool on)
 
 void Tank::_alertFatal(bool on)
 {
-    digitalWrite(_pinLightWarning, on ? HIGH : LOW); 
+    digitalWrite(_pinLightFatal, on ? HIGH : LOW); 
 }
 
 void Tank::_cmdPumpIn(bool on)
@@ -174,7 +174,7 @@ void Tank::loop()
     // TODO: different signals based on the problem
     // e.g. constant light vs blinking
     _alertFatal(isMotorInBlocked() || isMotorOutBlocked() || isOverpressured() || _manualMode);
-    _alertWarning(isFilterInBlocked() || isTankEmpty());
+    _alertWarning(isFilterInBlocked() || isOn(_pinUrbanNetwork));
 
     _computeFlowRates();
 
