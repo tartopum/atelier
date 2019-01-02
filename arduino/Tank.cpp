@@ -20,11 +20,11 @@ Tank::Tank(
     byte pinLightFatal,
     void (*sendAlert)(const char *, const char *)
 ) :
-    _motorInBlockedAlert("tank", "Le moteur de la pompe est en panne.", sendAlert, 15),
-    _motorOutBlockedAlert("tank", "Le moteur du surpresseur est en panne.", sendAlert, 15),
-    _filterInBlockedAlert("tank", "Le filtre est encrassé.", sendAlert),
-    _overpressureAlert("tank", "Le système est en surpression.", sendAlert, 15),
-    _tankEmptyAlert("tank", "La cuve est vide.", sendAlert),
+    _motorInBlockedAlert("tank", "Le moteur de la pompe est en panne.", sendAlert),
+    _motorOutBlockedAlert("tank", "Le moteur du surpresseur est en panne.", sendAlert),
+    _filterInBlockedAlert("tank", "Le filtre est encrassé.", sendAlert, 60),
+    _overpressureAlert("tank", "Le système est en surpression.", sendAlert),
+    _tankEmptyAlert("tank", "La cuve est vide.", sendAlert, 120),
     _manualModeAlert("tank", "La cuve est en mode manuel.", sendAlert)
 {
     _pinPumpIn = pinPumpIn;
@@ -171,17 +171,12 @@ void Tank::loop()
     _overpressureAlert.raise(isOverpressured());
     _tankEmptyAlert.raise(isTankEmpty());
 
-    _computeFlowRates();
-
-    if (_manualMode) {
-        _alertFatal(true);
-        return;
-    }
-
     // TODO: different signals based on the problem
     // e.g. constant light vs blinking
-    _alertFatal(isMotorInBlocked() || isMotorOutBlocked() || isOverpressured());
+    _alertFatal(isMotorInBlocked() || isMotorOutBlocked() || isOverpressured() || _manualMode);
     _alertWarning(isFilterInBlocked() || isTankEmpty());
+
+    _computeFlowRates();
 
     if (isMotorInBlocked()) {
         _cmdPumpIn(false);
@@ -197,6 +192,10 @@ void Tank::loop()
     if (isTankFull()) {
         _cmdPumpIn(false);
         _enablePumpOut(true);
+        return;
+    }
+
+    if (_manualMode) {
         return;
     }
 

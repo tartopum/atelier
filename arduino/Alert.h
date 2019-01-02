@@ -10,7 +10,7 @@ class Alert
             const char *name,
             const char *msg,
             void (*send)(const char *, const char *),
-            unsigned int reminderDelay = 24 * 60 // min
+            unsigned int reminderDelay = 15 // min
         );
         void raise(bool);
 
