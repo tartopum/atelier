@@ -394,6 +394,30 @@ var Tank = function(svg, state, links) {
             yBottom: bbox.y + bbox.height,
         }
     }
+
+    function drawWaterVolumeSensor(tank, yRatio, activated) {
+        let w = _w(10)
+        let y = tank.yBottom - yRatio * (tank.yBottom - tank.yTop)
+        let tick = rc.line(tank.xLeft, y, tank.xRight, y, {
+            roughness: 0.5,
+            strokeWidth: 1
+        })
+        svg.appendChild(tick)
+
+        if (!activated) return
+
+        let x1 = tank.xLeft - _w(5)
+        for (let i = -1; i < 2; i++) {
+            let x2 = x1 - (i == 0 ? _w(8) : _w(5))
+            let y1 = y + i * _h(5)
+            let y2 = y1 + i * _h(3)
+            let tick = rc.line(x1, y1, x2, y2, {
+                roughness: 1,
+                strokeWidth: 1
+            })
+            svg.appendChild(tick)
+        }
+    }
     
     const pipeWidth = _h(15)
     const yFlowmeter = _y(250)
@@ -404,6 +428,7 @@ var Tank = function(svg, state, links) {
     const hFilter = 1.5 * pipeWidth
 
     let tank = drawTank(_x(500), state.waterLevel)
+
     const xTankTopGate = tank.xLeft + _w(20)
     if (state.flowIn) {
         drawFallingWater(tank);
@@ -513,6 +538,9 @@ var Tank = function(svg, state, links) {
     drawLabel(_x(0), pipeH1.yMiddle, "Puits")
     drawLabel(pipeOutH3.xRight + _w(10), pipeOutH1.yMiddle, "Ferme")
     let urbanLabel = drawLabel(pipeUrbanV.xMiddle, pipeUrbanV.yTop - _h(20), "Ville", 16, true)
+
+    drawWaterVolumeSensor(tank, 0.35 / 5, !state.isTankEmpty)
+    drawWaterVolumeSensor(tank, 4.8 / 5, state.isTankFull)
 
     if (!state.manualMode) {
         drawLabel(_x(0), _y(20), "Cliquer sur la pompe du puits pour la commander.")
