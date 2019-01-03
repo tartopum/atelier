@@ -24,7 +24,11 @@ app.register_blueprint(tank.blueprint, url_prefix="/tank")
 def after_request(response):
     if 400 <= response.status_code < 600:
         app.logger.warning(
-            f"{request.remote_addr} got {response.status_code} for {request.url}: {response.response}"
+            f"{request.remote_addr} got {response.status_code} for {request.url}:\n"
+            f"\t* Request headers: {request.headers}\n"
+            f"\t* Reqquest content: {request.data}\n"
+            f"\t* Reqquest content len: {len(request.data)}\n"
+            f"\t* Response: {response.response}"
         )
     return response
 
