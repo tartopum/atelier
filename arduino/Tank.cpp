@@ -251,11 +251,17 @@ void Tank::flowInPulsed()
 {
     _flowInPulses++;
     _volumeCollectedSinceEmpty++;
+    _volumeIn++;
 }
 
 void Tank::flowOutPulsed()
 {
     _flowOutPulses++;
+    if (isOn(_pinUrbanNetwork)) {
+        _volumeOutUrbanNetwork++;
+    } else {
+        _volumeOutTank++;
+    }
 }
 
 void Tank::attachFlowInterrupts()
@@ -298,6 +304,9 @@ void Tank::_httpRouteGet(WebServer &server)
     server << "{ ";
     server << "\"manual_mode\": " << _manualMode << ", ";
     server << "\"pump_in\": " << isOn(_pinPumpIn) << ", ";
+    server << "\"volume_in\": " << _volumeIn << ", ";
+    server << "\"volume_out_tank\": " << _volumeOutTank << ", ";
+    server << "\"volume_out_urban_network\": " << _volumeOutUrbanNetwork << ", ";
     server << "\"millis\": " << millis() << ", ";
     server << "\"last_time_pump_in_off\": " << _lastTimePumpInOff << ", ";
     server << "\"last_time_pump_in_started\": " << _timePumpInStarted << ", ";
@@ -379,4 +388,28 @@ void Tank::httpRoute(WebServer &server, WebServer::ConnectionType type)
         return;
     }
     _httpRouteGet(server);
+}
+
+void Tank::httpRouteStats(WebServer &server, WebServer::ConnectionType type)
+{
+    if (type == WebServer::POST) {
+        server.httpUnauthorized();
+        return;
+    }
+    
+    server.httpSuccess("application/json");
+    server << "{ ";
+    server << "\"volume_in\": " << _volumeIn << ", ";
+    _volumeIn = 0;
+    server << "\"volume_out_tank\": " << _volumeOutTank << ", ";
+    _volumeOutTank = 0;
+    server << "\"volume_out_urban_network\": " << _volumeOutUrbanNetwork << ", ";
+    _volumeOutUrbanNetwork = 0;
+
+    server << "\"urban_network\": " << isOn(_pinUrbanNetwork) << ", ";
+    server << "\"is_tank_full\": " << isTankFull() << ", ";
+    server << "\"is_tank_empty\": " << isTankEmpty() << ", ";
+    server << "\"flow_in\": " << _flowIn << ", ";
+    server << "\"flow_out\": " << _flowOut;
+    server << " }";
 }

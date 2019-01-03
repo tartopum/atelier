@@ -133,6 +133,11 @@ void tankRoute(WebServer &server, WebServer::ConnectionType type, char *, bool)
     tank.httpRoute(server, type);
 }
 
+void tankStatsRoute(WebServer &server, WebServer::ConnectionType type, char *, bool)
+{
+    tank.httpRouteStats(server, type);
+}
+
 void parseIp(char *ip)
 {
     char *token = strtok(ip, ".");
@@ -196,6 +201,7 @@ void setup()
     webserver.addCommand("fence", &fenceRoute);
     webserver.addCommand("workshop", &atelierRoute);
     webserver.addCommand("tank", &tankRoute);
+    webserver.addCommand("tank_stats", &tankStatsRoute);
 }
 
 void loop()

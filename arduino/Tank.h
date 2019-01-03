@@ -50,6 +50,7 @@ class Tank
         bool canCleanFilter();
 
         void httpRoute(WebServer &server, WebServer::ConnectionType type);
+        void httpRouteStats(WebServer &server, WebServer::ConnectionType type);
 
     private:
         byte _pinPumpIn;
@@ -74,12 +75,17 @@ class Tank
         unsigned long _lastTimePumpInOff = 0; // ms
         unsigned long _timePumpInStarted = 0; // ms
         unsigned long _pumpInStartDuration = 60000; // ms
-        volatile byte _flowInPulses = 0; // L
-        volatile byte _flowOutPulses = 0; // L
+        volatile unsigned int _flowInPulses = 0; // L
+        volatile unsigned int _flowOutPulses = 0; // L
         unsigned int _volumeBeforePumpOut = 500; // L
         unsigned int _volumeCollectedSinceEmpty = 0; // L
         bool _canEnablePumpOut = true;
         unsigned long _lastFilterCleaningTime = 0; // ms
+
+        // Stats
+        unsigned long _volumeIn = 0; // L
+        unsigned long _volumeOutTank = 0; // L
+        unsigned long _volumeOutUrbanNetwork = 0; // L
 
         void _dettachFlowInterrupts();
         void _computeFlowRates();
