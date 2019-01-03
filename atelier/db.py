@@ -36,8 +36,11 @@ def create_tables():
         )
         """)
         cursor.execute("""
-        CREATE TABLE IF NOT EXISTS tank_state(
+        CREATE TABLE IF NOT EXISTS tank_stats(
              timestamp TIMESTAMP,
+             volume_in INTEGER,
+             volume_out_tank INTEGER,
+             volume_out_urban_network INTEGER,
              urban_network BOOLEAN,
              flow_in REAL,
              flow_out REAL,
@@ -71,13 +74,14 @@ def list_alerts(n_days_ago=None):
         return cursor.fetchall()
 
 
-def add_tank_state(data):
-    data["now"] = datetime.datetime.now()
+def store_tank_stats(data):
+    data = {"now": datetime.datetime.now(), **data}
     with _connect() as conn:
         cursor = conn.cursor()
         cursor.execute(
-            "INSERT INTO tank_state VALUES("
-            ":now, :urban_network, :flow_in, :flow_out, :is_tank_full, :is_tank_empty"
+            "INSERT INTO tank_stats VALUES("
+            ":now, :volume_in, :volume_out_tank, :volume_out_urban_network, "
+            ":urban_network, :flow_in, :flow_out, :is_tank_full, :is_tank_empty"
             ")",
             data
         )

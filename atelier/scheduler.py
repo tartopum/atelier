@@ -134,8 +134,7 @@ class TankJob(ArduinoConnectionJob):
         schedule.every(self._every).seconds.do(self.job)
 
     def _unsafe_job(self):
-        state = arduino.read_state(tank)
-        db.add_tank_state(state)
+        tank.read_and_store_stats()
 
     def job(self):
         self._run_job_safely(self._unsafe_job)

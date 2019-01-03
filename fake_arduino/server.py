@@ -17,6 +17,9 @@ def home():
 
 @app.route("/<page>", methods=["GET", "POST"])
 def route(page):
+    if page == "tank_stats":
+        page = "tank"
+
     with open(state_path) as f:
         data = json.load(f)
 

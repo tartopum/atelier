@@ -1,7 +1,7 @@
 from flask import Blueprint, redirect, request
 import requests
 
-from . import arduino
+from . import arduino, db
 from .config import config
 
 
@@ -61,3 +61,7 @@ def urban_network(on):
 @arduino.post_route
 def filter_cleaning(on):
     return arduino.post(arduino_endpoint, {"filter_cleaning": int(on)})
+
+
+def read_and_store_stats():
+    db.store_tank_stats(arduino.get("tank_stats"))
