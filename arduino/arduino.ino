@@ -10,10 +10,11 @@ inline Print &operator <<(Print &obj, T arg)
 
 byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
 IPAddress ip(192, 168, 167, 100);
-WebServer webserver("", 80);
+int port = 80;
+WebServer webserver("", port);
 
 // To be sent by the server
-byte apiIp[] = { 192, 168, 167, 101 };
+char apiIp[] = "192.168.167.101";
 char apiAuthHeader[100] = "";
 int apiPort = 5000;
 
@@ -24,8 +25,15 @@ void sendAlert(const char *name, const char *message)
         return;
     }
 
-    unsigned int len = 1 + 6 + strlen(name) + 11 + strlen(message) + 1;
+    const char *start = "{\"name\": \"";
+    const char *messageKey = "\", \"message\": \"";
+    const char *end = "\"}";
+    unsigned int len = strlen(start) + strlen(name) + strlen(messageKey) + strlen(message) + strlen(end);
     client.println("POST /alert HTTP/1.1");
+    client.print("Host: ");
+    client.print(apiIp);
+    client.print(":");
+    client.println(apiPort);
     client.println("Content-Type: application/json");
     client.println("Connection: close");
     if (strlen(apiAuthHeader) > 0) {
@@ -35,14 +43,13 @@ void sendAlert(const char *name, const char *message)
     client.println(len);
     client.println();
 
-    client.print("{");
-    client.print("\"name\": \"");
+    client.print(start);
     client.print(name);
-    client.print("\", \"message\": \"");
+    client.print(messageKey);
     client.print(message);
-    client.println("\"}");
+    client.println(end);
 
-    client.println();
+    delay(20);
     client.stop();
 }
 
@@ -139,15 +146,6 @@ void tankStatsRoute(WebServer &server, WebServer::ConnectionType type, char *, b
     tank.httpRouteStats(server, type);
 }
 
-void parseIp(char *ip)
-{
-    char *token = strtok(ip, ".");
-    for (byte i = 0; i < 4; i++) {
-        apiIp[i] = atoi(token);
-        token = strtok(0, ".");
-    }
-}
-
 void configApiRoute(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
     if (type == WebServer::GET) {
@@ -166,7 +164,7 @@ void configApiRoute(WebServer &server, WebServer::ConnectionType type, char *, b
     char value[valueLen];
     while (server.readPOSTparam(key, keyLen, value, valueLen)) {
         if (strcmp(key, "ip") == 0) {
-            parseIp(value);
+            strcpy(apiIp, value);
         }
         if (strcmp(key, "port") == 0) {
             apiPort = atoi(value);

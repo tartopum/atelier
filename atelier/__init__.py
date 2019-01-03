@@ -26,8 +26,8 @@ def after_request(response):
         app.logger.warning(
             f"{request.remote_addr} got {response.status_code} for {request.url}:\n"
             f"\t* Request headers: {request.headers}\n"
-            f"\t* Reqquest content: {request.data}\n"
-            f"\t* Reqquest content len: {len(request.data)}\n"
+            f"\t* Request content: {request.data}\n"
+            f"\t* Request content len: {len(request.data)}\n"
             f"\t* Response: {response.response}"
         )
     return response
