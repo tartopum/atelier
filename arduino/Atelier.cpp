@@ -52,6 +52,9 @@ void Atelier::loop()
         }
         _breach = true;
     } else {
+        if (_breach) { // The alarm was just stopped
+            lights.cmdLight(0, false);
+        }
         _breach = false;
     }
 }
