@@ -64,13 +64,9 @@ def run_server():
     if app.debug:
         app.logger.setLevel(logging.INFO)
     else:
-        remove_console_logging(logging.getLogger())
         remove_console_logging(scheduler.logger)
         remove_console_logging(app.logger)
-    http_server = WSGIServer(
-        ("", config["server"]["port"]),
-        app,
-    )
+    http_server = WSGIServer(("", config["server"]["port"]), app)
     http_server.serve_forever()
 
 

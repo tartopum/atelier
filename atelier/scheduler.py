@@ -102,9 +102,10 @@ class PeriodJob(ArduinoConnectionJob, metaclass=abc.ABCMeta):
 class LunchJob(PeriodJob):
     def beginning(self):
         alarm.listen(1)
+        lights.activate_all(0)
 
     def end(self):
-        alarm.listen(0)
+        pass
 
 
 class SleepJob(PeriodJob):
@@ -114,7 +115,6 @@ class SleepJob(PeriodJob):
         lights.activate_all(0)
 
     def end(self):
-        alarm.listen(0)
         workshop.power_supply(1)
 
 
