@@ -11,14 +11,22 @@ from .config import config
 from .helpers import auth, raise_alert
 from . import arduino, db, forms, scheduler, alarm, lights, fence, tank, workshop
 
-logger = logging.getLogger()
-
 app = Flask(__name__)
+
 app.register_blueprint(alarm.blueprint, url_prefix="/alarm")
 app.register_blueprint(fence.blueprint, url_prefix="/fence")
 app.register_blueprint(lights.blueprint, url_prefix="/lights")
 app.register_blueprint(workshop.blueprint, url_prefix="/workshop")
 app.register_blueprint(tank.blueprint, url_prefix="/tank")
+
+
+@app.after_request
+def after_request(response):
+    if response.status_code != 200:
+        app.logger.warning(
+            f"{request.remote_addr} got {response.status_code} for {request.url}: {response.response}"
+        )
+    return response
 
 
 def config_arduino():
@@ -124,7 +132,7 @@ def receive_alert():
         name = data["name"]
         msg = data["message"]
     except (json.decoder.JSONDecodeError, KeyError) as e:
-        logger.error(e)
+        return f"{e.__class__.__name__}: {e}", 500
     else:
         raise_alert(name, msg)
     return ""

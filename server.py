@@ -21,7 +21,7 @@ logging.config.dictConfig(dict(
         "console": {
             "class": "logging.StreamHandler",
             "formatter": "message",
-            "level": logging.WARNING
+            "level": logging.INFO,
         },
         "file": {
             "class": "logging.handlers.RotatingFileHandler",
@@ -29,28 +29,48 @@ logging.config.dictConfig(dict(
             "formatter": "date",
             "level": logging.WARNING,
             "maxBytes": 50000,
-            "backupCount": 3
+            "backupCount": 3,
 
         },
     },
     root = {
-        "handlers": ["file"],
+        "handlers": ["file", "console"],
         "level": logging.DEBUG,
     },
     loggers = {
         "scheduler": {
-            "handlers": ["file"],
+            "handlers": ["file", "console"],
             "level": logging.WARNING,
-        }
+        },
+        "flask.app": {
+            "handlers": ["file", "console"],
+            "level": logging.WARNING,
+        },
     },
 ))
 
 from atelier import app, db, config, config_arduino, scheduler
 
 
+def remove_console_logging(logger):
+    for handler in logger.handlers:
+        if handler.name == "console":
+            logger.handlers.remove(handler)
+            return
+
+
 def run_server():
     app.debug = config["server"]["debug"]
-    http_server = WSGIServer(("", config["server"]["port"]), app)
+    if app.debug:
+        app.logger.setLevel(logging.INFO)
+    else:
+        remove_console_logging(logging.getLogger())
+        remove_console_logging(scheduler.logger)
+        remove_console_logging(app.logger)
+    http_server = WSGIServer(
+        ("", config["server"]["port"]),
+        app,
+    )
     http_server.serve_forever()
 
 

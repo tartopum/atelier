@@ -1,10 +1,24 @@
+import json
+import os
+
 import requests
+from requests.auth import HTTPBasicAuth
+
+HERE = os.path.dirname(__file__)
+CONFIG_PATH = os.path.join(HERE, "..", "config.json")
+
+
+def get_auth():
+    with open(CONFIG_PATH) as f:
+        cfg = json.load(f)["server"]
+    return HTTPBasicAuth(*cfg["credentials"])
 
 
 def send(name, msg, ip, port):
     requests.post(
         f"http://{ip}:{port}/alert",
-        json={"name": name, "message": msg}
+        json={"name": name, "message": msg},
+        auth=get_auth(),
     )
 
 
