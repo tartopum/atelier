@@ -6,7 +6,8 @@ inline Print &operator <<(Print &obj, T arg)
 
 Tank::Tank(
     byte pinPumpIn,
-    byte pinPumpOut,
+    byte pinEnablePumpOut,
+    byte pinPumpOutRunning,
     byte pinUrbanNetwork,
     byte pinFlowIn,
     byte pinFlowOut,
@@ -26,10 +27,12 @@ Tank::Tank(
     _filterInBlockedAlert("tank", "Le filtre est encrassé.", sendAlert, 60),
     _overpressureAlert("tank", "Le système est en surpression.", sendAlert),
     _tankEmptyAlert("tank", "La cuve est vide.", sendAlert, 120),
-    _manualModeAlert("tank", "La cuve est en mode manuel.", sendAlert)
+    _manualModeAlert("tank", "La cuve est en mode manuel.", sendAlert),
+    _pumpOutAlert("tank", "La pompe du surpresseur a fonctionné trop longtemps.", sendAlert)
 {
     _pinPumpIn = pinPumpIn;
-    _pinPumpOut = pinPumpOut;
+    _pinEnablePumpOut = pinEnablePumpOut;
+    _pinPumpOutRunning = pinPumpOutRunning;
     _pinUrbanNetwork = pinUrbanNetwork;
     _pinFlowIn = pinFlowIn;
     _pinFlowOut = pinFlowOut;
@@ -51,9 +54,10 @@ Tank::Tank(
     pinMode(_pinMotorInBlocked, INPUT);
     pinMode(_pinMotorOutBlocked, INPUT);
     pinMode(_pinOverpressure, INPUT);
+    pinMode(_pinPumpOutRunning, INPUT);
 
     pinMode(_pinPumpIn, OUTPUT);
-    pinMode(_pinPumpOut, OUTPUT);
+    pinMode(_pinEnablePumpOut, OUTPUT);
     pinMode(_pinUrbanNetwork, OUTPUT);
     pinMode(_pinLightWarning, OUTPUT);
     pinMode(_pinLightFatal, OUTPUT);
@@ -132,6 +136,11 @@ bool Tank::canCleanFilter()
     );
 }
 
+bool Tank::pumpOutRunningForTooLong()
+{
+    return isOn(_pinPumpOutRunning) && (millis() - _lastTimePumpOutOff > maxPumpOutRunningTime);
+}
+
 /*
  * Output
  */
@@ -162,7 +171,7 @@ void Tank::_enablePumpOut(bool on)
     if (isOverpressured()) on = false;
     if (isMotorOutBlocked()) on = false;
 
-    digitalWrite(_pinPumpOut, on ? HIGH : LOW); 
+    digitalWrite(_pinEnablePumpOut, on ? HIGH : LOW); 
     if (!_manualMode) {
         _cmdUrbanNetwork(!on);
     }
@@ -187,6 +196,7 @@ void Tank::loop()
     _filterInBlockedAlert.raise(isFilterInBlocked());
     _overpressureAlert.raise(isOverpressured());
     _tankEmptyAlert.raise(isTankEmpty());
+    _pumpOutAlert.raise(pumpOutRunningForTooLong());
 
     // TODO: different signals based on the problem
     // e.g. constant light vs blinking
@@ -204,6 +214,10 @@ void Tank::loop()
     if (isOverpressured()) {
         _cmdPumpIn(false);
         _enablePumpOut(false);
+    }
+
+    if (isOff(_pinPumpOutRunning)) {
+        _lastTimePumpOutOff = millis();
     }
 
     if (isTankFull()) {
@@ -311,7 +325,7 @@ void Tank::_httpRouteGet(WebServer &server)
     server << "\"last_time_pump_in_off\": " << _lastTimePumpInOff << ", ";
     server << "\"last_time_pump_in_started\": " << _timePumpInStarted << ", ";
     server << "\"pump_in_start_duration\": " << _pumpInStartDuration << ", ";
-    server << "\"pump_out\": " << isOn(_pinPumpOut) << ", ";
+    server << "\"pump_out\": " << isOn(_pinEnablePumpOut) << ", ";
     server << "\"urban_network\": " << isOn(_pinUrbanNetwork) << ", ";
     server << "\"is_tank_full\": " << isTankFull() << ", ";
     server << "\"is_tank_empty\": " << isTankEmpty() << ", ";
@@ -328,6 +342,7 @@ void Tank::_httpRouteGet(WebServer &server)
     server << "\"filter_cleaning_period\": " << filterCleaningPeriod << ", ";
     server << "\"filter_cleaning_duration\": " << filterCleaningDuration << ", ";
     server << "\"time_to_fill_up\": " << timeToFillUp << ", ";
+    server << "\"max_pump_out_running_time\": " << maxPumpOutRunningTime << ", ";
     server << "\"flow_check_period\": " << flowCheckPeriod << ", ";
     server << "\"flow_in\": " << _flowIn << ", ";
     server << "\"flow_out\": " << _flowOut;
@@ -346,6 +361,9 @@ void Tank::_httpRouteSet(WebServer &server)
         }
         if (strcmp(key, "min_flow_in") == 0) {
             minFlowIn = atoi(value);
+        }
+        if (strcmp(key, "max_pump_out_running_time") == 0) {
+            maxPumpOutRunningTime = atol(value);
         }
         if (strcmp(key, "time_to_fill_up") == 0) {
             timeToFillUp = atol(value);

@@ -43,6 +43,7 @@
     "filter_cleaning_duration": 3000,
     "pump_in_start_duration": 60000,
     "min_flow_in": 10,
+    "max_pump_out_running_time": 300000,
     "flow_in": 1,
     "flow_out": 0
   },

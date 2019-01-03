@@ -11,7 +11,8 @@ class Tank
     public:
         Tank(
             byte pinPumpIn,
-            byte pinPumpOut,
+            byte pinEnablePumpOut,
+            byte pinPumpOutRunning,
             byte pinUrbanNetwork,
             byte pinFlowIn,
             byte pinFlowOut,
@@ -31,6 +32,7 @@ class Tank
         unsigned long flowCheckPeriod = 30000; // ms
         unsigned long filterCleaningPeriod = 3600000; // ms
         unsigned long filterCleaningDuration = 30000; // ms
+        unsigned long maxPumpOutRunningTime = 300000; // ms
 
         void attachFlowInterrupts();
         void (*flowInInterrupt)();
@@ -48,13 +50,15 @@ class Tank
         bool isWellFull();
         bool isWellEmpty();
         bool canCleanFilter();
+        bool pumpOutRunningForTooLong();
 
         void httpRoute(WebServer &server, WebServer::ConnectionType type);
         void httpRouteStats(WebServer &server, WebServer::ConnectionType type);
 
     private:
         byte _pinPumpIn;
-        byte _pinPumpOut;
+        byte _pinEnablePumpOut;
+        byte _pinPumpOutRunning;
         byte _pinUrbanNetwork;
         byte _pinFlowIn;
         byte _pinFlowOut;
@@ -81,6 +85,7 @@ class Tank
         unsigned int _volumeCollectedSinceEmpty = 0; // L
         bool _canEnablePumpOut = true;
         unsigned long _lastFilterCleaningTime = 0; // ms
+        unsigned long _lastTimePumpOutOff = 0; // ms
 
         // Stats
         unsigned long _volumeIn = 0; // L
@@ -100,6 +105,7 @@ class Tank
         Alert _overpressureAlert;
         Alert _tankEmptyAlert;
         Alert _manualModeAlert;
+        Alert _pumpOutAlert;
         void _alertWarning(bool);
         void _alertFatal(bool);
 

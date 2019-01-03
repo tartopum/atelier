@@ -5,7 +5,7 @@ from . import arduino, db
 from .config import config
 
 
-state = dict() # TODO
+state = dict()
 arduino_endpoint = "tank"
 blueprint = Blueprint("tank", __name__, template_folder="templates")
 
@@ -29,6 +29,7 @@ def config_arduino():
             "filter_cleaning_period": config["tank"]["filter_cleaning_period"] * 60 * 1000,
             "filter_cleaning_duration": config["tank"]["filter_cleaning_duration"] * 1000,
             "pump_in_start_duration": config["tank"]["pump_in_start_duration"] * 1000,
+            "max_pump_out_running_time": config["tank"]["max_pump_out_running_time"] * 1000,
         }
     )
 
