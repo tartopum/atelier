@@ -70,7 +70,3 @@ shutdown:
 .PHONY: reboot
 reboot:
 	ssh ${SSH_HOST} 'sudo reboot'
-
-.PHONY: ping
-ping:
-	ping ${RPI_IP_WIFI}
