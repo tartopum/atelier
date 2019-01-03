@@ -200,7 +200,13 @@ void Tank::loop()
 
     // TODO: different signals based on the problem
     // e.g. constant light vs blinking
-    _alertFatal(isMotorInBlocked() || isMotorOutBlocked() || isOverpressured() || _manualMode);
+    _alertFatal(
+        isMotorInBlocked() ||
+        isMotorOutBlocked() ||
+        isOverpressured() ||
+        _manualMode ||
+        pumpOutRunningForTooLong()
+    );
     _alertWarning(isFilterInBlocked() || isOn(_pinUrbanNetwork));
 
     _computeFlowRates();
