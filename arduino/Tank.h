@@ -92,7 +92,6 @@ class Tank
         unsigned long _volumeOutTank = 0; // L
         unsigned long _volumeOutUrbanNetwork = 0; // L
 
-        void _dettachFlowInterrupts();
         void _computeFlowRates();
         void _cmdPumpIn(bool);
         void _enablePumpOut(bool);

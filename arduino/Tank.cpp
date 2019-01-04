@@ -290,29 +290,28 @@ void Tank::attachFlowInterrupts()
     attachInterrupt(digitalPinToInterrupt(_pinFlowOut), flowOutInterrupt, RISING);
 }
 
-void Tank::_dettachFlowInterrupts()
-{
-    detachInterrupt(digitalPinToInterrupt(_pinFlowIn));
-    detachInterrupt(digitalPinToInterrupt(_pinFlowOut));
-}
-
 void Tank::_computeFlowRates()
 {
     if((millis() - _oldTimeFlow) < flowCheckPeriod) return;
+    unsigned int flowInPulses = 0;
+    unsigned int flowOutPulses = 0;
+    unsigned long time;
+
     // We detach interrupts to avoid editing millis() and _flowInPulses during
     // the computations
-    _dettachFlowInterrupts();
-
-    // 1 pulse = 1L
-    // L/min
-    _flowIn = 60000.0 / (millis() - _oldTimeFlow) * _flowInPulses;
-    _flowOut = 60000.0 / (millis() - _oldTimeFlow) * _flowOutPulses;
-
-    _oldTimeFlow = millis();
+    noInterrupts();
+    flowInPulses = _flowInPulses;
+    flowOutPulses = _flowOutPulses;
+    time = millis();
     _flowInPulses = 0;
     _flowOutPulses = 0;
+    interrupts();
 
-    attachFlowInterrupts();
+    // 1 pulse = 1L
+    // flow rates in L/min
+    _flowIn = 60000.0 / (time - _oldTimeFlow) * flowInPulses;
+    _flowOut = 60000.0 / (time - _oldTimeFlow) * flowOutPulses;
+    _oldTimeFlow = time;
 }
 
 /*
