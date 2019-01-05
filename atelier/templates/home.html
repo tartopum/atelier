@@ -22,12 +22,25 @@
         <img src="{{ url_for('static', filename='img/alert.png') }}" alt="Alerte" />
         Alertes récentes
     </h2>
-    {% for alert in alerts %}
-        <div class="alert">
-            <div class="time">{{ alert[0].strftime("%Y-%m-%d %H:%M") }}</div>
-            <div class="name">{{ alert[1] }}</div>
-            <div class="message">{{ alert[2] }}</div>
-        </div>
+    {% if no_alerts %}
+        <p>Aucune alerte.</p>
+    {% endif %}
+    
+    <div class="alert-list">
+    {% for day, day_alerts in alerts %}
+        <h3>{{ day }}</h3>
+        <table>
+        {% for alert in day_alerts %}
+            <tr>
+                <td class="name">
+                    <img src="{{ url_for('static', filename='img/alerts/' + alert[1] + '.png') }}" alt="{{ alert[1] }}" />
+                </td>
+                <td class="time">{{ alert[0].strftime("%Hh%M") }}</td>
+                <td class="message">{{ alert[2] }}</td>
+            </tr>
+        {% endfor %}
+        </table>
     {% endfor %}
+    </div>
 </div>
 {% endblock %}

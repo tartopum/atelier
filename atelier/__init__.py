@@ -1,5 +1,6 @@
 from base64 import b64encode
 from collections import defaultdict
+from itertools import groupby
 import json
 import logging
 
@@ -55,10 +56,14 @@ def config_arduino():
 @app.route("/")
 @arduino.get_route
 def home():
+    alerts = db.list_alerts(n_days_ago=7)
+    grouped_alerts = groupby(alerts, lambda x: x[0].strftime("%A %d %B"))
+    
     return render_template(
         "home.html",
         fence=arduino.read_state(fence),
-        alerts=db.list_alerts(n_days_ago=7)
+        no_alerts=(len(alerts) < 1),
+        alerts=alerts,
     )
 
 

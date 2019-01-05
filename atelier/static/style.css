@@ -3,7 +3,7 @@ body {
     padding: 0;
 }
 
-h1, h2 {
+h1, h2, h3 {
     font-family: Slabo, Helvetica, Arial, sans-serif;
     text-transform: uppercase;
 }
@@ -75,6 +75,25 @@ header .nav  ul li.active {
 
 #content.home .alerts h2 img {
     vertical-align: middle;
+}
+
+#content.home .alerts h3 {
+    margin: 0;
+    margin-top: 10px;
+}
+
+#content.home .alert-list {
+    width: 500px;
+    text-align: left;
+    margin: auto;
+}
+
+#content.home .alert-list table {
+    margin-left: 20px;
+}
+
+#content.home .alert-list td {
+    padding: 5px;
 }
 
 #content.home .alert > div {
