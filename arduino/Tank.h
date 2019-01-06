@@ -12,8 +12,8 @@ class Tank
     public:
         Tank(
             byte pinPumpIn,
-            byte pinEnablePumpOut,
-            byte pinPumpOutRunning,
+            byte pinPumpOut,
+            byte pinPumpOutCanRun,
             byte pinUrbanNetwork,
             byte pinFlowIn,
             byte pinFlowOut,
@@ -52,14 +52,15 @@ class Tank
         bool isWellEmpty();
         bool canCleanFilter();
         bool pumpOutRunningForTooLong();
+        bool canPumpOutRun();
 
         void httpRoute(WebServer &server, WebServer::ConnectionType type);
         void httpRouteStats(WebServer &server, WebServer::ConnectionType type);
 
     private:
         byte _pinPumpIn;
-        byte _pinEnablePumpOut;
-        byte _pinPumpOutRunning;
+        byte _pinPumpOut;
+        byte _pinPumpOutCanRun;
         byte _pinUrbanNetwork;
         byte _pinFlowIn;
         byte _pinFlowOut;
@@ -82,7 +83,7 @@ class Tank
         volatile unsigned int _flowOutPulses = 0; // L
         unsigned int _volumeBeforePumpOut = 500; // L
         unsigned int _volumeCollectedSinceEmpty = 0; // L
-        bool _canEnablePumpOut = true;
+        bool _tankFullEnough = true;
         unsigned long _lastFilterCleaningTime = 0; // ms
         unsigned long _lastTimePumpOutOff = 0; // ms
 
@@ -93,7 +94,7 @@ class Tank
 
         void _computeFlowRates();
         void _cmdPumpIn(bool);
-        void _enablePumpOut(bool);
+        void _cmdPumpOut(bool);
         void _cmdUrbanNetwork(bool);
         void _cmdFilterCleaning(bool);
 

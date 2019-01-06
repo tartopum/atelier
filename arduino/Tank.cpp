@@ -6,8 +6,8 @@ inline Print &operator <<(Print &obj, T arg)
 
 Tank::Tank(
     byte pinPumpIn,
-    byte pinEnablePumpOut,
-    byte pinPumpOutRunning,
+    byte pinPumpOut,
+    byte pinPumpOutCanRun,
     byte pinUrbanNetwork,
     byte pinFlowIn,
     byte pinFlowOut,
@@ -74,8 +74,8 @@ Tank::Tank(
     )
 {
     _pinPumpIn = pinPumpIn;
-    _pinEnablePumpOut = pinEnablePumpOut;
-    _pinPumpOutRunning = pinPumpOutRunning;
+    _pinPumpOut = pinPumpOut;
+    _pinPumpOutCanRun = pinPumpOutCanRun;
     _pinUrbanNetwork = pinUrbanNetwork;
     _pinFlowIn = pinFlowIn;
     _pinFlowOut = pinFlowOut;
@@ -95,15 +95,15 @@ Tank::Tank(
     pinMode(_pinMotorInBlocked, INPUT);
     pinMode(_pinMotorOutBlocked, INPUT);
     pinMode(_pinOverpressure, INPUT);
-    pinMode(_pinPumpOutRunning, INPUT);
+    pinMode(_pinPumpOutCanRun, INPUT);
 
     pinMode(_pinPumpIn, OUTPUT);
-    pinMode(_pinEnablePumpOut, OUTPUT);
+    pinMode(_pinPumpOut, OUTPUT);
     pinMode(_pinUrbanNetwork, OUTPUT);
     pinMode(_pinFilterCleaning, OUTPUT);
 
     _cmdPumpIn(false);
-    _enablePumpOut(false);
+    _cmdPumpOut(false);
     _cmdUrbanNetwork(false);
 }
 
@@ -177,7 +177,12 @@ bool Tank::canCleanFilter()
 
 bool Tank::pumpOutRunningForTooLong()
 {
-    return isOn(_pinPumpOutRunning) && (millis() - _lastTimePumpOutOff > maxPumpOutRunningTime);
+    return isOn(_pinPumpOut) && (millis() - _lastTimePumpOutOff > maxPumpOutRunningTime);
+}
+
+bool Tank::canPumpOutRun()
+{
+    return digitalRead(_pinPumpOutCanRun) == HIGH;
 }
 
 /*
@@ -195,15 +200,13 @@ void Tank::_cmdPumpIn(bool on)
     digitalWrite(_pinPumpIn, on ? HIGH : LOW); 
 }
 
-void Tank::_enablePumpOut(bool on)
+void Tank::_cmdPumpOut(bool on)
 {
     if (isOverpressured()) on = false;
     if (isMotorOutBlocked()) on = false;
+    if (!_manualMode && !canPumpOutRun()) on = false;
 
-    digitalWrite(_pinEnablePumpOut, on ? HIGH : LOW); 
-    if (!_manualMode) {
-        _cmdUrbanNetwork(!on);
-    }
+    digitalWrite(_pinPumpOut, on ? HIGH : LOW); 
 }
 
 void Tank::_cmdUrbanNetwork(bool on)
@@ -233,21 +236,19 @@ void Tank::loop()
         _cmdPumpIn(false);
     }
     if (isMotorOutBlocked()) {
-        _enablePumpOut(false);
+        _cmdPumpOut(false);
     }
     if (isOverpressured()) {
         _cmdPumpIn(false); // TODO
-        _enablePumpOut(false);
+        _cmdPumpOut(false);
     }
 
-    if (isOff(_pinPumpOutRunning)) {
+    if (isOff(_pinPumpOut)) {
         _lastTimePumpOutOff = millis();
     }
 
     if (isTankFull()) {
         _cmdPumpIn(false);
-        _enablePumpOut(true);
-        return;
     }
 
     if (_manualMode) {
@@ -264,20 +265,24 @@ void Tank::loop()
 
     // Command pump-out and urban network
     if (isTankEmpty()) {
-        _canEnablePumpOut = false;
-        _enablePumpOut(false);
+        _tankFullEnough = false;
+        _cmdPumpOut(false);
+        _cmdUrbanNetwork(true);
         _volumeCollectedSinceEmpty = 0;
-    } else if (_canEnablePumpOut) {
-        _enablePumpOut(true);
+    } else if (_tankFullEnough) {
+        _cmdPumpOut(isOn(_pinPumpOutCanRun));
+        _cmdUrbanNetwork(false);
     } else if (_volumeCollectedSinceEmpty > _volumeBeforePumpOut) {
-        _canEnablePumpOut = true;
+        // We need this because the tank could stay almost full and
+        // _volumeCollectedSinceEmpty could loop back to 0.
+        _tankFullEnough = true;
     }
 
     // Command pump-in
-    if (isOff(_pinPumpIn) && isWellFull()) {
+    if (isOff(_pinPumpIn) && isWellFull() && !isTankFull()) {
         _cmdPumpIn(true);
     }
-    if (isOn(_pinPumpIn) && isWellEmpty()) {
+    if (isOn(_pinPumpIn) && (isWellEmpty() || isTankFull())) {
         _cmdPumpIn(false);
     }
 }
@@ -348,7 +353,7 @@ void Tank::_httpRouteGet(WebServer &server)
     server << "\"last_time_pump_in_off\": " << _lastTimePumpInOff << ", ";
     server << "\"last_time_pump_in_started\": " << _timePumpInStarted << ", ";
     server << "\"pump_in_start_duration\": " << _pumpInStartDuration << ", ";
-    server << "\"pump_out\": " << isOn(_pinEnablePumpOut) << ", ";
+    server << "\"pump_out\": " << isOn(_pinPumpOut) << ", ";
     server << "\"urban_network\": " << isOn(_pinUrbanNetwork) << ", ";
     server << "\"is_tank_full\": " << isTankFull() << ", ";
     server << "\"is_tank_empty\": " << isTankEmpty() << ", ";
@@ -404,7 +409,7 @@ void Tank::_httpRouteSet(WebServer &server)
             _cmdPumpIn(strcmp(value, "1") == 0);
         }
         if (strcmp(key, "pump_out") == 0) {
-            _enablePumpOut(strcmp(value, "1") == 0);
+            _cmdPumpOut(strcmp(value, "1") == 0);
         }
         if (strcmp(key, "filter_cleaning") == 0) {
             _cmdFilterCleaning(strcmp(value, "1") == 0);
