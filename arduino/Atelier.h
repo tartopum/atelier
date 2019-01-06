@@ -4,6 +4,7 @@
 #include "Alarm.h"
 #include "Lights.h"
 #include "Fence.h"
+#include "AlertLight.h"
 
 class Atelier
 {
@@ -11,10 +12,12 @@ class Atelier
         Atelier(
             int pinPowerSupply,
             unsigned long inactivityDelay_,
-            int pinsAlarm[6],
+            int pinsAlarm[5],
             int pinsLight[3],
             int pinsLightBtn[2],
-            int pinsFence[2],
+            int pinFence,
+            AlertLight *redLight,
+            AlertLight *greenLight,
             void (*sendAlert_)(const char *, const char *)
         );
         // Need to be public to access HTTP routes
@@ -22,7 +25,6 @@ class Atelier
         Lights lights;
         Fence fence;
 
-        void (*sendAlert)(const char *, const char *);
         unsigned long inactivityDelay;
         void loop();
         void cmdPowerSupply(bool on);

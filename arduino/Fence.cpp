@@ -4,41 +4,32 @@ template<class T>
 inline Print &operator <<(Print &obj, T arg)
 { obj.print(arg); return obj; }
 
-Fence::Fence(int pinControl, int pinDisplay)
+Fence::Fence(int pinControl, AlertLight *light)
 {
-  _pinControl = pinControl;
-  _pinDisplay = pinDisplay;
-  pinMode(_pinControl, OUTPUT);
-  pinMode(_pinDisplay, OUTPUT);
-  on();
+    _light = light;
+    _pinControl = pinControl;
+    pinMode(_pinControl, OUTPUT);
+    on();
 }
 
 void Fence::on()
 {
-  digitalWrite(_pinControl, HIGH);
-  digitalWrite(_pinDisplay, LOW);
+    digitalWrite(_pinControl, HIGH);
+    _light->unsetLevel(MID_ALERT);
 }
 
 void Fence::off()
 {
-  digitalWrite(_pinControl, LOW);
-  digitalWrite(_pinDisplay, HIGH);
+    digitalWrite(_pinControl, LOW);
+    _light->setLevel(MID_ALERT);
 }
 
 bool Fence::isOn()
 {
-  return digitalRead(_pinControl) == HIGH;
+    return digitalRead(_pinControl) == HIGH;
 }
 
 void Fence::loop() {
-    if (isOn()) return;
-
-    // Make light blink
-    if (millis() - _lightStateChangeTime > 500) {
-        bool isLightOn = (digitalRead(_pinDisplay) == HIGH);
-        digitalWrite(_pinDisplay, isLightOn ? LOW : HIGH);
-        _lightStateChangeTime = millis();
-    }
 }
 
 void Fence::_httpRouteGet(WebServer &server)

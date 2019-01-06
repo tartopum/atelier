@@ -2,6 +2,7 @@
 #define Alert_h
 
 #include <Arduino.h>
+#include "AlertLight.h"
 
 class Alert
 {
@@ -10,13 +11,17 @@ class Alert
             const char *name,
             const char *msg,
             void (*send)(const char *, const char *),
-            unsigned int reminderDelay = 15 // min
+            AlertLight *light,
+            alert_level_t level,
+            unsigned int reminderDelay = 60 // min
         );
         void raise(bool);
 
     private:
         char _name[40];
         char _msg[100];
+        AlertLight *_light;
+        alert_level_t _level;
         unsigned long _reminderDelay;
         bool _sent = false;
         unsigned long _lastTimeSent = 0;

@@ -18,17 +18,60 @@ Tank::Tank(
     byte pinMotorOutBlocked,
     byte pinOverpressure,
     byte pinFilterCleaning,
-    byte pinLightWarning,
-    byte pinLightFatal,
+    AlertLight *lightWarning,
+    AlertLight *lightFatal,
     void (*sendAlert)(const char *, const char *)
 ) :
-    _motorInBlockedAlert("tank", "Le moteur de la pompe est en panne.", sendAlert),
-    _motorOutBlockedAlert("tank", "Le moteur du surpresseur est en panne.", sendAlert),
-    _filterInBlockedAlert("tank", "Le filtre est encrassé.", sendAlert, 60),
-    _overpressureAlert("tank", "Le système est en surpression.", sendAlert),
-    _tankEmptyAlert("tank", "La cuve est vide.", sendAlert, 120),
-    _manualModeAlert("tank", "La cuve est en mode manuel.", sendAlert),
-    _pumpOutAlert("tank", "La pompe du surpresseur a fonctionné trop longtemps.", sendAlert)
+    _motorInBlockedAlert(
+        "tank",
+        "Le moteur de la pompe est en panne.",
+        sendAlert,
+        lightFatal,
+        MID_ALERT
+    ),
+    _motorOutBlockedAlert(
+        "tank",
+        "Le moteur du surpresseur est en panne.",
+        sendAlert,
+        lightFatal,
+        MID_ALERT
+    ),
+    _filterInBlockedAlert(
+        "tank",
+        "Le filtre est encrassé.",
+        sendAlert,
+        lightWarning,
+        HIGH_ALERT
+    ),
+    _overpressureAlert(
+        "tank",
+        "Le système est en surpression.",
+        sendAlert,
+        lightFatal,
+        HIGH_ALERT
+    ),
+    _tankEmptyAlert(
+        "tank",
+        "La cuve est vide.",
+        sendAlert,
+        lightWarning,
+        LOW_ALERT,
+        120
+    ),
+    _manualModeAlert(
+        "tank",
+        "La cuve est en mode manuel.",
+        sendAlert,
+        lightFatal,
+        LOW_ALERT
+    ),
+    _pumpOutAlert(
+        "tank",
+        "La pompe du surpresseur a fonctionné trop longtemps.",
+        sendAlert,
+        lightFatal,
+        MID_ALERT
+    )
 {
     _pinPumpIn = pinPumpIn;
     _pinEnablePumpOut = pinEnablePumpOut;
@@ -43,8 +86,6 @@ Tank::Tank(
     _pinMotorOutBlocked = pinMotorOutBlocked;
     _pinOverpressure = pinOverpressure;
     _pinFilterCleaning = pinFilterCleaning;
-    _pinLightWarning = pinLightWarning;
-    _pinLightFatal = pinLightFatal;
 
     pinMode(_pinFlowIn, INPUT);
     pinMode(_pinFlowOut, INPUT);
@@ -59,8 +100,6 @@ Tank::Tank(
     pinMode(_pinPumpIn, OUTPUT);
     pinMode(_pinEnablePumpOut, OUTPUT);
     pinMode(_pinUrbanNetwork, OUTPUT);
-    pinMode(_pinLightWarning, OUTPUT);
-    pinMode(_pinLightFatal, OUTPUT);
     pinMode(_pinFilterCleaning, OUTPUT);
 
     _cmdPumpIn(false);
@@ -144,16 +183,6 @@ bool Tank::pumpOutRunningForTooLong()
 /*
  * Output
  */
-void Tank::_alertWarning(bool on)
-{
-    digitalWrite(_pinLightWarning, on ? HIGH : LOW); 
-}
-
-void Tank::_alertFatal(bool on)
-{
-    digitalWrite(_pinLightFatal, on ? HIGH : LOW); 
-}
-
 void Tank::_cmdPumpIn(bool on)
 {
     if (isOverpressured()) on = false;
@@ -197,17 +226,6 @@ void Tank::loop()
     _overpressureAlert.raise(isOverpressured());
     _tankEmptyAlert.raise(isTankEmpty());
     _pumpOutAlert.raise(pumpOutRunningForTooLong());
-
-    // TODO: different signals based on the problem
-    // e.g. constant light vs blinking
-    _alertFatal(
-        isMotorInBlocked() ||
-        isMotorOutBlocked() ||
-        isOverpressured() ||
-        _manualMode ||
-        pumpOutRunningForTooLong()
-    );
-    _alertWarning(isFilterInBlocked() || isOn(_pinUrbanNetwork));
 
     _computeFlowRates();
 

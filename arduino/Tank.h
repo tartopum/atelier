@@ -5,6 +5,7 @@
 #include <Arduino.h>
 #include <WebServer.h>
 #include "Alert.h"
+#include "AlertLight.h"
 
 class Tank
 {
@@ -23,8 +24,8 @@ class Tank
             byte pinMotorOutBlocked,
             byte pinOverpressure,
             byte pinFilterCleaning,
-            byte pinLightWarning,
-            byte pinLightFatal,
+            AlertLight *lightWarning,
+            AlertLight *lightFatal,
             void (*sendAlert)(const char *, const char *)
         );
         byte minFlowIn = 10; // L/min
@@ -69,8 +70,6 @@ class Tank
         byte _pinMotorOutBlocked;
         byte _pinOverpressure;
         byte _pinFilterCleaning;
-        byte _pinLightWarning;
-        byte _pinLightFatal;
 
         bool _manualMode = true;
         float _flowIn = 0.0; // L/min
@@ -105,8 +104,6 @@ class Tank
         Alert _tankEmptyAlert;
         Alert _manualModeAlert;
         Alert _pumpOutAlert;
-        void _alertWarning(bool);
-        void _alertFatal(bool);
 
         void _httpRouteGet(WebServer &server);
         void _httpRouteSet(WebServer &server);

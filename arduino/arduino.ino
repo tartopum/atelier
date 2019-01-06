@@ -3,6 +3,7 @@
 #include <Controllino.h>
 #include "Atelier.h"
 #include "Tank.h"
+#include "AlertLight.h"
 
 template<class T>
 inline Print &operator <<(Print &obj, T arg)
@@ -17,6 +18,10 @@ WebServer webserver("", port);
 char apiIp[] = "192.168.167.101";
 char apiAuthHeader[100] = "";
 int apiPort = 5000;
+
+AlertLight redLight(CONTROLLINO_DO4);
+AlertLight greenLight(CONTROLLINO_DO3);
+AlertLight blueLight(CONTROLLINO_DO2);
 
 void sendAlert(const char *name, const char *message)
 {
@@ -55,10 +60,9 @@ void sendAlert(const char *name, const char *message)
 
 unsigned long inactivityDelay = 15000 * (long) 60;
 int pinPower = CONTROLLINO_RELAY_05;
-int pinsAlarm[6] = {
+int pinsAlarm[5] = {
     CONTROLLINO_AI6,
     CONTROLLINO_DO5,
-    CONTROLLINO_DO4,
     CONTROLLINO_DO1,
     CONTROLLINO_DO0,
     CONTROLLINO_AI5,
@@ -72,10 +76,7 @@ int pinsLightBtn[2] = {
     CONTROLLINO_AI3,
     CONTROLLINO_AI4,
 };
-int pinsFence[2] = {
-    CONTROLLINO_RELAY_04,
-    CONTROLLINO_DO3,
-};
+int pinFence = CONTROLLINO_RELAY_04;
 
 Atelier atelier(
     pinPower,
@@ -83,7 +84,9 @@ Atelier atelier(
     pinsAlarm,
     pinsLight,
     pinsLightBtn,
-    pinsFence,
+    pinFence,
+    &redLight,
+    &greenLight,
     &sendAlert
 );
 
@@ -101,8 +104,8 @@ Tank tank(
     CONTROLLINO_AI8,
     CONTROLLINO_AI9,
     CONTROLLINO_RELAY_01,
-    CONTROLLINO_DO2,
-    CONTROLLINO_DO4,
+    &blueLight,
+    &redLight,
     &sendAlert
 );
 
@@ -208,4 +211,7 @@ void loop()
     handleHTTP();
     atelier.loop();
     tank.loop();
+    redLight.loop();
+    greenLight.loop();
+    blueLight.loop();
 }

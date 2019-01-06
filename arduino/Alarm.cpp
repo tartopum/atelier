@@ -4,11 +4,19 @@ template<class T>
 inline Print &operator <<(Print &obj, T arg)
 { obj.print(arg); return obj; }
 
-Alarm::Alarm(int pinDetector, int pinBuzzer, int pinLightAlert, int pinListening, int pinNotListening, int pinListenSwitch)
+Alarm::Alarm(
+    int pinDetector,
+    int pinBuzzer,
+    int pinListening,
+    int pinNotListening,
+    int pinListenSwitch,
+    AlertLight *alertLight,
+    void (*sendAlert)(const char *, const char *)
+) :
+    _alert("alarm", "Une intrusion a été détectée.", sendAlert, alertLight, HIGH_ALERT)
 {
     _pinDetector = pinDetector;
     _pinBuzzer = pinBuzzer;
-    _pinLightAlert = pinLightAlert;
     _pinListening = pinListening;
     _pinNotListening = pinNotListening;
     _pinListenSwitch = pinListenSwitch;
@@ -17,12 +25,10 @@ Alarm::Alarm(int pinDetector, int pinBuzzer, int pinLightAlert, int pinListening
     pinMode(_pinListenSwitch, INPUT);
 
     pinMode(_pinBuzzer, OUTPUT);
-    pinMode(_pinLightAlert, OUTPUT);
     pinMode(_pinListening, OUTPUT);
     pinMode(_pinNotListening, OUTPUT);
 
     _oldListenSwitchState = digitalRead(_pinListenSwitch);
-    _listening = false;
 }
 
 bool Alarm::breachDetected()
@@ -47,9 +53,10 @@ bool Alarm::movementDetected()
 
 void Alarm::loop()
 {
+    _alert.raise(_breachDetected);
+
     if (!listening()) {
         digitalWrite(_pinBuzzer, LOW);
-        digitalWrite(_pinLightAlert, LOW);
         digitalWrite(_pinListening, LOW);
         digitalWrite(_pinNotListening, HIGH);
         _breachTime = 0;
@@ -76,15 +83,9 @@ void Alarm::loop()
         return;
     }
 
-    _breachDetected = true;
     // We raise the alert
+    _breachDetected = true;
     digitalWrite(_pinBuzzer, HIGH);
-    // Make light blink
-    if (millis() - _lightStateChangeTime > 500) {
-        bool isLightOn = (digitalRead(_pinLightAlert) == HIGH);
-        digitalWrite(_pinLightAlert, isLightOn ? LOW : HIGH);
-        _lightStateChangeTime = millis();
-    }
 }
 
 void Alarm::_httpRouteGet(WebServer &server)

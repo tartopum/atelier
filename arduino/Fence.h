@@ -4,11 +4,12 @@
 
 #include "Arduino.h"
 #include "WebServer.h"
+#include "AlertLight.h"
 
 class Fence
 {
     public:
-        Fence(int pinControl, int pinDisplay);
+        Fence(int pinControl, AlertLight *light);
         void on();
         void off();
         bool isOn();
@@ -17,7 +18,7 @@ class Fence
 
     private:
         int _pinControl;
-        int _pinDisplay;
+        AlertLight *_light;
         unsigned long _lightStateChangeTime = 0;
         void _httpRouteGet(WebServer &server);
         void _httpRouteSet(WebServer &server);

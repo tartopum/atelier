@@ -13,14 +13,15 @@ Atelier::Atelier(
     int pinsAlarm[5],
     int pinsLigth[3],
     int pinsLightBtn[2],
-    int pinsFence[2],
-    void (*sendAlert_)(const char *, const char *)
+    int pinFence,
+    AlertLight *redLight,
+    AlertLight *greenLight,
+    void (*sendAlert)(const char *, const char *)
 ) :
-    alarm(pinsAlarm[0], pinsAlarm[1], pinsAlarm[2], pinsAlarm[3], pinsAlarm[4], pinsAlarm[5]),
+    alarm(pinsAlarm[0], pinsAlarm[1], pinsAlarm[2], pinsAlarm[3], pinsAlarm[4], redLight, sendAlert),
     lights(pinsLigth, pinsLightBtn[0], pinsLightBtn[1]),
-    fence(pinsFence[0], pinsFence[1])
+    fence(pinFence, greenLight)
 {
-    sendAlert = sendAlert_;
     _pinPowerSupply = pinPowerSupply;
     inactivityDelay = inactivityDelay_;
     pinMode(_pinPowerSupply, OUTPUT);
@@ -47,14 +48,9 @@ void Atelier::loop()
     }
     if (alarm.breachDetected()) {
         lights.cmdLight(0, true);
-        if (!_breach) { // The breach was just detected
-            sendAlert("alarm", "Une intrusion a été détectée.");
-        }
         _breach = true;
     } else {
-        if (_breach) { // The alarm was just stopped
-            lights.cmdLight(0, false);
-        }
+        if (_breach) lights.cmdLight(0, false); // The alarm was just stopped
         _breach = false;
     }
 }
