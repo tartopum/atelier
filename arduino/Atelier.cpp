@@ -10,18 +10,12 @@ inline Print &operator <<(Print &obj, T arg)
 Atelier::Atelier(
     int pinPowerSupply,
     unsigned long inactivityDelay_,
-    int pinsAlarm[5],
-    int pinsLigth[3],
-    int pinsLightBtn[2],
-    int pinFence,
-    AlertLight *redLight,
-    AlertLight *greenLight,
-    void (*sendAlert)(const char *, const char *)
-) :
-    alarm(pinsAlarm[0], pinsAlarm[1], pinsAlarm[2], pinsAlarm[3], pinsAlarm[4], redLight, sendAlert),
-    lights(pinsLigth, pinsLightBtn[0], pinsLightBtn[1]),
-    fence(pinFence, greenLight)
+    Alarm *alarm,
+    Lights *lights
+)
 {
+    _alarm = alarm;
+    _lights = lights;
     _pinPowerSupply = pinPowerSupply;
     inactivityDelay = inactivityDelay_;
     pinMode(_pinPowerSupply, OUTPUT);
@@ -35,22 +29,21 @@ void Atelier::cmdPowerSupply(bool on)
 
 void Atelier::loop()
 {
-    fence.loop();
-    alarm.loop();
-    lights.loop();
+    _alarm->loop();
+    _lights->loop();
 
     if (millis() - _lastActivityTime > inactivityDelay) {
-        lights.cmdLight(LIGHT_IN1, false);
-        lights.cmdLight(LIGHT_IN2, false);
+        _lights->cmdLight(LIGHT_IN1, false);
+        _lights->cmdLight(LIGHT_IN2, false);
     }
-    if (alarm.movementDetected()) {
+    if (_alarm->movementDetected()) {
         _lastActivityTime = millis();
     }
-    if (alarm.breachDetected()) {
-        lights.cmdLight(0, true);
+    if (_alarm->breachDetected()) {
+        _lights->cmdLight(0, true);
         _breach = true;
     } else {
-        if (_breach) lights.cmdLight(0, false); // The alarm was just stopped
+        if (_breach) _lights->cmdLight(0, false); // The alarm was just stopped
         _breach = false;
     }
 }

@@ -12,25 +12,17 @@ class Atelier
         Atelier(
             int pinPowerSupply,
             unsigned long inactivityDelay_,
-            int pinsAlarm[5],
-            int pinsLight[3],
-            int pinsLightBtn[2],
-            int pinFence,
-            AlertLight *redLight,
-            AlertLight *greenLight,
-            void (*sendAlert_)(const char *, const char *)
+            Alarm *alarm,
+            Lights *lights
         );
-        // Need to be public to access HTTP routes
-        Alarm alarm;
-        Lights lights;
-        Fence fence;
-
         unsigned long inactivityDelay;
         void loop();
         void cmdPowerSupply(bool on);
         void httpRoute(WebServer &server, WebServer::ConnectionType type);
 
     private:
+        Alarm *_alarm;
+        Lights *_lights;
         int _pinPowerSupply;
         bool _breach = false;
         unsigned long _lastActivityTime = 0;

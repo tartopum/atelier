@@ -3,6 +3,9 @@
 #include <Controllino.h>
 #include "Atelier.h"
 #include "Tank.h"
+#include "Fence.h"
+#include "Lights.h"
+#include "Alarm.h"
 #include "AlertLight.h"
 
 template<class T>
@@ -18,10 +21,6 @@ WebServer webserver("", port);
 char apiIp[] = "192.168.167.101";
 char apiAuthHeader[100] = "";
 int apiPort = 5000;
-
-AlertLight redLight(CONTROLLINO_DO4);
-AlertLight greenLight(CONTROLLINO_DO3);
-AlertLight blueLight(CONTROLLINO_DO2);
 
 void sendAlert(const char *name, const char *message)
 {
@@ -58,36 +57,38 @@ void sendAlert(const char *name, const char *message)
     client.stop();
 }
 
-unsigned long inactivityDelay = 15000 * (long) 60;
-int pinPower = CONTROLLINO_RELAY_05;
-int pinsAlarm[5] = {
+AlertLight redLight(CONTROLLINO_DO4);
+AlertLight greenLight(CONTROLLINO_DO3);
+AlertLight blueLight(CONTROLLINO_DO2);
+
+Fence fence(CONTROLLINO_RELAY_04, &greenLight);
+
+Alarm alarm(
     CONTROLLINO_AI6,
     CONTROLLINO_DO5,
     CONTROLLINO_DO1,
     CONTROLLINO_DO0,
     CONTROLLINO_AI5,
-};
+    &redLight,
+    &sendAlert
+);
+
 int pinsLight[3] = {
     CONTROLLINO_RELAY_09,
     CONTROLLINO_RELAY_08,
     CONTROLLINO_RELAY_07,
 };
-int pinsLightBtn[2] = {
+Lights lights(
+    pinsLight,
     CONTROLLINO_AI3,
-    CONTROLLINO_AI4,
-};
-int pinFence = CONTROLLINO_RELAY_04;
+    CONTROLLINO_AI4
+);
 
 Atelier atelier(
-    pinPower,
-    inactivityDelay,
-    pinsAlarm,
-    pinsLight,
-    pinsLightBtn,
-    pinFence,
-    &redLight,
-    &greenLight,
-    &sendAlert
+    CONTROLLINO_RELAY_05,
+    15000 * (long)60,
+    &alarm,
+    &lights
 );
 
 Tank tank(
@@ -121,17 +122,17 @@ void flowOutInterrupt()
 
 void alarmRoute(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
-    atelier.alarm.httpRoute(server, type);
+    alarm.httpRoute(server, type);
 }
 
 void lightsRoute(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
-    atelier.lights.httpRoute(server, type);
+    lights.httpRoute(server, type);
 }
 
 void fenceRoute(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
-    atelier.fence.httpRoute(server, type);
+    fence.httpRoute(server, type);
 }
 
 void atelierRoute(WebServer &server, WebServer::ConnectionType type, char *, bool)
@@ -209,6 +210,7 @@ void setup()
 void loop()
 {
     handleHTTP();
+    fence.loop();
     atelier.loop();
     tank.loop();
     redLight.loop();
