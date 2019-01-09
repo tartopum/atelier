@@ -232,15 +232,12 @@ void Tank::loop()
 
     _computeFlowRates();
 
-    if (isMotorInBlocked()) {
+    if (isMotorInBlocked() || isFilterInBlocked()) {
         _cmdPumpIn(false);
     }
-    if (isMotorOutBlocked()) {
+    if (isMotorOutBlocked() || isOverpressured()) {
         _cmdPumpOut(false);
-    }
-    if (isOverpressured()) {
-        _cmdPumpIn(false); // TODO
-        _cmdPumpOut(false);
+        _cmdUrbanNetwork(true);
     }
 
     if (isOff(_pinPumpOut)) {
@@ -279,7 +276,7 @@ void Tank::loop()
     }
 
     // Command pump-in
-    if (isOff(_pinPumpIn) && isWellFull() && !isTankFull()) {
+    if (isOff(_pinPumpIn) && isWellFull() && !isTankFull() && !isFilterInBlocked()) {
         _cmdPumpIn(true);
     }
     if (isOn(_pinPumpIn) && (isWellEmpty() || isTankFull())) {
