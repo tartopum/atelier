@@ -63,7 +63,7 @@ def home():
         "home.html",
         fence=arduino.read_state(fence),
         no_alerts=(len(alerts) < 1),
-        alerts=alerts,
+        alerts=grouped_alerts,
     )
 
 
