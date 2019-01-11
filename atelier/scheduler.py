@@ -150,3 +150,5 @@ sleep_job = SleepJob(
 )
 
 tank_job = TankJob(config["tank"]["flow_check_period"])
+
+schedule.every().day.at("14:53").do(db.delete_old_alerts)

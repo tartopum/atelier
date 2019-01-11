@@ -74,6 +74,14 @@ def list_alerts(n_days_ago=None):
         return cursor.fetchall()
 
 
+def delete_old_alerts():
+    with _connect() as conn:
+        cursor = conn.cursor()
+        delta = datetime.timedelta(-config["server"]["max_alert_day_old"])
+        time_limit = datetime.datetime.now() + delta
+        cursor.execute("DELETE FROM alerts WHERE timestamp < ?", (time_limit,))
+
+
 def store_tank_stats(data):
     data = {"now": datetime.datetime.now(), **data}
     with _connect() as conn:

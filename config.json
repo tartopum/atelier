@@ -7,7 +7,8 @@
     "credentials": [
       "test",
       "test"
-    ]
+    ],
+    "max_alert_day_old": 7
   },
   "arduino": {
     "ip": "192.168.167.100",

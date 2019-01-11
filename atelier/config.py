@@ -136,6 +136,7 @@ schema.add_parameter("server", "credentials", {
     }
 })
 schema.add_int("server", "debug", min=0, max=1)
+schema.add_int("server", "max_alert_day_old", min=1, max=365) # days
 
 schema.add_ip("arduino", "ip")
 schema.add_port("arduino", "port")
