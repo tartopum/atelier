@@ -95,8 +95,8 @@ def _consumption_data(timestep, duration):
     dates_city, y_city = _bin_time_series(dates, y_city, timestep)
 
     return jsonify({
-        "x_tank": [d.strftime("%Y-%m-%d %H:%M") for d in dates_tank],
-        "x_city": [d.strftime("%Y-%m-%d %H:%M") for d in dates_tank],
+        "x_tank": [d.strftime("%Y-%m-%d %H") for d in dates_tank],
+        "x_city": [d.strftime("%Y-%m-%d %H") for d in dates_tank],
         "y_tank": [sum(period) for period in y_tank],
         "y_city": [sum(period) for period in y_city],
     })
