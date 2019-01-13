@@ -31,7 +31,7 @@
                 <li {% if page == "workshop" %}class="active"{% endif %}>
                     <a href="{{ url_for('workshop_route') }}">Atelier</a>
                 </li>
-                <li {% if page == "tank" %}class="active"{% endif %}>
+                <li {% if page == "tank" or page == "tank_stats" %}class="active"{% endif %}>
                     <a href="{{ url_for('tank_route') }}">Eau</a>
                 </li>
                 <li {% if page == "config" %}class="active"{% endif %}>

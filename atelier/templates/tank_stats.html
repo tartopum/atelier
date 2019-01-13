@@ -1,11 +1,14 @@
-{% set page = 'tank' %}
+{% set page = 'tank_stats' %}
 {% extends "layout.html" %}
 {% block title %}Statistiques - Eau - {% endblock %}
 
 {% block content %}
 <h2>Consommation de cette semaine</h2>
 
-<div id="week_consumption_plot"></div>
+<div id="week_consumption_wrapper">
+    <div id="week_consumption_plot"></div>
+    <div id="week_consumption_summary_plot"></div>
+</div>
 {% endblock %}
 
 {% block js %}

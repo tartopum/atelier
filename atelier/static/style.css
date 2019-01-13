@@ -162,6 +162,20 @@ header .nav  ul li.active {
     margin-bottom: 20px;
 }
 
+#content.tank_stats .modebar {
+    display: none;
+}
+
+#content.tank_stats #week_consumption_wrapper {
+    display: flex;
+    padding: 0 30px;
+}
+
+#content.tank_stats #week_consumption_plot {
+    flex-grow: 1;
+    margin-right: 50px;
+}
+
 #content.arduino_error h1 img {
     vertical-align: middle;
 }
