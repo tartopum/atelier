@@ -1,0 +1,19 @@
+{% set page = 'tank' %}
+{% extends "layout.html" %}
+{% block title %}Statistiques - Eau - {% endblock %}
+
+{% block content %}
+<h2>Consommation de cette semaine</h2>
+
+<div id="week_consumption_plot"></div>
+{% endblock %}
+
+{% block js %}
+<script>
+var HOURLY_CONSUMPTION_URL = "{{ url_for('tank.hourly_consumption') }}";
+</script>
+
+<script src="{{ url_for('static', filename='js/plotly-latest.min.js') }}"></script>
+
+<script src="{{ url_for('static', filename='js/tank-stats.js') }}"></script>
+{% endblock %}

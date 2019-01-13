@@ -93,3 +93,15 @@ def store_tank_stats(data):
             ")",
             data
         )
+
+
+def read_tank_stats(start, end=None):
+    if end is None:
+        end = datetime.datetime.now()
+    with _connect() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT * FROM tank_stats WHERE timestamp > :start AND timestamp < :end",
+            dict(start=start, end=end)
+        )
+        return cursor.fetchall()

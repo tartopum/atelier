@@ -158,6 +158,10 @@ header .nav  ul li.active {
     background: #ff6961;
 }
 
+#content.tank svg {
+    margin-bottom: 20px;
+}
+
 #content.arduino_error h1 img {
     vertical-align: middle;
 }

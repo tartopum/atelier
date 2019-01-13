@@ -1,4 +1,7 @@
-from flask import Blueprint, redirect, request
+from collections import defaultdict
+import datetime as dt
+
+from flask import Blueprint, jsonify, redirect, request
 import requests
 
 from . import arduino, db
@@ -66,3 +69,40 @@ def filter_cleaning(on):
 
 def read_and_store_stats():
     db.store_tank_stats(arduino.get("tank_stats"))
+
+
+def _bin_time_series(dates, data, binsize):
+    binned_data = defaultdict(list)
+    for date, val in zip(dates, data):
+        bin_index = abs(date - dates[0]) // binsize
+        binned_data[dates[0] + bin_index * binsize].append(val)
+    binned_dates = sorted(binned_data)
+    return binned_dates, [binned_data[d] for d in binned_dates]
+
+
+def _consumption_data(timestep, duration):
+    try:
+        end = dt.datetime.strptime(request.args.get("end", ""), "%Y-%m-%d")
+    except (ValueError, KeyError) as e:
+        end = dt.datetime.now()
+
+    start = end - duration
+    stats = db.read_tank_stats(start, end)
+    dates = [row[0] for row in stats]
+    y_tank = [row[2] for row in stats]
+    y_city = [row[3] for row in stats]
+    dates_tank, y_tank = _bin_time_series(dates, y_tank, timestep)
+    dates_city, y_city = _bin_time_series(dates, y_city, timestep)
+
+    return jsonify({
+        "x_tank": [d.strftime("%Y-%m-%d %H:%M") for d in dates_tank],
+        "x_city": [d.strftime("%Y-%m-%d %H:%M") for d in dates_tank],
+        "y_tank": [sum(period) for period in y_tank],
+        "y_city": [sum(period) for period in y_city],
+    })
+
+
+
+@blueprint.route("/stats/hourly_consumption")
+def hourly_consumption():
+    return _consumption_data(dt.timedelta(hours=1), dt.timedelta(7))

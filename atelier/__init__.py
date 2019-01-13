@@ -122,6 +122,12 @@ def tank_route():
     )
 
 
+@app.route("/eau/statistiques")
+@arduino.get_route
+def tank_stats_route():
+    return render_template("tank_stats.html")
+
+
 @app.route("/debug")
 @arduino.get_route
 def debug_route():
