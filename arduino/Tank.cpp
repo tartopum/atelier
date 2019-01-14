@@ -169,9 +169,9 @@ bool Tank::isWellEmpty()
 
 bool Tank::canCleanFilter()
 {
-    return (
-        (millis() - _lastFilterCleaningTime > filterCleaningPeriod) &&
-        isOn(_pinPumpIn)
+    return isOn(_pinPumpIn) && (
+        (!_filterFirstCleaningDone && millis() - _lastFilterCleaningTime > filterCleaningPeriod) ||
+        (_filterFirstCleaningDone && millis() - _lastFilterCleaningTime > filterCleaningConsecutiveDelay)
     );
 }
 
@@ -216,7 +216,10 @@ void Tank::_cmdUrbanNetwork(bool on)
 
 void Tank::_cmdFilterCleaning(bool on)
 {
-    if (on) _lastFilterCleaningTime = millis();
+    if (on) {
+        _lastFilterCleaningTime = millis();
+        _filterFirstCleaningDone = !_filterFirstCleaningDone; 
+    }
     digitalWrite(_pinFilterCleaning, on ? HIGH : LOW); 
 }
 
