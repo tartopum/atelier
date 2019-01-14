@@ -94,6 +94,12 @@ def config_route():
     )
 
 
+@app.route("/send_config")
+def send_config_route():
+    config_arduino()
+    return ""
+
+
 @app.route("/cloture")
 @arduino.get_route
 def fence_route():

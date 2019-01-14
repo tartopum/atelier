@@ -110,6 +110,9 @@ Tank tank(
     &sendAlert
 );
 
+/*
+ * Interrupts
+ */
 void flowInInterrupt()
 {
   tank.flowInPulsed();
@@ -118,6 +121,27 @@ void flowInInterrupt()
 void flowOutInterrupt()
 {
   tank.flowOutPulsed();
+}
+
+/*
+ * HTTP
+ */
+void askForConfig()
+{
+    EthernetClient client;
+    if (client.connect(apiIp, apiPort) != 1) {
+        return;
+    }
+
+    client.println("GET /send_config HTTP/1.1");
+    client.print("Host: ");
+    client.print(apiIp);
+    client.print(":");
+    client.println(apiPort);
+    client.println("Connection: close");
+    client.println("Content-Length: 0");
+    delay(20);
+    client.stop();
 }
 
 void alarmRoute(WebServer &server, WebServer::ConnectionType type, char *, bool)
@@ -187,6 +211,7 @@ void handleHTTP()
     webserver.processConnection(buff, &len);
 }
 
+
 void setup()
 {
     Serial.begin(9600); // TODO
@@ -205,6 +230,8 @@ void setup()
     webserver.addCommand("workshop", &atelierRoute);
     webserver.addCommand("tank", &tankRoute);
     webserver.addCommand("tank_stats", &tankStatsRoute);
+
+    askForConfig();
 }
 
 void loop()
