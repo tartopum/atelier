@@ -46,7 +46,6 @@
         isOverpressured: {{ state["is_overpressured"] }},
         isTankFull: {{ state["is_tank_full"] }},
         isTankEmpty: {{ state["is_tank_empty"] }},
-        timeToWellFull: {{ time_to_well_full }},
     }, {
         pumpInOn: "{{ url_for('tank.pump_in', on=1) }}",
         pumpInOff: "{{ url_for('tank.pump_in', on=0) }}",

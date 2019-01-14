@@ -1,5 +1,6 @@
 from collections import defaultdict
 import datetime as dt
+import math
 
 from flask import Blueprint, jsonify, redirect, request
 import requests
@@ -14,11 +15,16 @@ blueprint = Blueprint("tank", __name__, template_folder="templates")
 
 
 def water_level():
-    return 0.3 # TODO
-
-
-def time_to_well_full():
-    return 15 # TODO
+    start_empty, volume_in, volume_out = db.read_tank_volume_in_out()
+    total_volume = (
+        config["tank"]["height_between_sensors"]
+        * math.pi * config["tank"]["radius"] ** 2
+        / 1000
+    )
+    water_volume = 0 if start_empty else total_volume
+    water_volume = water_volume + volume_in - volume_out
+    ratio = water_volume / total_volume
+    return min(max(0, ratio), 1)
 
 
 def config_arduino():

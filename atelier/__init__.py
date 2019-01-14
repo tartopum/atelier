@@ -124,7 +124,6 @@ def tank_route():
         "tank.html",
         state=arduino.read_state(tank),
         water_level=tank.water_level(),
-        time_to_well_full=tank.time_to_well_full(),
     )
 
 

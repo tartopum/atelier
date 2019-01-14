@@ -101,7 +101,33 @@ def read_tank_stats(start, end=None):
     with _connect() as conn:
         cursor = conn.cursor()
         cursor.execute(
-            "SELECT * FROM tank_stats WHERE timestamp > :start AND timestamp < :end",
+            "SELECT * FROM tank_stats WHERE timestamp > :start AND timestamp < :end ORDER BY timestamp",
             dict(start=start, end=end)
         )
         return cursor.fetchall()
+
+
+def _is_tank_empty(row):
+    return row[7]
+
+
+def _is_tank_full(row):
+    return row[6]
+
+
+def read_tank_volume_in_out():
+    volume_in = 0
+    volume_out = 0
+    start_empty = True
+    with _connect() as conn:
+        cursor = conn.cursor()
+        for row in cursor.execute("SELECT * FROM tank_stats ORDER BY timestamp DESC"):
+            if _is_tank_empty(row):
+                start_empty = True
+                break
+            if _is_tank_full(row):
+                start_empty = False
+                break
+            volume_in += row[1]
+            volume_out += row[2]
+    return start_empty, volume_in, volume_out
