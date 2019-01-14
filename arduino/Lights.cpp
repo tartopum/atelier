@@ -13,6 +13,11 @@ Lights::Lights(int lightPins[3], int pinBtn1, int pinBtn2) : _buttons(pinBtn1, p
     cmdAll(false);
 }
 
+bool Lights::isOn(int n)
+{
+    return digitalRead(_pins[n]) == HIGH;
+}
+
 void Lights::cmdAll(bool on)
 {
     for (int i = 0; i < _N_PINS; i++) {

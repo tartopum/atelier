@@ -48,7 +48,7 @@ bool Alarm::listening()
 
 bool Alarm::movementDetected()
 {
-    return digitalRead(_pinDetector);
+    return digitalRead(_pinDetector) == HIGH;
 }
 
 void Alarm::loop()

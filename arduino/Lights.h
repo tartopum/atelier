@@ -12,6 +12,7 @@ class Lights
         Lights(int lightPins[3], int pinBtn1, int pinBtn2);
         void cmdAll(bool on);
         void cmdLight(int n, bool on);
+        bool isOn(int n);
         void loop();
         void httpRoute(WebServer &server, WebServer::ConnectionType type);
 

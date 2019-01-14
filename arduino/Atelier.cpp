@@ -1,5 +1,6 @@
 #include "Atelier.h"
 
+#define LIGHT_OUT 0
 #define LIGHT_IN1 1
 #define LIGHT_IN2 2
 
@@ -32,18 +33,27 @@ void Atelier::loop()
     _alarm->loop();
     _lights->loop();
 
-    if (millis() - _lastActivityTime > inactivityDelay) {
-        _lights->cmdLight(LIGHT_IN1, false);
-        _lights->cmdLight(LIGHT_IN2, false);
+    // The light inside was just turned on
+    // We need this to be able to turn lights on through the web interface
+    // after a long inactivity delay
+    if ((_lights->isOn(LIGHT_IN1) || _lights->isOn(LIGHT_IN2)) && !_wasAnyLightOn) {
+        _lastActivityTime = millis();
+        _wasAnyLightOn = true;
+    } else {
+        _wasAnyLightOn = false;
     }
     if (_alarm->movementDetected()) {
         _lastActivityTime = millis();
     }
+    if (millis() - _lastActivityTime > inactivityDelay) {
+        _lights->cmdLight(LIGHT_IN1, false);
+        _lights->cmdLight(LIGHT_IN2, false);
+    }
     if (_alarm->breachDetected()) {
-        _lights->cmdLight(0, true);
+        _lights->cmdLight(LIGHT_OUT, true);
         _breach = true;
     } else {
-        if (_breach) _lights->cmdLight(0, false); // The alarm was just stopped
+        if (_breach) _lights->cmdLight(LIGHT_OUT, false); // The alarm was just stopped
         _breach = false;
     }
 }
