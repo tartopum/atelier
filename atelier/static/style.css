@@ -179,6 +179,10 @@ header .nav  ul li.active {
     position: absolute;
 }
 
+#content.tank h2 a {
+    color: black;
+}
+
 #content.tank_stats .modebar {
     display: none;
 }
