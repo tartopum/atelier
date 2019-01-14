@@ -23,12 +23,12 @@ def power_supply(on):
     return arduino.post(arduino_endpoint, {"power_supply": int(on)})
 
 
-@blueprint.route("/turn_off_power/<int:turn_off>")
+@blueprint.route("/alimentation/nuit/<int:turn_on>")
 @auth.login_required
-def turn_off_power_route(turn_off):
+def turn_off_power_route(turn_on):
     global turn_off_power
-    turn_off_power = turn_off
+    turn_off_power = not turn_on
     return redirect_prev()
 
 
-arduino.register_post_route(power_supply, blueprint, "/power_supply/<int:on>")
+arduino.register_post_route(power_supply, blueprint, "/alimentation/<int:on>")

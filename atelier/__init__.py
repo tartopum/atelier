@@ -14,11 +14,11 @@ from . import arduino, db, forms, scheduler, alarm, lights, fence, tank, worksho
 
 app = Flask(__name__)
 
-app.register_blueprint(alarm.blueprint, url_prefix="/alarm")
-app.register_blueprint(fence.blueprint, url_prefix="/fence")
-app.register_blueprint(lights.blueprint, url_prefix="/lights")
-app.register_blueprint(workshop.blueprint, url_prefix="/workshop")
-app.register_blueprint(tank.blueprint, url_prefix="/tank")
+app.register_blueprint(alarm.blueprint, url_prefix="/alarme")
+app.register_blueprint(fence.blueprint, url_prefix="/cloture")
+app.register_blueprint(lights.blueprint, url_prefix="/lumieres")
+app.register_blueprint(workshop.blueprint, url_prefix="/atelier")
+app.register_blueprint(tank.blueprint, url_prefix="/cuve")
 
 
 @app.after_request

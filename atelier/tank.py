@@ -43,43 +43,43 @@ def config_arduino():
     )
 
 
-@blueprint.route("/pump_in/<int:on>")
+@blueprint.route("/pompe-puits/<int:on>")
 @arduino.post_route
 def pump_in(on):
     return arduino.post(arduino_endpoint, {"pump_in": int(on)})
 
 
-@blueprint.route("/pump_in/activate")
+@blueprint.route("/pompe-puits/activer")
 @arduino.post_route
 def activate_pump_in():
     return arduino.post(arduino_endpoint, {"pump_in_activated": 1})
 
 
-@blueprint.route("/pump_out/<int:on>")
+@blueprint.route("/pompe-surpresseur/<int:on>")
 @arduino.post_route
 def pump_out(on):
     return arduino.post(arduino_endpoint, {"pump_out": int(on)})
 
 
-@blueprint.route("/pump_out/activate")
+@blueprint.route("/pompe-surpresseur/activer")
 @arduino.post_route
 def activate_pump_out():
     return arduino.post(arduino_endpoint, {"pump_out_activated": 1})
 
 
-@blueprint.route("/manual_mode/<int:on>")
+@blueprint.route("/mode-manuel/<int:on>")
 @arduino.post_route
 def manual_mode(on):
     return arduino.post(arduino_endpoint, {"manual_mode": int(on)})
 
 
-@blueprint.route("/urban_network/<int:on>")
+@blueprint.route("/reseau-urbain/<int:on>")
 @arduino.post_route
 def urban_network(on):
     return arduino.post(arduino_endpoint, {"urban_network": int(on)})
 
 
-@blueprint.route("/filter_cleaning/<int:on>")
+@blueprint.route("/nettoyage-filtre/<int:on>")
 @arduino.post_route
 def filter_cleaning(on):
     return arduino.post(arduino_endpoint, {"filter_cleaning": int(on)})

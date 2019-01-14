@@ -12,4 +12,4 @@ blueprint = Blueprint("fence", __name__, template_folder="templates")
 def activate(on):
     return arduino.post(arduino_endpoint, {"state": int(on)})
 
-arduino.register_post_route(activate, blueprint, "/activate/<int:on>")
+arduino.register_post_route(activate, blueprint, "/activer/<int:on>")

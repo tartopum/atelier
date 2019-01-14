@@ -20,4 +20,4 @@ def listen(on):
     arduino.post(arduino_endpoint, {"listen": int(on)})
 
 
-arduino.register_post_route(listen, blueprint, "/listen/<int:on>")
+arduino.register_post_route(listen, blueprint, "/activer/<int:on>")
