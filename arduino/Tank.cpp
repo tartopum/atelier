@@ -169,7 +169,7 @@ bool Tank::isWellEmpty()
 
 bool Tank::canCleanFilter()
 {
-    return isOn(_pinPumpIn) && (
+    return isOn(_pinPumpIn) && (millis() - _timePumpInStarted > _pumpInStartDuration) && (
         (!_filterFirstCleaningDone && millis() - _lastFilterCleaningTime > filterCleaningPeriod) ||
         (_filterFirstCleaningDone && millis() - _lastFilterCleaningTime > filterCleaningConsecutiveDelay)
     );
