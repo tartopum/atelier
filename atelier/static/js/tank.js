@@ -154,9 +154,9 @@ var Tank = function(svg, state, links) {
         }
     }
 
-    function drawPump(xCenter, yCenter, isOn, isBlocked) {
+    function drawPump(xCenter, yCenter, isOn, isDeactivated) {
         let bg = "white"
-        if (isBlocked) bg = "rgb(255, 105, 97)"
+        if (isDeactivated) bg = "rgb(255, 105, 97)"
         let pump = rc.circle(xCenter, yCenter, pumpDiameter, {
             roughness: 0,
             strokeWidth,
@@ -179,7 +179,7 @@ var Tank = function(svg, state, links) {
         }
     }
 
-    function drawFilter(xCenter, yCenter, full, blocked) {
+    function drawFilter(xCenter, yCenter, full, blocked, open) {
         let yTop = yCenter - hFilter / 2.0
         let xLeft = xCenter - wFilter / 2.0
         let filter = rc.rectangle(xLeft, yTop, wFilter, hFilter, {
@@ -194,8 +194,36 @@ var Tank = function(svg, state, links) {
         let coords = {
             xLeft: xLeft,
             xRight: xLeft + wFilter,
+            xMiddle: xLeft + wFilter / 2.0,
             yTop: yTop,
             yBottom: yTop + hFilter,
+            yMiddle: yTop + hFilter / 2.0,
+        }
+
+        if (open) {
+            let wOpening = _w(8)
+            let hOpening = _h(10)
+            let xOpening = coords.xMiddle - wOpening / 2.0
+
+            if (full) {
+                drawWater(xOpening, coords.yBottom - _h(2), wOpening, hOpening)
+            } else {
+                svg.appendChild(rc.rectangle(xOpening, coords.yBottom - _h(2), wOpening, hOpening, {
+                    roughness: 0,
+                    strokeWidth: 0,
+                    fill: "white",
+                    fillStyle: "solid",
+                }))
+            }
+
+            svg.appendChild(rc.line(xOpening, coords.yBottom, xOpening, coords.yBottom + hOpening, {
+                roughness: 0,
+                strokeWidth: 2
+            }))
+            svg.appendChild(rc.line(xOpening + wOpening, coords.yBottom, xOpening + wOpening, coords.yBottom + hOpening, {
+                roughness: 0,
+                strokeWidth: 2
+            }))
         }
 
         if (!blocked) {
@@ -460,9 +488,22 @@ var Tank = function(svg, state, links) {
     }
     let pipeH1 = drawHPipe(
         _x(50),
-        tank.xLeft - _w(160),
+        tank.xLeft - _w(360),
         tank.yBottom - pipeWidth - _h(4),
+        state.pump_in
+    )
+    let pipeH2 = drawHPipe(
+        pipeH1.xRight,
+        tank.xLeft - _w(100) - pipeH1.xRight,
+        pipeH1.yTop,
         state.flow_in > 0
+    )
+    let filter = drawFilter(
+        pipeH1.xRight,
+        pipeH1.yMiddle,
+        state.pump_in,
+        state.is_filter_in_blocked,
+        state.filter_cleaning
     )
     let pipeV2 = drawVPipe(
         xTankTopGate,
@@ -471,14 +512,14 @@ var Tank = function(svg, state, links) {
         state.flow_in > 0
     )
     let pipeV1 = drawVPipe(
-        pipeH1.xRight,
+        pipeH2.xRight,
         pipeV2.yTop,
         pipeH1.yTop - pipeV2.yTop,
         state.flow_in > 0
     )
     elbow(
-        pipeH1.xRight,
-        pipeH1.yTop,
+        pipeH2.xRight,
+        pipeH2.yTop,
         0,
         Math.PI / 2,
         state.flow_in
@@ -490,15 +531,15 @@ var Tank = function(svg, state, links) {
         3 * Math.PI / 2,
         state.flow_in
     )
-    let pipeH2 = drawHPipe(
+    let pipeH3 = drawHPipe(
         pipeV1.xRight,
         pipeV2.xLeft - pipeV1.xRight,
         pipeV2.yTop - pipeWidth,
         state.flow_in
     )
     elbow(
-        pipeH2.xRight,
-        pipeH2.yBottom,
+        pipeH3.xRight,
+        pipeH3.yBottom,
         3 * Math.PI / 2,
         2 * Math.PI,
         state.flow_in
@@ -526,19 +567,13 @@ var Tank = function(svg, state, links) {
         _x(100),
         pipeH1.yMiddle,
         state.pump_in,
-        state.is_motor_in_blocked,
+        !state.pump_in_activated,
     )
     let pumpOut = drawPump(
         pipeOutH1.xRight,
         pipeOutH1.yMiddle,
         state.pump_out,
-        state.is_motor_out_blocked,
-    )
-    let filter = drawFilter(
-        tank.xLeft - _w(280),
-        pipeOutH1.yMiddle,
-        state.flow_in,
-        state.is_filter_in_blocked
+        !state.pump_out_activated,
     )
 
     let flowmeterIn = drawFlowmeter(
@@ -567,30 +602,47 @@ var Tank = function(svg, state, links) {
     drawWaterVolumeSensor(tank, lowSensorRelPos, !state.is_tank_empty)
     drawWaterVolumeSensor(tank, highSensorRelPos, state.is_tank_full)
 
-    if (!state.manual_mode) {
-        drawLabel(_x(0), _y(20), "Cliquer sur la pompe du puits pour la commander.")
+    if (state.pump_in_activated) {
+        drawLabel(_x(0), _y(20), "Cliquer pour commander.")
+    } else if (!state.pump_in_activated) {
+        drawLabel(_x(0), _y(20), "La pompe du puits est désactivée.")
+        drawLabel(_x(0), _y(50), "Cliquer dessus pour l'activer.")
+    }
+    if (!state.pump_out_activated) {
+        drawLabel(tank.xRight + _w(50), _y(20), "La pompe du suppresseur est désactivée.")
+        drawLabel(tank.xRight + _w(50), _y(50), "Cliquer dessus pour l'activer.")
     }
     
-    if (!state.is_motor_in_blocked) {
-        addLink(
-            pumpIn.xLeft,
-            pumpIn.yTop,
-            pumpIn.xRight - pumpIn.xLeft,
-            pumpIn.yBottom - pumpIn.yTop,
-            state.pump_in ? links.pumpInOff : links.pumpInOn,
-            state.manual_mode
-        )
+    let pumpInLink = state.pump_in ? links.pumpInOff : links.pumpInOn
+    if (!state.pump_in_activated) {
+        pumpInLink = links.activatePumpIn
     }
-    if (!state.is_motor_out_blocked && state.manual_mode) {
+    addLink(
+        pumpIn.xLeft,
+        pumpIn.yTop,
+        pumpIn.xRight - pumpIn.xLeft,
+        pumpIn.yBottom - pumpIn.yTop,
+        pumpInLink,
+        state.manual_mode
+    )
+
+    let pumpOutLink = null
+    if (state.pump_out_activated && state.manual_mode) {
+        pumpOutLink = state.pump_out ? links.pumpOutOff : links.pumpOutOn
+    } else if (!state.pump_out_activated) {
+        pumpOutLink = links.activatePumpOut
+    }
+    if (pumpOutLink) {
         addLink(
             pumpOut.xLeft,
             pumpOut.yTop,
             pumpOut.xRight - pumpOut.xLeft,
             pumpOut.yBottom - pumpOut.yTop,
-            state.pump_out ? links.pumpOutOff : links.pumpOutOn,
+            pumpOutLink,
             state.manual_mode
         )
     }
+
     if (state.manual_mode) {
         addLink(
             urbanLabel.xLeft,
