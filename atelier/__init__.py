@@ -114,6 +114,7 @@ def workshop_route():
         alarm=arduino.read_state(alarm),
         lights=arduino.read_state(lights),
         workshop=arduino.read_state(workshop),
+        turn_off_power=workshop.turn_off_power,
     )
 
 

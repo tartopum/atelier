@@ -3,8 +3,8 @@
 {% block title %}Eau - {% endblock %}
 
 {% block content %}
-<div class="mode">
-    <span class="label">Mode :</span>
+<div class="switch-wrapper">
+    <span class="switch-label">Mode :</span>
     {% if state["manual_mode"] %}
         <a href="{{ url_for('tank.manual_mode', on=0) }}" class="">
             <div class="switch off">

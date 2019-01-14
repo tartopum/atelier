@@ -40,6 +40,25 @@
             <img src="{{ url_for('static', filename='img/power_supply_off.png') }}" alt="Alimentation coupée. Cliquer pour allumer." />
         </a>
     {% endif %}
+
+        <div class="switch-wrapper">
+            <span class="switch-label">Éteint cette nuit :</span>
+        {% if turn_off_power %}
+            <a href="{{ url_for('workshop.turn_off_power_route', turn_off=0) }}" class="">
+                <div class="switch on">
+                    <span class="btn"></span>
+                    <span class="text">oui</span>
+                </div>
+            </a>
+        {% else %}
+            <a href="{{ url_for('workshop.turn_off_power_route', turn_off=1) }}" class="">
+                <div class="switch off">
+                    <span class="text">non</span>
+                    <span class="btn"></span>
+                </div>
+            </a>
+        {% endif %}
+        </div>
     </div>
 </div>
 

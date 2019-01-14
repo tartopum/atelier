@@ -8,6 +8,46 @@ h1, h2, h3 {
     text-transform: uppercase;
 }
 
+.switch-wrapper {
+    margin-bottom: 20px;
+    font-family: Slabo, Helvetica, Arial, sans-serif;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.switch-wrapper a {
+    text-decoration: none;
+}
+
+.switch {
+    color: #FFF;
+    padding: 5px 10px;
+    display: inline-block;
+    vertical-align: middle;
+    border-radius: 20px;
+    margin-left: 5px;
+}
+
+.switch .btn {
+    vertical-align: top;
+    display: inline-block;
+    position: relative;
+    top: 2px;
+    width: 20px;
+    height: 20px;
+    background: #FFF;
+    border-radius: 20px;
+}
+
+.switch.on {
+    background: #77dd77;
+}
+
+.switch.off {
+    background: #ff6961;
+}
+
 header {
     display: flex;
     padding: 10px 50px;
@@ -119,43 +159,14 @@ header .nav  ul li.active {
     min-width: 220px;
 }
 
-#content.tank .mode {
-    margin-bottom: 20px;
-    font-family: Slabo, Helvetica, Arial, sans-serif;
-    text-transform: uppercase;
-    font-weight: bold;
-    font-size: 20px;
+#content.workshop .switch-wrapper {
+    font-size: 18px;
+    margin-top: 15px;
 }
 
-#content.tank .mode a {
-    text-decoration: none;
-}
-
-#content.tank .mode .switch {
-    color: #FFF;
-    padding: 5px 10px;
-    display: inline-block;
-    vertical-align: middle;
-    border-radius: 20px;
-}
-
-#content.tank .mode .switch .btn {
-    vertical-align: top;
-    display: inline-block;
-    position: relative;
-    top: 2px;
-    width: 20px;
-    height: 20px;
-    background: #FFF;
-    border-radius: 20px;
-}
-
-#content.tank .mode .switch.on {
-    background: #77dd77;
-}
-
-#content.tank .mode .switch.off {
-    background: #ff6961;
+#content.workshop .switch .btn {
+    width: 18px;
+    height: 18px;
 }
 
 #content.tank #schema-wrapper {

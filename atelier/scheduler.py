@@ -111,7 +111,9 @@ class LunchJob(PeriodJob):
 class SleepJob(PeriodJob):
     def beginning(self):
         alarm.listen(1)
-        workshop.power_supply(0)
+        if workshop.turn_off_power:
+            workshop.power_supply(0)
+        workshop.turn_off_power = True
         lights.activate_all(0)
 
     def end(self):
