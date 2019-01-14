@@ -270,8 +270,9 @@ void Tank::loop()
         _cmdPumpOut(isOn(_pinPumpOutCanRun));
         _cmdUrbanNetwork(false);
     } else if (_volumeCollectedSinceEmpty > _volumeBeforePumpOut) {
-        // We need this because the tank could stay almost full and
-        // _volumeCollectedSinceEmpty could loop back to 0.
+        // We need this state because the tank could stay always full and
+        // _volumeCollectedSinceEmpty could loop back to 0. So we can only rely on
+        // it when it's "low".
         _tankFullEnough = true;
     }
 
