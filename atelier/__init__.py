@@ -127,6 +127,16 @@ def tank_route():
     )
 
 
+@app.route("/tank-state")
+@arduino.get_route
+def tank_state():
+    state = arduino.read_state(tank)
+    return jsonify(dict(
+        **state,
+        water_level=tank.water_level(),
+    ))
+
+
 @app.route("/eau/statistiques")
 @arduino.get_route
 def tank_stats_route():

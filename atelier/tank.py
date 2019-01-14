@@ -49,10 +49,22 @@ def pump_in(on):
     return arduino.post(arduino_endpoint, {"pump_in": int(on)})
 
 
+@blueprint.route("/pump_in/activate")
+@arduino.post_route
+def activate_pump_in():
+    return arduino.post(arduino_endpoint, {"pump_in_activated": 1})
+
+
 @blueprint.route("/pump_out/<int:on>")
 @arduino.post_route
 def pump_out(on):
     return arduino.post(arduino_endpoint, {"pump_out": int(on)})
+
+
+@blueprint.route("/pump_out/activate")
+@arduino.post_route
+def activate_pump_out():
+    return arduino.post(arduino_endpoint, {"pump_out_activated": 1})
 
 
 @blueprint.route("/manual_mode/<int:on>")

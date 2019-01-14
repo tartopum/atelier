@@ -7,12 +7,11 @@ var Tank = function(svg, state, links) {
     const padding = 5
     const _widthRef = 1000 + 2 * padding
     const _heightRef = 400 + 2 * padding
-    // TODO: adapt to screen
-    var _width = _widthRef,
-        _height = 400
+    var _width = parseInt(svg.parentNode.style.width),
+        _height = parseInt(svg.parentNode.style.height)
+
     svg.setAttribute("width", _width + "px")
     svg.setAttribute("height", _height + "px")
-    //svg.style.border = "1px solid #000" // TODO
 
     const roughness = 0.5
     const strokeWidth = 2
@@ -354,7 +353,7 @@ var Tank = function(svg, state, links) {
     function drawTankWaterBorder(tank, xPipe, waterVolumeRatio) {
         let yWater = tank.yBottom - waterVolumeRatio * (tank.yBottom - tank.yTop)
         let roughness = 0.5;
-        if (!state.flowIn) {
+        if (!state.flow_in) {
             let line = rc.line(tank.xLeft, yWater, tank.xRight, yWater, { roughness });
             svg.appendChild(line);
             return;
@@ -453,56 +452,56 @@ var Tank = function(svg, state, links) {
     const wFilter = _w(50)
     const hFilter = 1.5 * pipeWidth
 
-    let tank = drawTank(_x(500), state.waterLevel, state.isTankEmpty, state.isTankFull)
+    let tank = drawTank(_x(500), state.water_level, state.is_tank_empty, state.is_tank_full)
 
     const xTankTopGate = tank.xLeft + _w(20)
-    if (state.flowIn) {
+    if (state.flow_in) {
         drawFallingWater(tank);
     }
     let pipeH1 = drawHPipe(
         _x(50),
         tank.xLeft - _w(160),
         tank.yBottom - pipeWidth - _h(4),
-        state.flowIn > 0
+        state.flow_in > 0
     )
     let pipeV2 = drawVPipe(
         xTankTopGate,
         tank.yTop - _h(20),
         _h(22),
-        state.flowIn > 0
+        state.flow_in > 0
     )
     let pipeV1 = drawVPipe(
         pipeH1.xRight,
         pipeV2.yTop,
         pipeH1.yTop - pipeV2.yTop,
-        state.flowIn > 0
+        state.flow_in > 0
     )
     elbow(
         pipeH1.xRight,
         pipeH1.yTop,
         0,
         Math.PI / 2,
-        state.flowIn
+        state.flow_in
     )
     elbow(
         pipeV1.xRight,
         pipeV1.yTop,
         Math.PI,
         3 * Math.PI / 2,
-        state.flowIn
+        state.flow_in
     )
     let pipeH2 = drawHPipe(
         pipeV1.xRight,
         pipeV2.xLeft - pipeV1.xRight,
         pipeV2.yTop - pipeWidth,
-        state.flowIn
+        state.flow_in
     )
     elbow(
         pipeH2.xRight,
         pipeH2.yBottom,
         3 * Math.PI / 2,
         2 * Math.PI,
-        state.flowIn
+        state.flow_in
     )
     let pipeOutH1 = drawHPipe(
         tank.xRight - _w(3),
@@ -514,102 +513,102 @@ var Tank = function(svg, state, links) {
         pipeOutH1.xRight,
         _w(80),
         pipeH1.yTop,
-        state.pumpOut
+        state.pump_out
     )
     let pipeOutH3 = drawHPipe(
         pipeOutH2.xRight - _w(2),
         _x(950) - pipeOutH2.xRight,
         pipeH1.yTop,
-        state.urbanNetwork || state.pumpOut
+        state.urban_network || state.pump_out
     )
 
     let pumpIn = drawPump(
         _x(100),
         pipeH1.yMiddle,
-        state.pumpIn,
-        state.isMotorInBlocked,
+        state.pump_in,
+        state.is_motor_in_blocked,
     )
     let pumpOut = drawPump(
         pipeOutH1.xRight,
         pipeOutH1.yMiddle,
-        state.pumpOut,
-        state.isMotorOutBlocked,
+        state.pump_out,
+        state.is_motor_out_blocked,
     )
     let filter = drawFilter(
         tank.xLeft - _w(280),
         pipeOutH1.yMiddle,
-        state.flowIn,
-        state.isFilterInBlocked
+        state.flow_in,
+        state.is_filter_in_blocked
     )
 
     let flowmeterIn = drawFlowmeter(
         tank.xLeft - _w(240),
         yFlowmeter,
         pipeH1.yTop,
-        state.flowIn
+        state.flow_in
     )
     let flowmeterOut = drawFlowmeter(
         tank.xRight + _w(200),
         yFlowmeter,
         pipeOutH1.yTop,
-        state.flowOut
+        state.flow_out
     )
     let pipeUrbanV = drawVPipe(
         pipeOutH2.xRight - pipeWidth,
         _h(200),
         pipeOutH1.yTop - _h(198),
-        state.urbanNetwork
+        state.urban_network
     )
-    drawUrbanConnection(pipeUrbanV.xRight, pipeOutH3.yTop, state.urbanNetwork)
+    drawUrbanConnection(pipeUrbanV.xRight, pipeOutH3.yTop, state.urban_network)
     drawLabel(_x(0), pipeH1.yMiddle, "Puits")
     drawLabel(pipeOutH3.xRight + _w(10), pipeOutH1.yMiddle, "Ferme")
     let urbanLabel = drawLabel(pipeUrbanV.xMiddle, pipeUrbanV.yTop - _h(20), "Ville", 16, true)
 
-    drawWaterVolumeSensor(tank, lowSensorRelPos, !state.isTankEmpty)
-    drawWaterVolumeSensor(tank, highSensorRelPos, state.isTankFull)
+    drawWaterVolumeSensor(tank, lowSensorRelPos, !state.is_tank_empty)
+    drawWaterVolumeSensor(tank, highSensorRelPos, state.is_tank_full)
 
-    if (!state.manualMode) {
+    if (!state.manual_mode) {
         drawLabel(_x(0), _y(20), "Cliquer sur la pompe du puits pour la commander.")
     }
     
-    if (!state.isMotorInBlocked) {
+    if (!state.is_motor_in_blocked) {
         addLink(
             pumpIn.xLeft,
             pumpIn.yTop,
             pumpIn.xRight - pumpIn.xLeft,
             pumpIn.yBottom - pumpIn.yTop,
-            state.pumpIn ? links.pumpInOff : links.pumpInOn,
-            state.manualMode
+            state.pump_in ? links.pumpInOff : links.pumpInOn,
+            state.manual_mode
         )
     }
-    if (!state.isMotorOutBlocked && state.manualMode) {
+    if (!state.is_motor_out_blocked && state.manual_mode) {
         addLink(
             pumpOut.xLeft,
             pumpOut.yTop,
             pumpOut.xRight - pumpOut.xLeft,
             pumpOut.yBottom - pumpOut.yTop,
-            state.pumpOut ? links.pumpOutOff : links.pumpOutOn,
-            state.manualMode
+            state.pump_out ? links.pumpOutOff : links.pumpOutOn,
+            state.manual_mode
         )
     }
-    if (state.manualMode) {
+    if (state.manual_mode) {
         addLink(
             urbanLabel.xLeft,
             urbanLabel.yTop,
             urbanLabel.xRight - urbanLabel.xLeft,
             urbanLabel.yBottom - urbanLabel.yTop,
-            state.urbanNetwork ? links.urbanNetworkOff : links.urbanNetworkOn,
-            state.manualMode
+            state.urban_network ? links.urbanNetworkOff : links.urbanNetworkOn,
+            state.manual_mode
         )
     }
-    if (!state.manualMode) {
+    if (!state.manual_mode) {
         addLink(
             filter.xLeft,
             filter.yTop,
             filter.xRight - filter.xLeft,
             filter.yBottom - filter.yTop,
             links.filterCleaningOn,
-            state.manualMode
+            state.manual_mode
         )
     } else {
         addLink(
@@ -617,8 +616,8 @@ var Tank = function(svg, state, links) {
             filter.yTop,
             filter.xRight - filter.xLeft,
             filter.yBottom - filter.yTop,
-            state.filterCleaning ? links.filterCleaningOff : links.filterCleaningOn,
-            state.manualMode
+            state.filter_cleaning ? links.filterCleaningOff : links.filterCleaningOn,
+            state.manual_mode
         )
     }
 };

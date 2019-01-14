@@ -158,8 +158,14 @@ header .nav  ul li.active {
     background: #ff6961;
 }
 
+#content.tank #schema-wrapper {
+    position: relative;
+    margin: auto;
+    text-align: left;
+}
+
 #content.tank svg {
-    margin-bottom: 20px;
+    position: absolute;
 }
 
 #content.tank_stats .modebar {
