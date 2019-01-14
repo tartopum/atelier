@@ -3,6 +3,13 @@
 {% block title %}Eau - {% endblock %}
 
 {% block content %}
+<div class="stats">
+    <a href="{{ url_for('tank_stats_route') }}">
+        <img src="{{ url_for('static', filename='img/stats.png') }}" alt="Statistiques" />
+        <span>Consulter les statistiques</span>
+    </a>
+</div>
+
 <div class="switch-wrapper">
     <span class="switch-label">Mode :</span>
     {% if state["manual_mode"] %}
@@ -26,8 +33,6 @@
     <svg id="schema1" style="position: absolute;"></svg>
     <svg id="schema2" style="position: absolute; visibility: hidden;"></svg>
 </div>
-
-<h2><a href="{{ url_for('tank_stats_route') }}">Consulter les statistiques</a></h2>
 {% endblock %}
 
 {% block js %}
