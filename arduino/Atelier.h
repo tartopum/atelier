@@ -25,7 +25,7 @@ class Atelier
         Lights *_lights;
         int _pinPowerSupply;
         bool _breach = false;
-        bool _wasAnyLightOn = false;
+        bool _isInsideLightOn = false;
         unsigned long _lastActivityTime = 0;
         void _httpRouteGet(WebServer &server);
         void _httpRouteSet(WebServer &server);

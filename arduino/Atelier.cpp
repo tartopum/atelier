@@ -35,20 +35,24 @@ void Atelier::loop()
 
     // The light inside was just turned on
     // We need this to be able to turn lights on through the web interface
-    // after a long inactivity delay
-    if ((_lights->isOn(LIGHT_IN1) || _lights->isOn(LIGHT_IN2)) && !_wasAnyLightOn) {
+    // after a long inactivity delay. Otherwise, no movement is detected
+    // and the light is turned off immediatly.
+    if ((_lights->isOn(LIGHT_IN1) || _lights->isOn(LIGHT_IN2)) && !_isInsideLightOn) {
         _lastActivityTime = millis();
-        _wasAnyLightOn = true;
-    } else {
-        _wasAnyLightOn = false;
+        _isInsideLightOn = true;
+    } else if (!_lights->isOn(LIGHT_IN1) && !_lights->isOn(LIGHT_IN2)) {
+        _isInsideLightOn = false;
     }
+
     if (_alarm->movementDetected()) {
         _lastActivityTime = millis();
     }
+
     if (millis() - _lastActivityTime > inactivityDelay) {
         _lights->cmdLight(LIGHT_IN1, false);
         _lights->cmdLight(LIGHT_IN2, false);
     }
+
     if (_alarm->breachDetected()) {
         _lights->cmdLight(LIGHT_OUT, true);
         _breach = true;
