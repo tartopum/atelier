@@ -74,20 +74,28 @@ class Tank
         byte _pinFilterCleaning;
 
         bool _manualMode = true;
+
         float _flowIn = 0.0; // L/min
         float _flowOut = 0.0; // L/min
         unsigned long _oldTimeFlow = 0;
+        volatile unsigned int _flowInPulses = 0; // L
+        volatile unsigned int _flowOutPulses = 0; // L
+
+        bool _pumpInActivated = true;
         unsigned long _lastTimePumpInOff = 0; // ms
         unsigned long _timePumpInStarted = 0; // ms
         unsigned long _pumpInStartDuration = 60000; // ms
-        volatile unsigned int _flowInPulses = 0; // L
-        volatile unsigned int _flowOutPulses = 0; // L
+
+        bool _pumpOutActivated = true;
         unsigned int _volumeBeforePumpOut = 500; // L
         unsigned int _volumeCollectedSinceEmpty = 0; // L
         bool _tankFullEnough = true;
+        unsigned long _lastTimePumpOutOff = 0; // ms
+
         unsigned long _lastFilterCleaningTime = 0; // ms
         bool _filterFirstCleaningDone = false;
-        unsigned long _lastTimePumpOutOff = 0; // ms
+
+        bool _urbanNetworkActivated = true;
 
         // Stats
         unsigned long _volumeIn = 0; // L
@@ -104,9 +112,11 @@ class Tank
         Alert _motorOutBlockedAlert;
         Alert _filterInBlockedAlert;
         Alert _overpressureAlert;
-        Alert _tankEmptyAlert;
+        Alert _urbanNetworkUsedAlert;
         Alert _manualModeAlert;
-        Alert _pumpOutAlert;
+        Alert _pumpOutRunningForTooLongAlert;
+        Alert _pumpInDesactivatedAlert;
+        Alert _pumpOutDesactivatedAlert;
 
         void _httpRouteGet(WebServer &server);
         void _httpRouteSet(WebServer &server);

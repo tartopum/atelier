@@ -24,35 +24,39 @@ Tank::Tank(
 ) :
     _motorInBlockedAlert(
         "tank",
-        "Le moteur de la pompe est en panne.",
+        "Le moteur de la pompe du puits est en panne.",
         sendAlert,
         lightFatal,
-        MID_ALERT
+        MID_ALERT,
+        120
     ),
     _motorOutBlockedAlert(
         "tank",
-        "Le moteur du surpresseur est en panne.",
+        "Le moteur de la pompe du surpresseur est en panne.",
         sendAlert,
         lightFatal,
-        MID_ALERT
+        MID_ALERT,
+        120
     ),
     _filterInBlockedAlert(
         "tank",
         "Le filtre est encrassé.",
         sendAlert,
         lightWarning,
-        HIGH_ALERT
+        HIGH_ALERT,
+        120
     ),
     _overpressureAlert(
         "tank",
         "Le système est en surpression.",
         sendAlert,
         lightFatal,
-        HIGH_ALERT
+        HIGH_ALERT,
+        15
     ),
-    _tankEmptyAlert(
+    _urbanNetworkUsedAlert(
         "tank",
-        "La cuve est vide.",
+        "Le réseau urbain est utilisé.",
         sendAlert,
         lightWarning,
         LOW_ALERT,
@@ -63,14 +67,30 @@ Tank::Tank(
         "La cuve est en mode manuel.",
         sendAlert,
         lightFatal,
-        LOW_ALERT
+        LOW_ALERT,
+        1440
     ),
-    _pumpOutAlert(
+    _pumpOutRunningForTooLongAlert(
         "tank",
         "La pompe du surpresseur a fonctionné trop longtemps.",
         sendAlert,
         lightFatal,
-        MID_ALERT
+        MID_ALERT,
+        240
+    ),
+    _pumpInDesactivatedAlert(
+        "tank",
+        "La pompe du puits a été désactivée.",
+        sendAlert,
+        lightFatal,
+        HIGH_ALERT
+    ),
+    _pumpOutDesactivatedAlert(
+        "tank",
+        "La pompe du surpresseur a été désactivée.",
+        sendAlert,
+        lightFatal,
+        HIGH_ALERT
     )
 {
     _pinPumpIn = pinPumpIn;
@@ -193,6 +213,7 @@ void Tank::_cmdPumpIn(bool on)
     if (isOverpressured()) on = false;
     if (isMotorInBlocked()) on = false;
     if (isTankFull()) on = false;
+    if (!_pumpInActivated) on = false;
 
     if (!on && isOn(_pinPumpIn)) _lastTimePumpInOff = millis();
     if (on && !isOn(_pinPumpIn)) _timePumpInStarted = millis();
@@ -205,12 +226,14 @@ void Tank::_cmdPumpOut(bool on)
     if (isOverpressured()) on = false;
     if (isMotorOutBlocked()) on = false;
     if (!_manualMode && !canPumpOutRun()) on = false;
+    if (!_pumpOutActivated) on = false;
 
     digitalWrite(_pinPumpOut, on ? HIGH : LOW); 
 }
 
 void Tank::_cmdUrbanNetwork(bool on)
 {
+    if (!_urbanNetworkActivated) on = false;
     digitalWrite(_pinUrbanNetwork, on ? HIGH : LOW); 
 }
 
@@ -230,18 +253,22 @@ void Tank::loop()
     _motorOutBlockedAlert.raise(isMotorOutBlocked());
     _filterInBlockedAlert.raise(isFilterInBlocked());
     _overpressureAlert.raise(isOverpressured());
-    _tankEmptyAlert.raise(isTankEmpty());
-    _pumpOutAlert.raise(pumpOutRunningForTooLong());
-
-    _computeFlowRates();
+    _pumpOutRunningForTooLongAlert.raise(pumpOutRunningForTooLong());
+    _urbanNetworkUsedAlert.raise(isOn(_pinUrbanNetwork));
+    _pumpInDesactivatedAlert.raise(!_pumpInActivated);
+    _pumpOutDesactivatedAlert.raise(!_pumpOutActivated);
 
     if (isMotorInBlocked() || isFilterInBlocked()) {
         _cmdPumpIn(false);
+        _pumpInActivated = false;
     }
-    if (isMotorOutBlocked() || isOverpressured()) {
+    if (isMotorOutBlocked() || isOverpressured() || pumpOutRunningForTooLong()) {
         _cmdPumpOut(false);
         _cmdUrbanNetwork(true);
+        _pumpOutActivated = false;
     }
+
+    _computeFlowRates();
 
     if (isOff(_pinPumpOut)) {
         _lastTimePumpOutOff = millis();
@@ -346,6 +373,9 @@ void Tank::_httpRouteGet(WebServer &server)
     server.httpSuccess("application/json");
     server << "{ ";
     server << "\"manual_mode\": " << _manualMode << ", ";
+    server << "\"pump_in_activated\": " << _pumpInActivated << ", ";
+    server << "\"pump_out_activated\": " << _pumpOutActivated << ", ";
+    server << "\"urban_network_activated\": " << _urbanNetworkActivated << ", ";
     server << "\"pump_in\": " << isOn(_pinPumpIn) << ", ";
     server << "\"volume_in\": " << _volumeIn << ", ";
     server << "\"volume_out_tank\": " << _volumeOutTank << ", ";
@@ -409,8 +439,14 @@ void Tank::_httpRouteSet(WebServer &server)
         if (strcmp(key, "pump_in") == 0) {
             _cmdPumpIn(strcmp(value, "1") == 0);
         }
+        if (strcmp(key, "pump_in_activated") == 0) {
+            _pumpInActivated = (strcmp(value, "1") == 0);
+        }
         if (strcmp(key, "pump_out") == 0) {
             _cmdPumpOut(strcmp(value, "1") == 0);
+        }
+        if (strcmp(key, "pump_out_activated") == 0) {
+            _pumpOutActivated = (strcmp(value, "1") == 0);
         }
         if (strcmp(key, "filter_cleaning") == 0) {
             _cmdFilterCleaning(strcmp(value, "1") == 0);
