@@ -138,17 +138,20 @@ def consumption_data():
     try:
         days = int(request.args.get("days"))
         assert days > 0, "The number of days must be positive"
+        timestep = int(request.args.get("timestep", 0))
+        assert timestep >= 0, "The timestep must be greater than or equal to 0"
     except (TypeError, ValueError, AssertionError) as e:
         return str(e), 400
 
-    max_points = 100
-    step_sizes = [0.5, 1, 3, 6, 12, 24, 72, 168, 336, 720]  # hours
-    n_hours = days * 24
-    for step_size in step_sizes:
-        if n_hours / step_size <= max_points:
-            break
+    if not timestep:
+        max_points = 100
+        step_sizes = [30, 60, 180, 360, 720, 1440, 4320, 10080, 20160, 43200]  # minutes
+        n_minutes = days * 24 * 60
+        for timestep in step_sizes:
+            if n_minutes / timestep <= max_points:
+                break
 
     return _consumption_data(
-        dt.timedelta(hours=step_size),
+        dt.timedelta(minutes=timestep),
         dt.timedelta(days)
     )

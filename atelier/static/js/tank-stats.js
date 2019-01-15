@@ -242,6 +242,8 @@ function plotHistoryStats(yTank, yCity, yWell) {
 
 function updateHistoryPlot() {
     var period = document.getElementById("period").value
+    var timestep = document.getElementById("timestep").value
+
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
@@ -261,10 +263,15 @@ function updateHistoryPlot() {
             )
         }
     };
-    xhttp.open("GET", CONSUMPTION_URL + "?days=" + encodeURIComponent(period), true);
+    xhttp.open(
+        "GET",
+        CONSUMPTION_URL + "?days=" + encodeURIComponent(period) + "&timestep=" + encodeURIComponent(timestep),
+        true
+    );
     xhttp.send();
 }
 
 document.getElementById("period").addEventListener("change", updateHistoryPlot)
+document.getElementById("timestep").addEventListener("change", updateHistoryPlot)
 
 updateHistoryPlot()
