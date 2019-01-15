@@ -3,24 +3,23 @@
 {% block title %}Statistiques - Eau - {% endblock %}
 
 {% block content %}
-<h2>Historique de consommation</h2>
+<h2>Historique de consommation
 
-<div class="config">
 <select id="period">
-    <option value="1">Ces dernières 24 heures</option>
-    <option value="3">Ces 3 derniers jours</option>
-    <option value="7">Cette dernière semaine</option>
-    <option value="30">Ce dernier mois</option>
-    <option value="90">Ces 3 derniers mois</option>
-    <option value="180">Ces 6 derniers mois</option>
-    <option value="365">Cette dernière année</option>
-    <option value="730">Ces 2 dernières années</option>
+    <option value="1">des dernières 24 heures</option>
+    <option value="3">des 3 derniers jours</option>
+    <option value="7">de la dernière semaine</option>
+    <option value="30">du dernier mois</option>
+    <option value="90">des 3 derniers mois</option>
+    <option value="180">des 6 derniers mois</option>
+    <option value="365">de la dernière année</option>
+    <option value="730">des 2 dernières années</option>
 </select>
-</div>
+</h2>
 
-<div id="week_consumption_wrapper">
-    <div id="week_consumption_plot"></div>
-    <div id="week_consumption_summary_plot"></div>
+<div id="history_wrapper">
+    <div id="history_time_plot"></div>
+    <div id="history_stats_plot"></div>
 </div>
 {% endblock %}
 
