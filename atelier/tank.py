@@ -114,7 +114,9 @@ def _consumption_data(timestep, duration):
     dates_tank, y_tank = _bin_time_series(dates, y_tank, timestep)
     dates_city, y_city = _bin_time_series(dates, y_city, timestep)
 
-    date_format = "%Y-%m-%d %H"
+    date_format = "%Y-%m-%d %H:%M"
+    if timestep >= dt.timedelta(hours=1):
+        date_format = "%Y-%m-%d %H"
     if timestep >= dt.timedelta(days=1):
         date_format = "%Y-%m-%d"
     if timestep >= dt.timedelta(days=31):
@@ -132,7 +134,6 @@ def _consumption_data(timestep, duration):
     })
 
 
-
 @blueprint.route("/stats/consommation")
 def consumption_data():
     try:
@@ -145,7 +146,7 @@ def consumption_data():
 
     if not timestep:
         max_points = 100
-        step_sizes = [30, 60, 180, 360, 720, 1440, 4320, 10080, 20160, 43200]  # minutes
+        step_sizes = [60, 180, 360, 720, 1440, 4320, 10080, 20160, 43200]  # minutes
         n_minutes = days * 24 * 60
         for timestep in step_sizes:
             if n_minutes / timestep <= max_points:
