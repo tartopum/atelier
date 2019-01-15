@@ -179,7 +179,7 @@ void configApiRoute(WebServer &server, WebServer::ConnectionType type, char *, b
     if (type == WebServer::GET) {
         server.httpSuccess("application/json");
         server << "{ ";
-        server << "\"ip\": \"" << apiIp[0] << "." << apiIp[1] << "." << apiIp[2] << "." << apiIp[3] << "\",";
+        server << "\"ip\": \"" << apiIp << "\",";
         server << "\"port\": " << apiPort << ",";
         server << "\"auth_header\": \"" << apiAuthHeader << "\"";
         server << " }";
