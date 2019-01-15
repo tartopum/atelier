@@ -90,7 +90,7 @@ def config_route():
     return render_template(
         "config.html",
         forms=config_forms,
-        form_errors=any(form.errors for form in config_forms.values())
+        form_errors=any(form.errors for _, form in config_forms.values())
     )
 
 

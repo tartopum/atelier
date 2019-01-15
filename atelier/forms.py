@@ -44,15 +44,18 @@ class ConfigForms(dict):
     def __init__(self, data=None):
         for section, form in _config_form_cls.items():
             title = schema["properties"][section]["title"]
-            self[title or section] = form(data, **config[section], prefix=section)
+            self[section] = (
+                title or section,
+                form(data, **config[section], prefix=section)
+            )
 
     def validate(self):
-        return all(form.validate() for form in self.values())
+        return all(form.validate() for _, form in self.values())
 
     def populate_config(self):
         if not self.validate():
             raise ValueError("The forms must be validated.")
-        for section, form in self.items():
+        for section, (_, form) in self.items():
             for field in form:
                 config[section][field.short_name] = field.data
         config.validate()

@@ -24,7 +24,7 @@
     "end": "06:30"
   },
   "alarm": {
-    "delay": 16
+    "delay": 15
   },
   "lights": {
     "press_delay": 1,
@@ -35,7 +35,7 @@
     "volume_before_pump_out": 500,
     "filter_cleaning_period": 30,
     "filter_cleaning_duration": 3,
-    "pump_in_start_duration": 5,
+    "pump_in_start_duration": 10,
     "min_flow_in": 17,
     "max_pump_out_running_time": 10,
     "time_to_fill_up": 30,

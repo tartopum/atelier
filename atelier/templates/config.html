@@ -8,9 +8,9 @@
 {% endif %}
 
 <form action="{{ url_for('config_route') }}" method="POST">
-{% for section, form in forms.items() %}
+{% for section, (title, form) in forms.items() %}
 <div class="section">
-    <h2>{{ section }}</h2>
+    <h2>{{ title }}</h2>
     <table>
     {% for field in form %}
         {% if field.errors %}
