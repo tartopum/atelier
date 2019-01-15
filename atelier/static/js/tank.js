@@ -62,16 +62,25 @@ var Tank = function(svg, state, links) {
     }
 
     function drawTankVolumeScale(x, yTop, h) {
-        let xDelta = _w(5)
+        let xDelta = _w(10)
         let yStep = h / maxVolume
         for (var i = volumeScaleStep; i < maxVolume; i += volumeScaleStep) {
             let y = yTop + h - i * yStep
-            let tick = rc.line(x - xDelta, y, x + xDelta, y, {
+            let tick = rc.line(x - xDelta, y, x, y, {
                 roughness: 0.5,
                 strokeWidth: 2
             })
             svg.appendChild(tick)
-            drawLabel(x - xDelta - _w(15), y, i)
+            drawLabel(x - xDelta - _w(45), y, i * 1000)
+
+            for (let p of [0.25, 0.5, 0.75]) {
+                let y = yTop + h - (i + p) * yStep
+                let tick = rc.line(x - _w(5), y, x, y, {
+                    roughness: 0.5,
+                    strokeWidth: 1
+                })
+                svg.appendChild(tick)
+            }
         }
     }
 
