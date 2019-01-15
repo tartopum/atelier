@@ -206,10 +206,6 @@ header .nav  ul li.active {
     font-size: 20px;
 }
 
-#content.tank_stats .modebar {
-    display: none;
-}
-
 #content.tank_stats #history_wrapper {
     padding: 0 30px;
 }

@@ -37,11 +37,13 @@ function plotHistoryOverTime(xTank, xCity, xWell, yTank, yCity, yWell) {
             },
         }],
         {
+            modebar: {
+                orientation: "v",
+            },
             barmode: "relative",
-            margin: {t: 30, r: 10},
+            margin: {t: 30, r: 30},
             xaxis: {
                 showline: false,
-                fixedrange: true,
             },
             yaxis: {
                 title: "Volume (L)",
