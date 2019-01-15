@@ -93,7 +93,7 @@ def _bin_time_series(dates, data, binsize):
     binned_data = defaultdict(list)
     for date, val in zip(dates, data):
         bin_index = abs(date - dates[0]) // binsize
-        binned_data[dates[0] + bin_index * binsize].append(val)
+        binned_data[dates[0] + bin_index * binsize + binsize / 2].append(val)
     binned_dates = sorted(binned_data)
     return binned_dates, [binned_data[d] for d in binned_dates]
 
@@ -107,20 +107,32 @@ def _consumption_data(timestep, duration):
     start = end - duration
     stats = db.read_tank_stats(start, end)
     dates = [row[0] for row in stats]
+    y_well = [row[1] for row in stats]
     y_tank = [row[2] for row in stats]
     y_city = [row[3] for row in stats]
+    dates_well, y_well = _bin_time_series(dates, y_well, timestep)
     dates_tank, y_tank = _bin_time_series(dates, y_tank, timestep)
     dates_city, y_city = _bin_time_series(dates, y_city, timestep)
 
+    date_format = "%Y-%m-%d %H"
+    if timestep >= dt.timedelta(days=1):
+        date_format = "%Y-%m-%d"
+    if timestep >= dt.timedelta(days=31):
+        date_format = "%Y-%m"
+    if timestep >= dt.timedelta(days=365):
+        date_format = "%Y"
+
     return jsonify({
-        "x_tank": [d.strftime("%Y-%m-%d %H") for d in dates_tank],
-        "x_city": [d.strftime("%Y-%m-%d %H") for d in dates_tank],
+        "x_tank": [d.strftime(date_format) for d in dates_tank],
+        "x_city": [d.strftime(date_format) for d in dates_city],
+        "x_well": [d.strftime(date_format) for d in dates_well],
         "y_tank": [sum(period) for period in y_tank],
         "y_city": [sum(period) for period in y_city],
+        "y_well": [sum(period) for period in y_well],
     })
 
 
 
-@blueprint.route("/stats/hourly_consumption")
+@blueprint.route("/stats/last_four_days")
 def hourly_consumption():
     return _consumption_data(dt.timedelta(hours=1), dt.timedelta(7))

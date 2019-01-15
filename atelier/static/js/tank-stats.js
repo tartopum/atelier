@@ -1,6 +1,7 @@
-function plotConsumption(xTank, xCity, yTank, yCity) {
+function plotConsumption(xTank, xCity, xWell, yTank, yCity, yWell) {
     let TANK_COLOR = "#e9e9e9"
     let CITY_COLOR = "#ff6961"
+    let WELL_COLOR = "#aec5e0"
 
     function add(a, b) {
         return a + b;
@@ -8,79 +9,77 @@ function plotConsumption(xTank, xCity, yTank, yCity) {
 
     let sumTank = yTank.reduce(add, 0)
     let sumCity = yCity.reduce(add, 0)
+    let sumWell = yWell.reduce(add, 0)
+    let totalScale = Math.max(sumWell, sumTank + sumCity)
 
-    let annotations = []
-    if (sumTank) {
-        annotations.push({
-            x: 0,
-            y: sumTank / 2.0,
-            text: sumTank + "L",
-            showarrow: false,
-            bgcolor: TANK_COLOR,
-            font: {
-                color: "black",
-            },
-        })
-    }
-    if (sumCity) {
-        annotations.push({
-            x: 0,
-            y: sumTank + sumCity / 2.0,
-            text: sumCity + "L",
-            showarrow: false,
-            bgcolor: CITY_COLOR,
-            font: {
-                color: "black",
-            },
-        })
-    }
+    yCity = yCity.map(x => -1 * x)
+    yTank = yTank.map(x => -1 * x)
 
     Plotly.newPlot(
         document.getElementById("week_consumption_summary_plot"),
         [{
             type: "bar",
             x: [0],
-            y: [sumTank],
+            y: [-sumTank],
             name: "Cuve",
-            hoverinfo: "skip",
+            hoverinfo: "y",
             marker: {
                 color: TANK_COLOR,
             },
         }, {
             type: "bar",
             x: [0],
-            y: [sumCity],
+            y: [-sumCity],
             name: "Ville",
-            hoverinfo: "skip",
+            hoverinfo: "y",
             marker: {
                 color: CITY_COLOR,
             },
+        }, {
+            type: "bar",
+            x: [0],
+            y: [sumWell],
+            name: "Puits",
+            hoverinfo: "y",
+            marker: {
+                color: WELL_COLOR,
+            },
         }],
         {
-            title: "Total",
+            title: {
+                text: "Total",
+                font: {
+                    family: "Slabo, Helvetica, Arial, sans-serif",
+                },
+            },
             width: 100,
-            barmode: "stack",
+            barmode: "relative",
             showlegend: false,
-            margin: {t: 30, r: 10, l: 10},
+            margin: {t: 30, r: 10, l: 30},
             xaxis: {
                 visible: false,
                 fixedrange: true,
             },
             yaxis: {
-                visible: false,
+                showgrid: false,
+                zeroline: false,
                 fixedrange: true,
+                tickvals: [0, sumWell, -sumTank, -sumTank-sumCity],
             },
-            legend: {
-                x: 0.5,
-                y: 1.1,
-                orientation: "h",
-            },
-            annotations: annotations,
         }
     )
     Plotly.newPlot(
         document.getElementById("week_consumption_plot"),
         [{
+            type: "bar",
+            x: xWell,
+            y: yWell,
+            name: "Puits",
+            hoverinfo: "x+y",
+            marker: {
+                color: WELL_COLOR,
+            },
+        }, {
             type: "bar",
             x: xTank,
             y: yTank,
@@ -100,16 +99,16 @@ function plotConsumption(xTank, xCity, yTank, yCity) {
             },
         }],
         {
-            barmode: "stack",
+            barmode: "relative",
             margin: {t: 30, r: 10},
             xaxis: {
-                showline: true,
+                showline: false,
                 fixedrange: true,
             },
             yaxis: {
                 title: "Volume (L)",
                 showline: true,
-                zeroline: false,
+                zeroline: true,
                 range: [0, null],
                 fixedrange: true,
             },
@@ -117,6 +116,7 @@ function plotConsumption(xTank, xCity, yTank, yCity) {
                 x: 0.5,
                 y: 1.1,
                 orientation: "h",
+                xanchor: "center",
             },
         }
     )
@@ -127,7 +127,14 @@ function updateConsumptionPlot() {
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             let data = JSON.parse(xhttp.responseText)
-            plotConsumption(data.x_tank, data.x_city, data.y_tank, data.y_city)
+            plotConsumption(
+                data.x_tank,
+                data.x_city,
+                data.x_well,
+                data.y_tank,
+                data.y_city,
+                data.y_well
+            )
         }
     };
     xhttp.open("GET", HOURLY_CONSUMPTION_URL, true);
