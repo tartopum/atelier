@@ -78,14 +78,14 @@ Tank::Tank(
         MID_ALERT,
         240
     ),
-    _pumpInDesactivatedAlert(
+    _pumpInDisabledAlert(
         "tank",
         "La pompe du puits a été désactivée.",
         sendAlert,
         lightFatal,
         HIGH_ALERT
     ),
-    _pumpOutDesactivatedAlert(
+    _pumpOutDisabledAlert(
         "tank",
         "La pompe du surpresseur a été désactivée.",
         sendAlert,
@@ -255,8 +255,8 @@ void Tank::loop()
     _overpressureAlert.raise(isOverpressured());
     _pumpOutRunningForTooLongAlert.raise(pumpOutRunningForTooLong());
     _urbanNetworkUsedAlert.raise(isOn(_pinUrbanNetwork));
-    _pumpInDesactivatedAlert.raise(!_pumpInActivated);
-    _pumpOutDesactivatedAlert.raise(!_pumpOutActivated);
+    _pumpInDisabledAlert.raise(!_pumpInActivated);
+    _pumpOutDisabledAlert.raise(!_pumpOutActivated);
 
     if (isMotorInBlocked() || isFilterInBlocked()) {
         _cmdPumpIn(false);

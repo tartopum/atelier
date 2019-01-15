@@ -115,8 +115,8 @@ class Tank
         Alert _urbanNetworkUsedAlert;
         Alert _manualModeAlert;
         Alert _pumpOutRunningForTooLongAlert;
-        Alert _pumpInDesactivatedAlert;
-        Alert _pumpOutDesactivatedAlert;
+        Alert _pumpInDisabledAlert;
+        Alert _pumpOutDisabledAlert;
 
         void _httpRouteGet(WebServer &server);
         void _httpRouteSet(WebServer &server);

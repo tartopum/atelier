@@ -27,9 +27,9 @@ void Alert::raise(bool problemDetected)
         return;
     }
 
+    _light->setLevel(_level);
     if (_sent && (millis() - _lastTimeSent) < _reminderDelay) return;
 
-    _light->setLevel(_level);
     _sent = true;
     _lastTimeSent = millis();
     _send(_name, _msg);
