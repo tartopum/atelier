@@ -37,6 +37,7 @@ def config_arduino():
             "volume_before_pump_out": config["tank"]["volume_before_pump_out"],
             "filter_cleaning_period": config["tank"]["filter_cleaning_period"] * 60 * 1000,
             "filter_cleaning_duration": config["tank"]["filter_cleaning_duration"] * 1000,
+            "filter_cleaning_consecutive_delay": config["tank"]["filter_cleaning_consecutive_delay"] * 1000,
             "pump_in_start_duration": config["tank"]["pump_in_start_duration"] * 1000,
             "max_pump_out_running_time": config["tank"]["max_pump_out_running_time"] * 1000 * 60,
         }

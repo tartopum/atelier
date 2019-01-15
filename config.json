@@ -35,6 +35,7 @@
     "volume_before_pump_out": 500,
     "filter_cleaning_period": 30,
     "filter_cleaning_duration": 3,
+    "filter_cleaning_consecutive_delay": 5,
     "pump_in_start_duration": 10,
     "min_flow_in": 17,
     "max_pump_out_running_time": 10,

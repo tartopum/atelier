@@ -400,6 +400,7 @@ void Tank::_httpRouteGet(WebServer &server)
     server << "\"filter_cleaning\": " << isOn(_pinFilterCleaning) << ", ";
     server << "\"filter_cleaning_period\": " << filterCleaningPeriod << ", ";
     server << "\"filter_cleaning_duration\": " << filterCleaningDuration << ", ";
+    server << "\"filter_cleaning_consecutive_delay\": " << filterCleaningConsecutiveDelay << ", ";
     server << "\"time_to_fill_up\": " << timeToFillUp << ", ";
     server << "\"max_pump_out_running_time\": " << maxPumpOutRunningTime << ", ";
     server << "\"flow_check_period\": " << flowCheckPeriod << ", ";
@@ -456,6 +457,9 @@ void Tank::_httpRouteSet(WebServer &server)
         }
         if (strcmp(key, "filter_cleaning_duration") == 0) {
             filterCleaningDuration = atol(value);
+        }
+        if (strcmp(key, "filter_cleaning_consecutive_delay") == 0) {
+            filterCleaningConsecutiveDelay = atol(value);
         }
         if (strcmp(key, "urban_network") == 0) {
             _cmdUrbanNetwork(strcmp(value, "1") == 0);

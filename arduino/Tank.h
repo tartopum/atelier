@@ -33,7 +33,7 @@ class Tank
         unsigned long flowCheckPeriod = 30000; // ms
         unsigned long filterCleaningPeriod = 3600000; // ms
         unsigned long filterCleaningDuration = 30000; // ms
-        unsigned long filterCleaningConsecutiveDelay = 10000; // ms
+        unsigned long filterCleaningConsecutiveDelay = 5000; // ms
         unsigned long maxPumpOutRunningTime = 300000; // ms
 
         void attachFlowInterrupts();
