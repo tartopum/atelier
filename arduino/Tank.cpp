@@ -291,12 +291,15 @@ void Tank::loop()
     }
 
     // Command pump-out and urban network
+    if (!_pumpOutActivated) {
+        _cmdUrbanNetwork(true);
+    }
     if (isTankEmpty()) {
         _tankFullEnough = false;
         _cmdPumpOut(false);
         _cmdUrbanNetwork(true);
         _volumeCollectedSinceEmpty = 0;
-    } else if (_tankFullEnough) {
+    } else if (_tankFullEnough && _pumpOutActivated) {
         _cmdPumpOut(isOn(_pinPumpOutCanRun));
         _cmdUrbanNetwork(false);
     } else if (_volumeCollectedSinceEmpty > _volumeBeforePumpOut) {
