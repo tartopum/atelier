@@ -9,7 +9,9 @@
 
 <form action="{{ url_for('config_route') }}" method="POST">
 {% for section, form in forms.items() %}
+<div class="section">
     <h2>{{ section }}</h2>
+    <table>
     {% for field in form %}
         {% if field.errors %}
             <ul class="errors">
@@ -18,8 +20,13 @@
             {% endfor %}
             </ul>
         {% endif %}
-        <div>{{ field.label }}: {{ field() }}</div>
+        <tr class="field-row">
+            <td class="field-label">{{ field.label }}&nbsp;:</td>
+            <td class="field-input">{{ field() }}</td>
+        </tr>
     {% endfor %}
+    </table>
+</div>
 {% endfor %}
     <input type="submit" value="Sauvegarder" />
 </form>

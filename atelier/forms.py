@@ -22,7 +22,7 @@ def _parameter_to_field(name, parameter):
     if parameter["type"] == "integer":
         field_cls = IntegerField
     return field_cls(
-        parameter.get("title", name),
+        parameter.get("title") or name, 
         [InputRequired(), _make_parameter_validator(parameter)]
     )
 
@@ -43,7 +43,8 @@ _config_form_cls = {
 class ConfigForms(dict):
     def __init__(self, data=None):
         for section, form in _config_form_cls.items():
-            self[section] = form(data, **config[section], prefix=section)
+            title = schema["properties"][section]["title"]
+            self[title or section] = form(data, **config[section], prefix=section)
 
     def validate(self):
         return all(form.validate() for form in self.values())
