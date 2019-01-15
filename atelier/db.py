@@ -108,11 +108,11 @@ def read_tank_stats(start, end=None):
 
 
 def _is_tank_empty(row):
-    return row[7]
+    return row[8]
 
 
 def _is_tank_full(row):
-    return row[6]
+    return row[7]
 
 
 def read_tank_volume_in_out():
