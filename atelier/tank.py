@@ -133,6 +133,22 @@ def _consumption_data(timestep, duration):
 
 
 
-@blueprint.route("/stats/last_four_days")
-def hourly_consumption():
-    return _consumption_data(dt.timedelta(hours=1), dt.timedelta(7))
+@blueprint.route("/stats/consommation")
+def consumption_data():
+    try:
+        days = int(request.args.get("days"))
+        assert days > 0, "The number of days must be positive"
+    except (TypeError, ValueError, AssertionError) as e:
+        return str(e), 400
+
+    max_points = 100
+    step_sizes = [0.5, 1, 3, 6, 12, 24, 72, 168, 336, 720]  # hours
+    n_hours = days * 24
+    for step_size in step_sizes:
+        if n_hours / step_size <= max_points:
+            break
+
+    return _consumption_data(
+        dt.timedelta(hours=step_size),
+        dt.timedelta(days)
+    )

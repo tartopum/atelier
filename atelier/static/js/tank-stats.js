@@ -123,6 +123,7 @@ function plotConsumption(xTank, xCity, xWell, yTank, yCity, yWell) {
 }
 
 function updateConsumptionPlot() {
+    var period = document.getElementById("period").value
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
@@ -137,8 +138,10 @@ function updateConsumptionPlot() {
             )
         }
     };
-    xhttp.open("GET", HOURLY_CONSUMPTION_URL, true);
+    xhttp.open("GET", CONSUMPTION_URL + "?days=" + encodeURIComponent(period), true);
     xhttp.send();
 }
 
-updateConsumptionPlot();
+document.getElementById("period").addEventListener("change", updateConsumptionPlot)
+
+updateConsumptionPlot()
