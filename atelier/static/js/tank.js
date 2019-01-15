@@ -64,14 +64,16 @@ var Tank = function(svg, state, links) {
     function drawTankVolumeScale(x, yTop, h) {
         let xDelta = _w(10)
         let yStep = h / maxVolume
-        for (var i = volumeScaleStep; i < maxVolume; i += volumeScaleStep) {
-            let y = yTop + h - i * yStep
-            let tick = rc.line(x - xDelta, y, x, y, {
-                roughness: 0.5,
-                strokeWidth: 2
-            })
-            svg.appendChild(tick)
-            drawLabel(x - xDelta - _w(45), y, i * 1000)
+        for (var i = 0; i < maxVolume; i += volumeScaleStep) {
+            if (i > 0) {
+                let y = yTop + h - i * yStep
+                let tick = rc.line(x - xDelta, y, x, y, {
+                    roughness: 0.5,
+                    strokeWidth: 2
+                })
+                svg.appendChild(tick)
+                drawLabel(x - xDelta - _w(45), y, i * 1000)
+            }
 
             for (let p of [0.25, 0.5, 0.75]) {
                 let y = yTop + h - (i + p) * yStep
@@ -508,23 +510,10 @@ var Tank = function(svg, state, links) {
         let y = tank.yBottom - yRatio * (tank.yBottom - tank.yTop)
         let tick = rc.line(tank.xLeft, y, tank.xRight, y, {
             roughness: 0.5,
-            strokeWidth: 1
+            strokeWidth: 1,
+            stroke: activated ? "black" : "rgba(0, 0, 0, 0.2)",
         })
         svg.appendChild(tick)
-
-        if (!activated) return
-
-        let x1 = tank.xLeft - _w(5)
-        for (let i = -1; i < 2; i++) {
-            let x2 = x1 - (i == 0 ? _w(8) : _w(5))
-            let y1 = y + i * _h(5)
-            let y2 = y1 + i * _h(3)
-            let tick = rc.line(x1, y1, x2, y2, {
-                roughness: 1,
-                strokeWidth: 1
-            })
-            svg.appendChild(tick)
-        }
     }
     
     const pipeWidth = _h(15)
