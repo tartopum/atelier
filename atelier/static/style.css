@@ -228,6 +228,11 @@ header .nav  ul li.active {
     cursor: pointer;
 }
 
+#content.tank_stats #download {
+    margin-left: 50px;
+    vertical-align: bottom;
+}
+
 #content.tank_stats #history_wrapper {
     padding: 0 30px;
 }

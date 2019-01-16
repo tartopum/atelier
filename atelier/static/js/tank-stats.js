@@ -1,6 +1,7 @@
 let TANK_COLOR = "#e9e9e9"
 let CITY_COLOR = "#ff6961"
 let WELL_COLOR = "#aec5e0"
+let downloadLink = document.getElementById("download")
 
 function plotHistoryOverTime(xTank, xCity, xWell, yTank, yCity, yWell) {
     yCity = yCity.map(x => -1 * x)
@@ -243,6 +244,7 @@ function plotHistoryStats(yTank, yCity, yWell) {
 }
 
 function updateHistoryPlot() {
+    downloadLink.style.visibility = "hidden"
     var period = document.getElementById("period").value
     var timestep = document.getElementById("timestep").value
 
@@ -263,6 +265,7 @@ function updateHistoryPlot() {
                 data.y_city,
                 data.y_well
             )
+            buildDownloadLink(period, timestep, data)
         }
     };
     xhttp.open(
@@ -271,6 +274,30 @@ function updateHistoryPlot() {
         true
     );
     xhttp.send();
+}
+
+function buildDownloadLink(period, timestep, data) {
+    let csvContent = "data:text/csv;charset=utf-8,";
+    csvContent += "date,puits,cuve,ville\r\n"
+    for (let i = 0; i < data.x_tank.length; i++) {
+        csvContent += (
+            data.x_tank[i] + "," + data.y_well[i] + "," + data.y_tank[i] + "," +
+            data.y_city[i] + "\r\n"
+        )
+    }
+
+    let encodedUri = encodeURI(csvContent)
+    let now = new Date()
+    let datetime = (
+        now.getFullYear() + "_" + (now.getMonth() + 1) + "_" + now.getDate() +
+        "_" + now.getHours() + "_" + now.getMinutes()
+    )
+    downloadLink.setAttribute("href", encodedUri)
+    downloadLink.setAttribute(
+        "download",
+        "consommation_eau_" + datetime + "_" + period + "jours_" + timestep + "minutes.csv"
+    )
+    downloadLink.style.visibility = "visible"
 }
 
 document.getElementById("period").addEventListener("change", updateHistoryPlot)
