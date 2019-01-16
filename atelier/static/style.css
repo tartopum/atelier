@@ -199,11 +199,33 @@ header .nav  ul li.active {
     position: absolute;
 }
 
-#content.tank_stats h2 select {
-    font-weight: bold;
-    font-family: Slabo, Helvetica, Arial, sans-serif;
-    text-transform: uppercase;
-    font-size: 20px;
+#content.tank_stats .config {
+    margin-bottom: 20px;    
+}
+
+#content.tank_stats .config .styled-select {
+    display: inline-block;
+    vertical-align: middle;
+    overflow: hidden;
+    border: 1px solid rgb(233, 233, 233);
+    cursor: pointer;
+    background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUBAMAAAB/pwA+AAAAJFBMVEUAAADi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uIR/tmHAAAAC3RSTlMAAQIEBgwax8ji9T+dF2UAAAAySURBVAiZY2CgLmBycXFxhjA5du/evUsAzGSdvXv3MqiKyN27EqBM1tnL4BrDExioDQDiPAr8LEKtTwAAAABJRU5ErkJggg==") no-repeat right;
+}
+
+#content.tank_stats .config .styled-select.period {
+    width: 96px;
+}
+
+#content.tank_stats .config .styled-select.timestep {
+    width: 120px;
+}
+
+#content.tank_stats .config .styled-select select {
+    background: transparent;
+    padding: 5px;
+    padding-right: 18px;
+    border: none;
+    cursor: pointer;
 }
 
 #content.tank_stats #history_wrapper {
