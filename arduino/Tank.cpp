@@ -79,15 +79,15 @@ Tank::Tank(
         240
     ),
     _pumpInDisabledAlert(
-        "tank",
-        "La pompe du puits a été désactivée.",
+        "",
+        "",
         sendAlert,
         lightFatal,
         HIGH_ALERT
     ),
     _pumpOutDisabledAlert(
-        "tank",
-        "La pompe du surpresseur a été désactivée.",
+        "",
+        "",
         sendAlert,
         lightFatal,
         HIGH_ALERT
