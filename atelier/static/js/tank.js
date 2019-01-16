@@ -179,12 +179,12 @@ var Tank = function(svg, state, links) {
 
         drawLabel(xCenter + _w(2), yCenter + _h(3), "P", _h(40), true)
         if (isDeactivated) {
-            drawLabel(xCenter, yCenter - pumpDiameter / 2.0 - _y(10), "Pompe désactivée", 14, true, link)
+            drawLabel(xCenter, yCenter - pumpDiameter / 2.0 - _y(10), "Désactivée", 14, true, link)
         } else if (isOn) {
             drawPumpVibs(xCenter, yCenter)
-            drawLabel(xCenter, yCenter - pumpDiameter / 2.0 - _y(20), "Pompe allumée", 14, true, link)
+            drawLabel(xCenter, yCenter - pumpDiameter / 2.0 - _y(20), "Allumée", 14, true, link)
         } else {
-            drawLabel(xCenter, yCenter - pumpDiameter / 2.0 - _y(10), "Pompe éteinte", 14, true, link)
+            drawLabel(xCenter, yCenter - pumpDiameter / 2.0 - _y(10), "Éteinte", 14, true, link)
         }
 
         var coords = {
@@ -283,6 +283,61 @@ var Tank = function(svg, state, links) {
             links.filterCleaningOn
         )
 
+        return coords
+    }
+    
+    function drawPressureSensor(xCenter, yCenter, activated) {
+        let diameter = 3 * pipeWidth
+        let sensor = rc.circle(xCenter, yCenter, diameter, {
+            roughness: 0,
+            strokeWidth,
+            fill: activated ? "rgb(255, 105, 97)" : "white",
+            fillStyle: "solid"
+        })
+        svg.appendChild(sensor)
+        
+        let center = rc.circle(xCenter, yCenter, _w(5), {
+            roughness: 0,
+            strokeWidth,
+            fill: "black",
+            fillStyle: "solid"
+        })
+        svg.appendChild(center)
+        
+        let padding = _w(5)
+        let arcDiameter = diameter - 2 * padding 
+        let arc = rc.arc(xCenter, yCenter, arcDiameter, arcDiameter, 0.75 * Math.PI, 2.25 * Math.PI, false, {
+            roughness: 0,
+            strokeWidth: 1,
+        })
+        svg.appendChild(arc)
+
+        let coords = {
+            xLeft: xCenter - diameter / 2.0,
+            xRight: xCenter + diameter / 2.0,
+            xMiddle: xCenter,
+            yTop: yCenter - diameter / 2.0,
+            yBottom: yCenter + diameter / 2.0,
+            yMiddle: yCenter,
+        }
+
+        let hand
+        if (activated) {
+            hand = rc.line(xCenter - _w(7), yCenter, coords.xRight - padding / 2.0, yCenter,  {
+                roughness: 0,
+                strokeWidth: 2
+            })
+        } else {
+            hand = rc.line(xCenter + _w(7), yCenter, coords.xLeft + padding / 2.0, yCenter,  {
+                roughness: 0,
+                strokeWidth: 2
+            })
+        }
+        svg.appendChild(hand)
+
+        let label = activated ? "Surpression" : "Pression normale"
+        drawLabel(xCenter, coords.yTop - _h(15), label, 14, true)
+    
         return coords
     }
 
@@ -524,7 +579,7 @@ var Tank = function(svg, state, links) {
     const wFilter = _w(50)
     const hFilter = 1.5 * pipeWidth
 
-    let tank = drawTank(_x(500), state.water_level, state.is_tank_empty, state.is_tank_full)
+    let tank = drawTank(_x(450), state.water_level, state.is_tank_empty, state.is_tank_full)
 
     const xTankTopGate = tank.xLeft + _w(20)
     if (state.flow_in) {
@@ -532,7 +587,7 @@ var Tank = function(svg, state, links) {
     }
     let pipeH1 = drawHPipe(
         _x(50),
-        tank.xLeft - _w(340),
+        tank.xLeft - _w(310),
         tank.yBottom - pipeWidth - _h(4),
         state.pump_in
     )
@@ -590,13 +645,13 @@ var Tank = function(svg, state, links) {
     )
     let pipeOutH1 = drawHPipe(
         tank.xRight - _w(3),
-        _w(75),
+        _w(50),
         pipeH1.yTop,
         true
     )
     let pipeOutH2 = drawHPipe(
         pipeOutH1.xRight,
-        _w(80),
+        _w(180),
         pipeH1.yTop,
         state.pump_out
     )
@@ -612,7 +667,7 @@ var Tank = function(svg, state, links) {
         pumpInLink = links.activatePumpIn
     }
     let pumpIn = drawPump(
-        _x(100),
+        _x(90),
         pipeH1.yMiddle,
         state.pump_in,
         !state.pump_in_activated,
@@ -634,13 +689,13 @@ var Tank = function(svg, state, links) {
     )
 
     let flowmeterIn = drawFlowmeter(
-        tank.xLeft - _w(240),
+        tank.xLeft - _w(215),
         yFlowmeter,
         pipeH1.yTop,
         state.flow_in
     )
     let flowmeterOut = drawFlowmeter(
-        tank.xRight + _w(200),
+        tank.xRight + _w(250),
         yFlowmeter,
         pipeOutH1.yTop,
         state.flow_out
@@ -667,6 +722,8 @@ var Tank = function(svg, state, links) {
         true,
         urbanNetworkLink
     )
+
+    drawPressureSensor(tank.xRight + _w(140), pipeOutH1.yMiddle, state.is_overpressured)
 
     drawWaterVolumeSensor(tank, lowSensorRelPos, !state.is_tank_empty)
     drawWaterVolumeSensor(tank, highSensorRelPos, state.is_tank_full)
