@@ -72,7 +72,7 @@ var Tank = function(svg, state, links) {
                     strokeWidth: 2
                 })
                 svg.appendChild(tick)
-                drawLabel(x - xDelta - _w(45), y, i * 1000)
+                drawLabel(x - xDelta - _w(40), y, i * 1000)
             }
 
             for (let p of [0.25, 0.5, 0.75]) {
@@ -341,7 +341,7 @@ var Tank = function(svg, state, links) {
         return coords
     }
 
-    function drawFlowmeter(x, y, yArrow, val) {
+    function drawFlowmeter(x, y, val) {
         const xMiddle = x + wFlowmeter / 2.0
         const yMiddle = y + hFlowmeter / 2.0
         let flowMeter = rc.rectangle(x, y, wFlowmeter, hFlowmeter, {
@@ -351,25 +351,31 @@ var Tank = function(svg, state, links) {
 
         let text = document.createElementNS("http://www.w3.org/2000/svg", "text")
         text.setAttributeNS(null, "font-family", "Courier")
-        text.setAttributeNS(null, "font-size", "25px")
+        text.setAttributeNS(null, "font-size", "20px")
         text.setAttributeNS(null, "dominant-baseline", "middle")
-        text.setAttributeNS(null, "text-anchor", "middle")
-        text.setAttributeNS(null, "x", xMiddle)
+        text.setAttributeNS(null, "text-anchor", "end")
+        text.setAttributeNS(null, "x", xMiddle - _w(2))
         text.setAttributeNS(null, "y", yMiddle)
 
         val = parseInt(val)
-        val = (val > 9) ? val : "0" + val
-        var textNode = document.createTextNode(val + " L/m")
+        var textNode = document.createTextNode(val)
         text.appendChild(textNode)
 
         let g = document.createElementNS("http://www.w3.org/2000/svg", "g")
         g.appendChild(text)
+        
+        text = document.createElementNS("http://www.w3.org/2000/svg", "text")
+        text.setAttributeNS(null, "font-family", "Courier")
+        text.setAttributeNS(null, "font-size", "14px")
+        text.setAttributeNS(null, "dominant-baseline", "middle")
+        text.setAttributeNS(null, "text-anchor", "start")
+        text.setAttributeNS(null, "x", xMiddle + _w(2))
+        text.setAttributeNS(null, "y", yMiddle)
 
-        let arrow = rc.line(xMiddle, y + hFlowmeter, xMiddle, yArrow, {
-            roughness: 0
-        })
+        textNode = document.createTextNode("L/m")
+        text.appendChild(textNode)
+        g.appendChild(text)
 
-        svg.appendChild(arrow)
         svg.appendChild(flowMeter)
         svg.appendChild(g)
 
@@ -573,8 +579,8 @@ var Tank = function(svg, state, links) {
     
     const pipeWidth = _h(15)
     const yFlowmeter = _y(250)
-    const wFlowmeter = _w(100)
-    const hFlowmeter = _h(50)
+    const wFlowmeter = _w(70)
+    const hFlowmeter = _h(40)
     const pumpDiameter = _h(60)
     const wFilter = _w(50)
     const hFilter = 1.5 * pipeWidth
@@ -593,7 +599,7 @@ var Tank = function(svg, state, links) {
     )
     let pipeH2 = drawHPipe(
         pipeH1.xRight,
-        tank.xLeft - _w(100) - pipeH1.xRight,
+        tank.xLeft - _w(80) - pipeH1.xRight,
         pipeH1.yTop,
         state.flow_in > 0
     )
@@ -689,15 +695,13 @@ var Tank = function(svg, state, links) {
     )
 
     let flowmeterIn = drawFlowmeter(
-        tank.xLeft - _w(215),
-        yFlowmeter,
-        pipeH1.yTop,
+        tank.xLeft - _w(180),
+        pipeH2.yMiddle - hFlowmeter / 2.0,
         state.flow_in
     )
     let flowmeterOut = drawFlowmeter(
         tank.xRight + _w(250),
-        yFlowmeter,
-        pipeOutH1.yTop,
+        pipeOutH3.yMiddle - hFlowmeter / 2.0,
         state.flow_out
     )
     let pipeUrbanV = drawVPipe(
