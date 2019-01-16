@@ -554,6 +554,7 @@ var Tank = function(svg, state, links) {
 
         if (link) {
             txt.setAttributeNS(null, "text-decoration", "underline")
+            txt.setAttributeNS(null, "fill", "#8e44b4")
             addLink(
                 coords.xLeft,
                 coords.yTop,
@@ -722,7 +723,7 @@ var Tank = function(svg, state, links) {
         pipeUrbanV.xMiddle,
         pipeUrbanV.yTop - _h(20),
         "Ville " + (state.urban_network ? "ouverte" : "fermée"),
-        16,
+        14,
         true,
         urbanNetworkLink
     )
