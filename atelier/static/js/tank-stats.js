@@ -2,6 +2,7 @@ let TANK_COLOR = "#e9e9e9"
 let CITY_COLOR = "#ff6961"
 let WELL_COLOR = "#aec5e0"
 let downloadLink = document.getElementById("download")
+let loader = document.getElementById("loader")
 
 function plotHistoryOverTime(xTank, xCity, xWell, yTank, yCity, yWell) {
     yCity = yCity.map(x => -1 * x)
@@ -245,6 +246,8 @@ function plotHistoryStats(yTank, yCity, yWell) {
 
 function updateHistoryPlot() {
     downloadLink.style.visibility = "hidden"
+    loader.style.visibility = "visible"
+
     var period = document.getElementById("period").value
     var timestep = document.getElementById("timestep").value
 
@@ -266,6 +269,7 @@ function updateHistoryPlot() {
                 data.y_well
             )
             buildDownloadLink(period, timestep, data)
+            loader.style.visibility = "hidden"
         }
     };
     xhttp.open(
