@@ -42,11 +42,16 @@
     <div id="history_time_plot"></div>
     <div id="history_stats_plot"></div>
 </div>
+
+<h2>Niveau de la cuve cette semaine</h2>
+
+<div id="tank_level_plot" style="margin: 0 30px;"></div>
 {% endblock %}
 
 {% block js %}
 <script>
 var CONSUMPTION_URL = "{{ url_for('tank.consumption_data') }}";
+var TANK_LEVEL_URL = "{{ url_for('tank.water_level_history') }}";
 </script>
 
 <script src="{{ url_for('static', filename='js/plotly-latest.min.js') }}"></script>

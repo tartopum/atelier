@@ -131,3 +131,26 @@ def read_tank_volume_in_out():
             volume_in += row[1]
             volume_out += row[2]
     return start_empty, volume_in, volume_out
+
+
+def read_tank_volume_history(n_days=7):
+    start = datetime.datetime.now() - datetime.timedelta(n_days)
+    dates = []
+    rel_volumes = []
+    volume_before = 0
+    start_empty = True
+    with _connect() as conn:
+        cursor = conn.cursor()
+        for row in cursor.execute("SELECT * FROM tank_stats ORDER BY timestamp DESC"):
+            if _is_tank_empty(row) and row[0] < start:
+                start_empty = True
+                break
+            if _is_tank_full(row) and row[0] < start:
+                start_empty = False
+                break
+            if row[0] >= start:
+                dates.append(row[0])
+                rel_volumes.append(row[1] - row[2])
+            else:
+                volume_before += row[1] - row[2]
+    return start_empty, dates[::-1], rel_volumes[::-1], volume_before

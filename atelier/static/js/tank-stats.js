@@ -1,6 +1,7 @@
 let TANK_COLOR = "#e9e9e9"
 let CITY_COLOR = "#ff6961"
 let WELL_COLOR = "#aec5e0"
+let WATER_COLOR = "#aec5e0"
 let downloadLink = document.getElementById("download")
 let loader = document.getElementById("loader")
 
@@ -304,7 +305,46 @@ function buildDownloadLink(period, timestep, data) {
     downloadLink.style.visibility = "visible"
 }
 
+function plotTankLevelPlot(x, y) {
+    Plotly.newPlot(
+        document.getElementById("tank_level_plot"),
+        [{
+            x: x,
+            y: y,
+            mode: "lines",
+            marker: { color: WATER_COLOR },
+        }],
+        {
+            margin: {t: 10, r: 10},
+            xaxis: {
+                fixedrange: true,
+                showline: true,
+                zeroline: false,
+            },
+            yaxis: {
+                title: "Volume entre les capteurs (L)",
+                showline: true,
+                zeroline: false,
+                fixedrange: true,
+            },
+        }
+    )
+}
+
+function updateTankLevelPlot() {
+    var xhttp = new XMLHttpRequest()
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            let data = JSON.parse(xhttp.responseText)
+            plotTankLevelPlot(data.dates, data.volumes)
+        }
+    }
+    xhttp.open("GET", TANK_LEVEL_URL, true)
+    xhttp.send()
+}
+
 document.getElementById("period").addEventListener("change", updateHistoryPlot)
 document.getElementById("timestep").addEventListener("change", updateHistoryPlot)
 
 updateHistoryPlot()
+updateTankLevelPlot()

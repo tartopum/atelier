@@ -7,6 +7,7 @@ import requests
 
 from . import arduino, db
 from .config import config
+from .helpers import auth
 
 
 state = dict()
@@ -14,17 +15,38 @@ arduino_endpoint = "tank"
 blueprint = Blueprint("tank", __name__, template_folder="templates")
 
 
-def water_level():
-    start_empty, volume_in, volume_out = db.read_tank_volume_in_out()
-    total_volume = (
+def total_volume():
+    return (
         config["tank"]["height_between_sensors"]
         * math.pi * config["tank"]["radius"] ** 2
         / 1000
     )
-    water_volume = 0 if start_empty else total_volume
+
+
+def water_level():
+    start_empty, volume_in, volume_out = db.read_tank_volume_in_out()
+    water_volume = 0 if start_empty else total_volume()
     water_volume = water_volume + volume_in - volume_out
-    ratio = water_volume / total_volume
+    ratio = water_volume / total_volume()
     return min(max(0, ratio), 1)
+
+
+@blueprint.route("/stats/niveau-cuve")
+@auth.login_required
+def water_level_history():
+    start_empty, dates, rel_volumes, volume_before = db.read_tank_volume_history()
+    start_volume = (0 if start_empty else total_volume()) + volume_before
+    dates, rel_volumes = _bin_time_series(dates, rel_volumes, dt.timedelta(hours=1))
+    rel_volumes = [sum(bin_vol) for bin_vol in rel_volumes]
+    for i, delta in enumerate(rel_volumes):
+        if i == 0:
+            rel_volumes[i] = start_volume + delta
+        else:
+            rel_volumes[i] = rel_volumes[i - 1] + delta
+    return jsonify({
+        "dates": [d.strftime("%Y-%m-%d %H") for d in dates],
+        "volumes": rel_volumes,
+    })
 
 
 def config_arduino():
@@ -136,6 +158,7 @@ def _consumption_data(timestep, duration):
 
 
 @blueprint.route("/stats/consommation")
+@auth.login_required
 def consumption_data():
     try:
         days = int(request.args.get("days"))
