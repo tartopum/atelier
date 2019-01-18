@@ -10,7 +10,7 @@ class Alert
         Alert(
             const char *name,
             const char *msg,
-            void (*send)(const char *, const char *),
+            void (*send)(const char *, const char *, byte),
             AlertLight *light,
             alert_level_t level,
             unsigned int reminderDelay = 60 // min
@@ -25,7 +25,7 @@ class Alert
         unsigned long _reminderDelay;
         bool _sent = false;
         unsigned long _lastTimeSent = 0;
-        void (*_send)(const char *, const char *);
+        void (*_send)(const char *, const char *, byte);
 };
 
 #endif

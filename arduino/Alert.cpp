@@ -3,7 +3,7 @@
 Alert::Alert(
     const char *name,
     const char *msg,
-    void (*send)(const char *, const char *),
+    void (*send)(const char *, const char *, byte),
     AlertLight *light,
     alert_level_t level,
     unsigned int reminderDelay
@@ -33,5 +33,5 @@ void Alert::raise(bool problemDetected)
     if (_sent && (millis() - _lastTimeSent) < _reminderDelay) return;
     _sent = true;
     _lastTimeSent = millis();
-    _send(_name, _msg);
+    _send(_name, _msg, (byte)_level);
 }

@@ -22,7 +22,7 @@ char apiIp[] = "192.168.167.101";
 char apiAuthHeader[100] = "";
 int apiPort = 5000;
 
-void sendAlert(const char *name, const char *message)
+void sendAlert(const char *name, const char *message, byte level)
 {
     EthernetClient client;
     if (client.connect(apiIp, apiPort) != 1) {
@@ -31,8 +31,13 @@ void sendAlert(const char *name, const char *message)
 
     const char *start = "{\"name\": \"";
     const char *messageKey = "\", \"message\": \"";
+    const char *levelKey = "\", \"level\": \"";
     const char *end = "\"}";
-    unsigned int len = strlen(start) + strlen(name) + strlen(messageKey) + strlen(message) + strlen(end);
+    unsigned int len = (
+        strlen(start) + strlen(name) + strlen(messageKey) + strlen(message) +
+        strlen(levelKey) + 1 + strlen(end)
+    );
+
     client.println("POST /alert HTTP/1.1");
     client.print("Host: ");
     client.print(apiIp);
@@ -51,6 +56,8 @@ void sendAlert(const char *name, const char *message)
     client.print(name);
     client.print(messageKey);
     client.print(message);
+    client.print(levelKey);
+    client.print(level);
     client.println(end);
 
     delay(20);

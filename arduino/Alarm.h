@@ -17,7 +17,7 @@ class Alarm
             int,
             int,
             AlertLight *alertLight,
-            void (*sendAlert)(const char *, const char *)
+            void (*sendAlert)(const char *, const char *, byte)
         );
         // The movement detector stays active ~ 8 seconds after we leave the room
         unsigned long millisBeforeAlert = 15000;
