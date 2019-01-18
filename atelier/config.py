@@ -131,7 +131,15 @@ schema.add_section("server", "Serveur")
 schema.add_ip("server", "ip")
 schema.add_port("server", "port")
 schema.add_parameter("server", "db_path", {"type": "string"})
-schema.add_parameter("server", "credentials", {
+schema.add_parameter("server", "http_credentials", {
+    "type": "array",
+    "minItems": 2,
+    "maxItems": 2,
+    "items": {
+        "type": "string"
+    }
+})
+schema.add_parameter("server", "sms_credentials", {
     "type": "array",
     "minItems": 2,
     "maxItems": 2,

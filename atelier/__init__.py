@@ -36,7 +36,7 @@ def after_request(response):
 
 def config_arduino():
     credentials = b64encode(
-        bytes(":".join(config["server"]["credentials"]), "utf8")
+        bytes(":".join(config["server"]["http_credentials"]), "utf8")
     ).decode("utf8")
     config.validate()
     arduino.post(
@@ -162,8 +162,9 @@ def receive_alert():
         data = request.get_json()
         name = data["name"]
         msg = data["message"]
+        level = data["level"]
     except (json.decoder.JSONDecodeError, KeyError) as e:
         return f"{e.__class__.__name__}: {e}", 500
     else:
-        raise_alert(name, msg)
+        raise_alert(name, msg, level)
     return ""

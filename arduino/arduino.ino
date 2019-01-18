@@ -31,8 +31,8 @@ void sendAlert(const char *name, const char *message, byte level)
 
     const char *start = "{\"name\": \"";
     const char *messageKey = "\", \"message\": \"";
-    const char *levelKey = "\", \"level\": \"";
-    const char *end = "\"}";
+    const char *levelKey = "\", \"level\": ";
+    const char *end = "}";
     unsigned int len = (
         strlen(start) + strlen(name) + strlen(messageKey) + strlen(message) +
         strlen(levelKey) + 1 + strlen(end)

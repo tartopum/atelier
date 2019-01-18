@@ -4,9 +4,13 @@
     "port": 5000,
     "db_path": "db.sqlite3",
     "debug": 0,
-    "credentials": [
+    "http_credentials": [
       "test",
       "test"
+    ],
+    "sms_credentials": [
+      "",
+      ""
     ],
     "max_alert_day_old": 7
   },
