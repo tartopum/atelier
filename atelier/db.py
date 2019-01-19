@@ -41,9 +41,6 @@ def create_tables():
              volume_in INTEGER,
              volume_out_tank INTEGER,
              volume_out_urban_network INTEGER,
-             urban_network BOOLEAN,
-             flow_in REAL,
-             flow_out REAL,
              is_tank_full BOOLEAN,
              is_tank_empty BOOLEAN
         )
@@ -89,7 +86,7 @@ def store_tank_stats(data):
         cursor.execute(
             "INSERT INTO tank_stats VALUES("
             ":now, :volume_in, :volume_out_tank, :volume_out_urban_network, "
-            ":urban_network, :flow_in, :flow_out, :is_tank_full, :is_tank_empty"
+            ":is_tank_full, :is_tank_empty"
             ")",
             data
         )
@@ -108,11 +105,11 @@ def read_tank_stats(start, end=None):
 
 
 def _is_tank_empty(row):
-    return row[8]
+    return row[5]
 
 
 def _is_tank_full(row):
-    return row[7]
+    return row[4]
 
 
 def read_tank_volume_in_out():

@@ -496,10 +496,7 @@ void Tank::httpRouteStats(WebServer &server, WebServer::ConnectionType type)
     server << "\"volume_out_urban_network\": " << _volumeOutUrbanNetwork << ", ";
     _volumeOutUrbanNetwork = 0;
 
-    server << "\"urban_network\": " << isOn(_pinUrbanNetwork) << ", ";
     server << "\"is_tank_full\": " << isTankFull() << ", ";
-    server << "\"is_tank_empty\": " << isTankEmpty() << ", ";
-    server << "\"flow_in\": " << _flowIn << ", ";
-    server << "\"flow_out\": " << _flowOut;
+    server << "\"is_tank_empty\": " << isTankEmpty();
     server << " }";
 }
