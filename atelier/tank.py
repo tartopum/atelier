@@ -31,24 +31,6 @@ def water_level():
     return min(max(0, ratio), 1)
 
 
-@blueprint.route("/stats/niveau-cuve")
-@auth.login_required
-def water_level_history():
-    start_empty, dates, rel_volumes, volume_before = db.read_tank_volume_history()
-    start_volume = (0 if start_empty else total_volume()) + volume_before
-    dates, rel_volumes = _bin_time_series(dates, rel_volumes, dt.timedelta(hours=1))
-    rel_volumes = [sum(bin_vol) for bin_vol in rel_volumes]
-    for i, delta in enumerate(rel_volumes):
-        if i == 0:
-            rel_volumes[i] = start_volume + delta
-        else:
-            rel_volumes[i] = rel_volumes[i - 1] + delta
-    return jsonify({
-        "dates": [d.strftime("%Y-%m-%d %H") for d in dates],
-        "volumes": rel_volumes,
-    })
-
-
 def config_arduino():
     arduino.post(
         arduino_endpoint,
@@ -121,10 +103,22 @@ def _bin_time_series(dates, data, binsize):
     return binned_dates, [binned_data[d] for d in binned_dates]
 
 
+def _date_format_from_step(timestep):
+    if timestep >= dt.timedelta(days=365):
+        return "%Y"
+    if timestep >= dt.timedelta(days=31):
+        return "%Y-%m"
+    if timestep >= dt.timedelta(days=1):
+        return "%Y-%m-%d"
+    if timestep >= dt.timedelta(hours=1):
+        return "%Y-%m-%d %H"
+    return "%Y-%m-%d %H:%M"
+
+
 def _consumption_data(timestep, duration):
     try:
         end = dt.datetime.strptime(request.args.get("end", ""), "%Y-%m-%d")
-    except (ValueError, KeyError) as e:
+    except (ValueError, KeyError):
         end = dt.datetime.now()
 
     start = end - duration
@@ -136,16 +130,7 @@ def _consumption_data(timestep, duration):
     dates_well, y_well = _bin_time_series(dates, y_well, timestep)
     dates_tank, y_tank = _bin_time_series(dates, y_tank, timestep)
     dates_city, y_city = _bin_time_series(dates, y_city, timestep)
-
-    date_format = "%Y-%m-%d %H:%M"
-    if timestep >= dt.timedelta(hours=1):
-        date_format = "%Y-%m-%d %H"
-    if timestep >= dt.timedelta(days=1):
-        date_format = "%Y-%m-%d"
-    if timestep >= dt.timedelta(days=31):
-        date_format = "%Y-%m"
-    if timestep >= dt.timedelta(days=365):
-        date_format = "%Y"
+    date_format = _date_format_from_step(timestep)
 
     return jsonify({
         "x_tank": [d.strftime(date_format) for d in dates_tank],
@@ -163,20 +148,60 @@ def consumption_data():
     try:
         days = int(request.args.get("days"))
         assert days > 0, "The number of days must be positive"
-        timestep = int(request.args.get("timestep", 0))
-        assert timestep >= 0, "The timestep must be greater than or equal to 0"
+        timestep = int(request.args.get("timestep"))
+        assert timestep > 0, "The timestep must be positive"
     except (TypeError, ValueError, AssertionError) as e:
         return str(e), 400
-
-    if not timestep:
-        max_points = 100
-        step_sizes = [60, 180, 360, 720, 1440, 4320, 10080, 20160, 43200]  # minutes
-        n_minutes = days * 24 * 60
-        for timestep in step_sizes:
-            if n_minutes / timestep <= max_points:
-                break
 
     return _consumption_data(
         dt.timedelta(minutes=timestep),
         dt.timedelta(days)
     )
+
+
+@blueprint.route("/stats/niveau-cuve")
+@auth.login_required
+def water_level_history():
+    start_empty, dates, rel_volumes, volume_before = db.read_tank_volume_history()
+    start_volume = (0 if start_empty else total_volume()) + volume_before
+    dates, rel_volumes = _bin_time_series(dates, rel_volumes, dt.timedelta(hours=1))
+    rel_volumes = [sum(bin_vol) for bin_vol in rel_volumes]
+    for i, delta in enumerate(rel_volumes):
+        if i == 0:
+            rel_volumes[i] = start_volume + delta
+        else:
+            rel_volumes[i] = rel_volumes[i - 1] + delta
+    return jsonify({
+        "dates": [d.strftime("%Y-%m-%d %H") for d in dates],
+        "volumes": rel_volumes,
+    })
+
+
+@blueprint.route("/stats/pompes")
+@auth.login_required
+def pumps_data():
+    try:
+        days = int(request.args.get("days"))
+        assert days > 0, "The number of days must be positive"
+        timestep = int(request.args.get("timestep"))
+        assert timestep > 0, "The timestep must be positive"
+    except (TypeError, ValueError, AssertionError) as e:
+        return str(e), 400
+
+    timestep = dt.timedelta(minutes=timestep)
+    dates, running_in, running_out = db.read_pumps_history(n_days=days)
+    binned_dates, running_in = _bin_time_series(dates, running_in, timestep)
+    _, running_out = _bin_time_series(dates, running_out, timestep)
+    date_format = _date_format_from_step(timestep)
+
+    return jsonify({
+        "dates": [d.strftime(date_format) for d in binned_dates],
+        "pump_in": [
+            sum(period, dt.timedelta(0)).total_seconds() // 60
+            for period in running_in
+        ],
+        "pump_out": [
+            sum(period, dt.timedelta(0)).total_seconds() // 60
+            for period in running_out
+        ],
+    })

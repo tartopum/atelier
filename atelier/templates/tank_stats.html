@@ -8,7 +8,7 @@
 <div class="config">
     Pendant
     <div class="styled-select period">
-        <select id="period">
+        <select id="period-consumption">
             <option value="1">1 jour</option>
             <option value="7">1 semaine</option>
             <option value="30">1 mois</option>
@@ -20,7 +20,7 @@
     </div>
     par
     <div class="styled-select timestep">
-        <select id="timestep">
+        <select id="timestep-consumption">
             <option value="60">heure</option>
             <option value="240">4 heures</option>
             <option value="720">demi-journée</option>
@@ -46,12 +46,42 @@
 <h2>Niveau de la cuve cette semaine</h2>
 
 <div id="tank_level_plot" style="margin: 0 30px;"></div>
+
+<h2>Historique de fonctionnement des pompes</h2>
+
+<div class="config">
+    Pendant
+    <div class="styled-select period">
+        <select id="period-pumps">
+            <option value="7">1 semaine</option>
+            <option value="30">1 mois</option>
+            <option value="90">3 mois</option>
+            <option value="180">6 mois</option>
+            <option value="365">1 an</option>
+            <option value="730">2 ans</option>
+        </select>
+    </div>
+    par
+    <div class="styled-select timestep">
+        <select id="timestep-pumps">
+            <option value="60">heure</option>
+            <option value="240">4 heures</option>
+            <option value="720">demi-journée</option>
+            <option value="1440">jour</option>
+            <option value="10080">semaine</option>
+            <option value="20160">14 jours</option>
+            <option value="43200">mois</option>
+        </select>
+    </div>
+</div>
+<div id="pumps_history_plot" style="margin: 0 30px;"></div>
 {% endblock %}
 
 {% block js %}
 <script>
 var CONSUMPTION_URL = "{{ url_for('tank.consumption_data') }}";
 var TANK_LEVEL_URL = "{{ url_for('tank.water_level_history') }}";
+var PUMPS_URL = "{{ url_for('tank.pumps_data') }}";
 </script>
 
 <script src="{{ url_for('static', filename='js/plotly-latest.min.js') }}"></script>

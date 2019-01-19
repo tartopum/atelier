@@ -11,6 +11,13 @@ _HERE = os.path.dirname(__file__)
 _PATH = os.path.join(_HERE, "..", config["server"]["db_path"])
 _ALERT_TABLE = "alerts"
 
+TANK_DATE_COL = 0
+TANK_VOL_IN_COL = 1
+TANK_VOL_OUT_TANK_COL = 2
+TANK_VOL_OUT_CITY_COL = 3
+TANK_FULL_COL = 4
+TANK_EMPTY_COL = 5
+
 lock = Lock()
 
 @contextmanager
@@ -104,14 +111,6 @@ def read_tank_stats(start, end=None):
         return cursor.fetchall()
 
 
-def _is_tank_empty(row):
-    return row[5]
-
-
-def _is_tank_full(row):
-    return row[4]
-
-
 def read_tank_volume_in_out():
     volume_in = 0
     volume_out = 0
@@ -119,14 +118,14 @@ def read_tank_volume_in_out():
     with _connect() as conn:
         cursor = conn.cursor()
         for row in cursor.execute("SELECT * FROM tank_stats ORDER BY timestamp DESC"):
-            if _is_tank_empty(row):
+            if row[TANK_EMPTY_COL]:
                 start_empty = True
                 break
-            if _is_tank_full(row):
+            if row[TANK_FULL_COL]:
                 start_empty = False
                 break
-            volume_in += row[1]
-            volume_out += row[2]
+            volume_in += row[TANK_VOL_IN_COL]
+            volume_out += row[TANK_VOL_OUT_TANK_COL]
     return start_empty, volume_in, volume_out
 
 
@@ -139,15 +138,39 @@ def read_tank_volume_history(n_days=7):
     with _connect() as conn:
         cursor = conn.cursor()
         for row in cursor.execute("SELECT * FROM tank_stats ORDER BY timestamp DESC"):
-            if _is_tank_empty(row) and row[0] < start:
+            if row[TANK_EMPTY_COL] and row[TANK_DATE_COL] < start:
                 start_empty = True
                 break
-            if _is_tank_full(row) and row[0] < start:
+            if row[TANK_FULL_COL] and row[TANK_DATE_COL] < start:
                 start_empty = False
                 break
-            if row[0] >= start:
-                dates.append(row[0])
-                rel_volumes.append(row[1] - row[2])
+            if row[TANK_DATE_COL] >= start:
+                dates.append(row[TANK_DATE_COL])
+                rel_volumes.append(row[TANK_VOL_IN_COL] - row[TANK_VOL_OUT_TANK_COL])
             else:
-                volume_before += row[1] - row[2]
+                volume_before += row[TANK_VOL_IN_COL] - row[TANK_VOL_OUT_TANK_COL]
     return start_empty, dates[::-1], rel_volumes[::-1], volume_before
+
+
+def read_pumps_history(n_days=7):
+    start = datetime.datetime.now() - datetime.timedelta(n_days)
+    dates = []
+    running_in = []
+    running_out = []
+    with _connect() as conn:
+        cursor = conn.cursor()
+        q = "SELECT * FROM tank_stats WHERE timestamp >= :start ORDER BY timestamp"
+        for row in cursor.execute(q, (start,)):
+            dates.append(row[TANK_DATE_COL])
+            running_in.append(row[TANK_VOL_IN_COL] > 0)
+            running_out.append(row[TANK_VOL_OUT_TANK_COL] > 0)
+    for i in range(len(dates)):
+        try:
+            delta = dates[i + 1] - dates[i]
+        except IndexError:
+            # For the last measure, we consider it is the same duration as the
+            # previous one
+            delta = dates[i] - dates[i - 1]
+        running_in[i] = delta if running_in[i] else datetime.timedelta(0)
+        running_out[i] = delta if running_out[i] else datetime.timedelta(0)
+    return dates, running_in, running_out

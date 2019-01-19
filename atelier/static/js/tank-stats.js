@@ -245,12 +245,56 @@ function plotHistoryStats(yTank, yCity, yWell) {
     )
 }
 
+function plotPumpHistory(x, pumpIn, pumpOut) {
+    Plotly.newPlot(
+        document.getElementById("pumps_history_plot"),
+        [{
+            type: "bar",
+            x: x,
+            y: pumpIn,
+            name: "Pompe du puits",
+            mode: "lines",
+            hoverinfo: "x+y",
+            marker: { color: WELL_COLOR },
+        }, {
+            type: "bar",
+            x: x,
+            y: pumpOut,
+            name: "Pompe du surpresseur",
+            mode: "lines",
+            hoverinfo: "x+y",
+            marker: { color: TANK_COLOR },
+        }],
+        {
+            barmode: "relative",
+            margin: {t: 10, r: 10},
+            xaxis: {
+                fixedrange: true,
+                showline: true,
+                zeroline: false,
+            },
+            yaxis: {
+                title: "Durée de fonctionnement (min)",
+                showline: true,
+                zeroline: false,
+                fixedrange: true,
+            },
+            legend: {
+                x: 0.5,
+                y: 1.1,
+                orientation: "h",
+                xanchor: "center",
+            },
+        }
+    )
+}
+
 function updateHistoryPlot() {
     downloadLink.style.visibility = "hidden"
     loader.style.visibility = "visible"
 
-    var period = document.getElementById("period").value
-    var timestep = document.getElementById("timestep").value
+    var period = document.getElementById("period-consumption").value
+    var timestep = document.getElementById("timestep-consumption").value
 
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
@@ -276,6 +320,32 @@ function updateHistoryPlot() {
     xhttp.open(
         "GET",
         CONSUMPTION_URL + "?days=" + encodeURIComponent(period) + "&timestep=" + encodeURIComponent(timestep),
+        true
+    );
+    xhttp.send();
+}
+
+function updatePumpsPlot() {
+    downloadLink.style.visibility = "hidden"
+    loader.style.visibility = "visible"
+
+    var period = document.getElementById("period-pumps").value
+    var timestep = document.getElementById("timestep-pumps").value
+
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            let data = JSON.parse(xhttp.responseText)
+            plotPumpHistory(
+                data.dates,
+                data.pump_in,
+                data.pump_out
+            )
+        }
+    };
+    xhttp.open(
+        "GET",
+        PUMPS_URL + "?days=" + encodeURIComponent(period) + "&timestep=" + encodeURIComponent(timestep),
         true
     );
     xhttp.send();
@@ -343,8 +413,11 @@ function updateTankLevelPlot() {
     xhttp.send()
 }
 
-document.getElementById("period").addEventListener("change", updateHistoryPlot)
-document.getElementById("timestep").addEventListener("change", updateHistoryPlot)
+document.getElementById("period-consumption").addEventListener("change", updateHistoryPlot)
+document.getElementById("timestep-consumption").addEventListener("change", updateHistoryPlot)
+document.getElementById("period-pumps").addEventListener("change", updatePumpsPlot)
+document.getElementById("timestep-pumps").addEventListener("change", updatePumpsPlot)
 
 updateHistoryPlot()
 updateTankLevelPlot()
+updatePumpsPlot()
