@@ -93,6 +93,7 @@
 var CONSUMPTION_URL = "{{ url_for('tank.consumption_data') }}";
 var TANK_LEVEL_URL = "{{ url_for('tank.water_level_history') }}";
 var PUMPS_URL = "{{ url_for('tank.pumps_data') }}";
+var VOLUME_BETWEEN_SENSORS = {{ volume_between_sensors }};
 </script>
 
 <script src="{{ url_for('static', filename='js/plotly-latest.min.js') }}"></script>

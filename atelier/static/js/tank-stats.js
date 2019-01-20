@@ -454,6 +454,7 @@ function plotTankLevelPlot(x, y) {
                 showline: true,
                 zeroline: false,
                 fixedrange: true,
+                range: [0, VOLUME_BETWEEN_SENSORS],
             },
         }
     )

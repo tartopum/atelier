@@ -141,7 +141,10 @@ def tank_state():
 @app.route("/eau/statistiques")
 @arduino.get_route
 def tank_stats_route():
-    return render_template("tank_stats.html")
+    return render_template(
+        "tank_stats.html",
+        volume_between_sensors=tank.total_volume(),
+    )
 
 
 @app.route("/debug")
