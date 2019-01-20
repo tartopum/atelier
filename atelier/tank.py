@@ -162,8 +162,8 @@ def consumption_data():
 @blueprint.route("/stats/niveau-cuve")
 @auth.login_required
 def water_level_history():
-    start_empty, dates, rel_volumes, volume_before = db.read_tank_volume_history()
-    start_volume = (0 if start_empty else total_volume()) + volume_before
+    ref_empty, dates, rel_volumes, delta_volume = db.read_tank_volume_history()
+    start_volume = (0 if ref_empty else total_volume()) + delta_volume
     dates, rel_volumes = _bin_time_series(dates, rel_volumes, dt.timedelta(hours=1))
     rel_volumes = [sum(bin_vol) for bin_vol in rel_volumes]
     for i, delta in enumerate(rel_volumes):

@@ -292,13 +292,16 @@ function plotPumpStats(pumpIn, pumpOut) {
 }
 
 function plotPumpHistory(x, pumpIn, pumpOut) {
+    pumpIn = pumpIn.map(x => x / 60)
+    pumpOut = pumpOut.map(x => x / 60)
+
     Plotly.newPlot(
         document.getElementById("pumps_history_plot"),
         [{
             type: "bar",
             x: x,
             y: pumpIn,
-            name: "Pompe du puits",
+            name: "Puits",
             mode: "lines",
             hoverinfo: "x+y",
             marker: { color: WELL_COLOR },
@@ -306,7 +309,7 @@ function plotPumpHistory(x, pumpIn, pumpOut) {
             type: "bar",
             x: x,
             y: pumpOut,
-            name: "Pompe du surpresseur",
+            name: "Surpresseur",
             mode: "lines",
             hoverinfo: "x+y",
             marker: { color: TANK_COLOR },
@@ -320,7 +323,7 @@ function plotPumpHistory(x, pumpIn, pumpOut) {
                 zeroline: false,
             },
             yaxis: {
-                title: "Durée de fonctionnement (min)",
+                title: "Durée de fonctionnement (h)",
                 showline: true,
                 zeroline: false,
                 fixedrange: true,

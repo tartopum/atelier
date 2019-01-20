@@ -133,23 +133,36 @@ def read_tank_volume_history(n_days=7):
     start = datetime.datetime.now() - datetime.timedelta(n_days)
     dates = []
     rel_volumes = []
-    volume_before = 0
-    start_empty = True
+    volume_delta_before = 0
+    volume_delta_after = 0
+    is_ref_before = False
+    ref_empty = None
     with _connect() as conn:
         cursor = conn.cursor()
         for row in cursor.execute("SELECT * FROM tank_stats ORDER BY timestamp DESC"):
-            if row[TANK_EMPTY_COL] and row[TANK_DATE_COL] < start:
-                start_empty = True
+            if ref_empty is not None and row[TANK_DATE_COL] < start:
                 break
-            if row[TANK_FULL_COL] and row[TANK_DATE_COL] < start:
-                start_empty = False
-                break
+            is_ref_before = row[TANK_DATE_COL] < start
+            if row[TANK_EMPTY_COL]:
+                ref_empty = True
+                volume_delta_after = 0
+            if row[TANK_FULL_COL]:
+                ref_empty = False
+                volume_delta_after = 0
+
             if row[TANK_DATE_COL] >= start:
                 dates.append(row[TANK_DATE_COL])
                 rel_volumes.append(row[TANK_VOL_IN_COL] - row[TANK_VOL_OUT_TANK_COL])
+                volume_delta_after += row[TANK_VOL_IN_COL] - row[TANK_VOL_OUT_TANK_COL]
             else:
-                volume_before += row[TANK_VOL_IN_COL] - row[TANK_VOL_OUT_TANK_COL]
-    return start_empty, dates[::-1], rel_volumes[::-1], volume_before
+                volume_delta_before += row[TANK_VOL_IN_COL] - row[TANK_VOL_OUT_TANK_COL]
+
+    # If the reference is after the start, we have:
+    # start = ref - delta_after
+    # Otherwise, we have:
+    # ref + delta_before = start
+    delta_volume = volume_delta_before if is_ref_before else -volume_delta_after
+    return ref_empty, dates[::-1], rel_volumes[::-1], delta_volume
 
 
 def read_pumps_history(n_days=7):
