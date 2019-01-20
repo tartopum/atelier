@@ -54,6 +54,7 @@ class Tank
         bool canCleanFilter();
         bool pumpOutRunningForTooLong();
         bool canPumpOutRun();
+        bool isFillingCycleEmpty();
 
         void httpRoute(WebServer &server, WebServer::ConnectionType type);
         void httpRouteStats(WebServer &server, WebServer::ConnectionType type);
@@ -85,6 +86,7 @@ class Tank
         unsigned long _lastTimePumpInOff = 0; // ms
         unsigned long _timePumpInStarted = 0; // ms
         unsigned long _pumpInStartDuration = 60000; // ms
+        int _volumeInCurCycle = -1;
 
         bool _pumpOutActivated = true;
         unsigned int _volumeBeforePumpOut = 500; // L
@@ -115,6 +117,7 @@ class Tank
         Alert _urbanNetworkUsedAlert;
         Alert _manualModeAlert;
         Alert _pumpOutRunningForTooLongAlert;
+        Alert _noFlowInAlert;
         Alert _pumpInDisabledAlert;
         Alert _pumpOutDisabledAlert;
 

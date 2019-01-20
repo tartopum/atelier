@@ -78,6 +78,13 @@ Tank::Tank(
         MID_ALERT,
         240
     ),
+    _noFlowInAlert(
+        "tank",
+        "La pompe du puits n'a pas remonté d'eau durant le cycle de remplissage.",
+        sendAlert,
+        lightFatal,
+        MID_ALERT
+    ),
     _pumpInDisabledAlert(
         "",
         "",
@@ -205,6 +212,15 @@ bool Tank::canPumpOutRun()
     return digitalRead(_pinPumpOutCanRun) == HIGH;
 }
 
+bool Tank::isFillingCycleEmpty()
+{
+    return (
+        isOn(_pinPumpIn) &&
+        (millis() - _timePumpInStarted > _pumpInStartDuration) &&
+        _volumeInCurCycle == 0
+    );
+}
+
 /*
  * Output
  */
@@ -217,6 +233,8 @@ void Tank::_cmdPumpIn(bool on)
 
     if (!on && isOn(_pinPumpIn)) _lastTimePumpInOff = millis();
     if (on && !isOn(_pinPumpIn)) _timePumpInStarted = millis();
+
+    if (on) _volumeInCurCycle = 0;
 
     digitalWrite(_pinPumpIn, on ? HIGH : LOW); 
 }
@@ -255,10 +273,11 @@ void Tank::loop()
     _overpressureAlert.raise(isOverpressured());
     _pumpOutRunningForTooLongAlert.raise(pumpOutRunningForTooLong());
     _urbanNetworkUsedAlert.raise(isOn(_pinUrbanNetwork));
+    _noFlowInAlert.raise(isFillingCycleEmpty());
     _pumpInDisabledAlert.raise(!_pumpInActivated);
     _pumpOutDisabledAlert.raise(!_pumpOutActivated);
 
-    if (isMotorInBlocked() || isFilterInBlocked()) {
+    if (isMotorInBlocked() || isFilterInBlocked() || isFillingCycleEmpty()) {
         _cmdPumpIn(false);
         _pumpInActivated = false;
     }
@@ -310,7 +329,7 @@ void Tank::loop()
     }
 
     // Command pump-in
-    if (isOff(_pinPumpIn) && isWellFull() && !isTankFull() && !isFilterInBlocked()) {
+    if (_pumpInActivated && isOff(_pinPumpIn) && isWellFull() && !isTankFull()) {
         _cmdPumpIn(true);
     }
     if (isOn(_pinPumpIn) && (isWellEmpty() || isTankFull())) {
@@ -326,6 +345,7 @@ void Tank::flowInPulsed()
     _flowInPulses++;
     _volumeCollectedSinceEmpty++;
     _volumeIn++;
+    _volumeInCurCycle++;
 }
 
 void Tank::flowOutPulsed()

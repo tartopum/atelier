@@ -12,7 +12,7 @@
       "",
       ""
     ],
-    "max_alert_day_old": 7
+    "max_alert_day_old": 3
   },
   "arduino": {
     "ip": "192.168.167.100",
