@@ -228,12 +228,12 @@ header .nav  ul li.active {
     cursor: pointer;
 }
 
-#content.tank_stats #loader {
+#content.tank_stats .loader {
     margin-left: 25px;
     vertical-align: middle;
 }
 
-#content.tank_stats #download {
+#content.tank_stats .download {
     margin-left: 25px;
     vertical-align: bottom;
 }

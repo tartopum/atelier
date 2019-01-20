@@ -2,8 +2,11 @@ let TANK_COLOR = "#e9e9e9"
 let CITY_COLOR = "#ff6961"
 let WELL_COLOR = "#aec5e0"
 let WATER_COLOR = "#aec5e0"
-let downloadLink = document.getElementById("download")
-let loader = document.getElementById("loader")
+let downloadConsumption = document.getElementById("download-consumption")
+let downloadPumps = document.getElementById("download-pumps")
+let loaderConsumption = document.getElementById("loader-consumption")
+let loaderTankLevel = document.getElementById("loader-tank-level")
+let loaderPumps = document.getElementById("loader-pumps")
 
 function plotHistoryOverTime(xTank, xCity, xWell, yTank, yCity, yWell) {
     yCity = yCity.map(x => -1 * x)
@@ -44,7 +47,7 @@ function plotHistoryOverTime(xTank, xCity, xWell, yTank, yCity, yWell) {
                 orientation: "v",
             },
             barmode: "relative",
-            margin: {t: 30, r: 30},
+            margin: {t: 30, r: 60},
             xaxis: {
                 showline: false,
             },
@@ -148,7 +151,7 @@ function plotHistoryStats(yTank, yCity, yWell) {
             grid: {rows: 2, columns: 2, pattern: "independent"},
             barmode: "grouped",
             showlegend: false,
-            margin: {t: 30, r: 10, l: 30},
+            margin: {t: 50, r: 10, l: 30},
             xaxis: {
                 showline: true,
                 fixedrange: true,
@@ -290,8 +293,8 @@ function plotPumpHistory(x, pumpIn, pumpOut) {
 }
 
 function updateHistoryPlot() {
-    downloadLink.style.visibility = "hidden"
-    loader.style.visibility = "visible"
+    downloadConsumption.style.visibility = "hidden"
+    loaderConsumption.style.visibility = "visible"
 
     var period = document.getElementById("period-consumption").value
     var timestep = document.getElementById("timestep-consumption").value
@@ -313,8 +316,15 @@ function updateHistoryPlot() {
                 data.y_city,
                 data.y_well
             )
-            buildDownloadLink(period, timestep, data)
-            loader.style.visibility = "hidden"
+            let csv = "date,puits (L),cuve (L),ville (L)\r\n"
+            for (let i = 0; i < data.x_tank.length; i++) {
+                csv += (
+                    data.x_tank[i] + "," + data.y_well[i] + "," + data.y_tank[i] + "," +
+                    data.y_city[i] + "\r\n"
+                )
+            }
+            buildDownloadLink(downloadConsumption, "consommation_eau", period, timestep, csv)
+            loaderConsumption.style.visibility = "hidden"
         }
     };
     xhttp.open(
@@ -326,8 +336,8 @@ function updateHistoryPlot() {
 }
 
 function updatePumpsPlot() {
-    downloadLink.style.visibility = "hidden"
-    loader.style.visibility = "visible"
+    downloadPumps.style.visibility = "hidden"
+    loaderPumps.style.visibility = "visible"
 
     var period = document.getElementById("period-pumps").value
     var timestep = document.getElementById("timestep-pumps").value
@@ -341,6 +351,15 @@ function updatePumpsPlot() {
                 data.pump_in,
                 data.pump_out
             )
+            let csv = "date,puits (min),cuve (min)\r\n"
+            for (let i = 0; i < data.dates.length; i++) {
+                csv += (
+                    data.dates[i] + "," + data.pump_in[i] + "," + data.pump_out[i]
+                    + "\r\n"
+                )
+            }
+            buildDownloadLink(downloadPumps, "consommation_pompes", period, timestep, csv)
+            loaderPumps.style.visibility = "hidden"
         }
     };
     xhttp.open(
@@ -351,28 +370,20 @@ function updatePumpsPlot() {
     xhttp.send();
 }
 
-function buildDownloadLink(period, timestep, data) {
-    let csvContent = "data:text/csv;charset=utf-8,";
-    csvContent += "date,puits,cuve,ville\r\n"
-    for (let i = 0; i < data.x_tank.length; i++) {
-        csvContent += (
-            data.x_tank[i] + "," + data.y_well[i] + "," + data.y_tank[i] + "," +
-            data.y_city[i] + "\r\n"
-        )
-    }
-
+function buildDownloadLink(link, prefix, period, timestep, csv) {
+    let csvContent = "data:text/csv;charset=utf-8," + csv;
     let encodedUri = encodeURI(csvContent)
     let now = new Date()
     let datetime = (
         now.getFullYear() + "_" + (now.getMonth() + 1) + "_" + now.getDate() +
         "_" + now.getHours() + "_" + now.getMinutes()
     )
-    downloadLink.setAttribute("href", encodedUri)
-    downloadLink.setAttribute(
+    link.setAttribute("href", encodedUri)
+    link.setAttribute(
         "download",
-        "consommation_eau_" + datetime + "_" + period + "jours_" + timestep + "minutes.csv"
+        prefix + "_" + datetime + "_" + period + "jours_" + timestep + "minutes.csv"
     )
-    downloadLink.style.visibility = "visible"
+    link.style.visibility = "visible"
 }
 
 function plotTankLevelPlot(x, y) {
@@ -402,11 +413,13 @@ function plotTankLevelPlot(x, y) {
 }
 
 function updateTankLevelPlot() {
+    loaderTankLevel.style.visibility = "visible"
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             let data = JSON.parse(xhttp.responseText)
             plotTankLevelPlot(data.dates, data.volumes)
+            loaderTankLevel.style.visibility = "hidden"
         }
     }
     xhttp.open("GET", TANK_LEVEL_URL, true)
