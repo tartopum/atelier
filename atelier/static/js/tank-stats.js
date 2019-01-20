@@ -8,6 +8,10 @@ let loaderConsumption = document.getElementById("loader-consumption")
 let loaderTankLevel = document.getElementById("loader-tank-level")
 let loaderPumps = document.getElementById("loader-pumps")
 
+function add(a, b) {
+    return a + b;
+}    
+
 function plotHistoryOverTime(xTank, xCity, xWell, yTank, yCity, yWell) {
     yCity = yCity.map(x => -1 * x)
     yTank = yTank.map(x => -1 * x)
@@ -78,10 +82,6 @@ function plotHistoryOverTime(xTank, xCity, xWell, yTank, yCity, yWell) {
 }
 
 function plotHistoryStats(yTank, yCity, yWell) {
-    function add(a, b) {
-        return a + b;
-    }    
-
     let sumTank = yTank.reduce(add, 0)
     let sumCity = yCity.reduce(add, 0)
     let sumWell = yWell.reduce(add, 0)
@@ -248,6 +248,49 @@ function plotHistoryStats(yTank, yCity, yWell) {
     )
 }
 
+function plotPumpStats(pumpIn, pumpOut) {
+    pumpIn = pumpIn.reduce(add, 0)
+    pumpOut = pumpOut.reduce(add, 0)
+    let total = pumpIn + pumpOut
+    total = (Math.floor(total / 60)) + "h" + (total % 60)
+    Plotly.newPlot(
+        document.getElementById("pumps_stats_plot"),
+        [{
+            type: "pie",
+            hoverinfo: "label+value",
+            hole: .6,
+            values: [pumpIn, pumpOut],
+            labels: ["Puits", "Surpresseur"],
+            marker: { colors: [WELL_COLOR, TANK_COLOR] },
+        }],
+        {
+            showlegend: false,
+            margin: {t: 50, r: 10, l: 30},
+            title: {
+                text: "Total",
+                font: {
+                    family: "Slabo, Helvetica, Arial, sans-serif",
+                    size: 30,
+                },
+            },
+            annotations: [{
+                font: {
+                    family: "Slabo, Helvetica, Arial, sans-serif",
+                    size: 30,
+                },
+                showarrow: false,
+                text: total,
+                x: 0.5,
+                y: 0.5,
+                xanchor: "center",
+                yanchor: "middle",
+                xref: "paper",
+                yref: "paper",
+            }]
+        }
+    )
+}
+
 function plotPumpHistory(x, pumpIn, pumpOut) {
     Plotly.newPlot(
         document.getElementById("pumps_history_plot"),
@@ -348,6 +391,10 @@ function updatePumpsPlot() {
             let data = JSON.parse(xhttp.responseText)
             plotPumpHistory(
                 data.dates,
+                data.pump_in,
+                data.pump_out
+            )
+            plotPumpStats(
                 data.pump_in,
                 data.pump_out
             )

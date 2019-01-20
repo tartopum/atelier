@@ -238,20 +238,21 @@ header .nav  ul li.active {
     vertical-align: bottom;
 }
 
-#content.tank_stats #history_wrapper {
+#content.tank_stats .wrapper {
     padding: 0 30px;
 }
 
-#content.tank_stats #history_time_plot {
+#content.tank_stats .wrapper > div {
     display: inline-block;
     vertical-align: top;
+}
+
+#content.tank_stats .wrapper div:nth-child(1) {
     margin-right: 50px;
     width: 65%;
 }
 
-#content.tank_stats #history_stats_plot {
-    display: inline-block;
-    vertical-align: top;
+#content.tank_stats .wrapper div:nth-child(2) {
     width: 30%;
 }
 

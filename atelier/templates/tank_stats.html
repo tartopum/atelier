@@ -38,7 +38,7 @@
     </a>
 </div>
 
-<div id="history_wrapper">
+<div id="history_wrapper" class="wrapper">
     <div id="history_time_plot"></div>
     <div id="history_stats_plot"></div>
 </div>
@@ -82,7 +82,10 @@
         <img src="{{ url_for('static', filename='img/download.png') }}" alt="Exporter" />
     </a>
 </div>
-<div id="pumps_history_plot" style="margin: 0 30px;"></div>
+<div id="pumps_wrapper" class="wrapper">
+    <div id="pumps_history_plot"></div>
+    <div id="pumps_stats_plot"></div>
+</div>
 {% endblock %}
 
 {% block js %}
