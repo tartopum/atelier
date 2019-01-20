@@ -153,4 +153,5 @@ sleep_job = SleepJob(
 
 tank_job = TankJob(config["tank"]["stats_collection_period"])
 
-schedule.every().day.at("14:53").do(db.delete_old_alerts)
+schedule.every().day.at("00:00").do(db.delete_old_alerts)
+schedule.every().day.at("00:05").do(db.backup)

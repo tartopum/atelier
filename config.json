@@ -3,6 +3,7 @@
     "ip": "192.168.167.101",
     "port": 5000,
     "db_path": "db.sqlite3",
+    "db_backup": "backup_db.sqlite3",
     "debug": 0,
     "http_credentials": [
       "test",

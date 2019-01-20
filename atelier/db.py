@@ -2,6 +2,7 @@ from contextlib import contextmanager
 import datetime
 import os
 import sqlite3
+import subprocess as sp
 from threading import Lock
 
 from .config import config
@@ -19,6 +20,15 @@ TANK_FULL_COL = 4
 TANK_EMPTY_COL = 5
 
 lock = Lock()
+
+
+def backup():
+    bk_path = config["server"]["db_backup"]
+    if not bk_path:
+        bk_path = "backup_db.sqlite3"
+    bk_path = os.path.join(_HERE, "..", bk_path)
+    sp.call(["sqlite3", _PATH, f".backup {bk_path}"])
+
 
 @contextmanager
 def _connect(commit=True):
