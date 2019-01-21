@@ -231,8 +231,14 @@ void Tank::_cmdPumpIn(bool on)
     if (isTankFull()) on = false;
     if (!_pumpInActivated) on = false;
 
-    if (!on && isOn(_pinPumpIn)) _lastTimePumpInOff = millis();
-    if (on && !isOn(_pinPumpIn)) _timePumpInStarted = millis();
+    if (!on && isOn(_pinPumpIn)) {
+        _lastTimePumpInOff = millis();
+        _pumpInRunningTime += (millis() - _pumpInRunningTimeStart) / 1000;
+    }
+    if (on && !isOn(_pinPumpIn)) {
+        _timePumpInStarted = millis();
+        _pumpInRunningTimeStart = millis();
+    }
 
     if (on) _volumeInCurCycle = 0;
 
@@ -245,6 +251,11 @@ void Tank::_cmdPumpOut(bool on)
     if (isMotorOutBlocked()) on = false;
     if (!_manualMode && !canPumpOutRun()) on = false;
     if (!_pumpOutActivated) on = false;
+
+    if (on && !isOn(_pinPumpOut)) _pumpOutRunningTimeStart = millis();
+    if (!on && isOn(_pinPumpOut)) {
+        _pumpOutRunningTime += (millis() - _pumpOutRunningTimeStart) / 1000;
+    }
 
     digitalWrite(_pinPumpOut, on ? HIGH : LOW); 
 }
@@ -511,10 +522,26 @@ void Tank::httpRouteStats(WebServer &server, WebServer::ConnectionType type)
     server << "{ ";
     server << "\"volume_in\": " << _volumeIn << ", ";
     _volumeIn = 0;
+
     server << "\"volume_out_tank\": " << _volumeOutTank << ", ";
     _volumeOutTank = 0;
+
     server << "\"volume_out_urban_network\": " << _volumeOutUrbanNetwork << ", ";
     _volumeOutUrbanNetwork = 0;
+
+    if (isOn(_pinPumpIn)) {
+        _pumpInRunningTime += (millis() - _pumpInRunningTimeStart) / 1000;
+        _pumpInRunningTimeStart = millis();
+    }
+    server << "\"pump_in_running_time\": " << _pumpInRunningTime << ", ";
+    _pumpInRunningTime = 0;
+
+    if (isOn(_pinPumpOut)) {
+        _pumpOutRunningTime += (millis() - _pumpOutRunningTimeStart) / 1000;
+        _pumpOutRunningTimeStart = millis();
+    }
+    server << "\"pump_out_running_time\": " << _pumpOutRunningTime << ", ";
+    _pumpOutRunningTime = 0;
 
     server << "\"is_tank_full\": " << isTankFull() << ", ";
     server << "\"is_tank_empty\": " << isTankEmpty();
