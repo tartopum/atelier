@@ -18,6 +18,8 @@ TANK_VOL_OUT_TANK_COL = 2
 TANK_VOL_OUT_CITY_COL = 3
 TANK_FULL_COL = 4
 TANK_EMPTY_COL = 5
+TANK_PUMP_IN_COL = 6
+TANK_PUMP_OUT_COL = 7
 
 lock = Lock()
 
@@ -59,7 +61,9 @@ def create_tables():
              volume_out_tank INTEGER,
              volume_out_urban_network INTEGER,
              is_tank_full BOOLEAN,
-             is_tank_empty BOOLEAN
+             is_tank_empty BOOLEAN,
+             pump_in_running_duration INTEGER,
+             pump_out_running_duration INTEGER
         )
         """)
 
@@ -103,7 +107,7 @@ def store_tank_stats(data):
         cursor.execute(
             "INSERT INTO tank_stats VALUES("
             ":now, :volume_in, :volume_out_tank, :volume_out_urban_network, "
-            ":is_tank_full, :is_tank_empty"
+            ":pump_in_running_time, :pump_out_running_time, :is_tank_full, :is_tank_empty"
             ")",
             data
         )
@@ -178,22 +182,16 @@ def read_tank_volume_history(n_days=7):
 def read_pumps_history(n_days=7):
     start = datetime.datetime.now() - datetime.timedelta(n_days)
     dates = []
-    running_in = []
-    running_out = []
+    pump_in = []
+    pump_out = []
     with _connect() as conn:
         cursor = conn.cursor()
-        q = "SELECT * FROM tank_stats WHERE timestamp >= :start ORDER BY timestamp"
+        q = (
+            "SELECT timestamp, pump_in_running_duration, pump_out_running_duration "
+            "FROM tank_stats WHERE timestamp >= :start ORDER BY timestamp"
+        )
         for row in cursor.execute(q, (start,)):
-            dates.append(row[TANK_DATE_COL])
-            running_in.append(row[TANK_VOL_IN_COL] > 0)
-            running_out.append(row[TANK_VOL_OUT_TANK_COL] > 0)
-    for i in range(len(dates)):
-        try:
-            delta = dates[i + 1] - dates[i]
-        except IndexError:
-            # For the last measure, we consider it is the same duration as the
-            # previous one
-            delta = dates[i] - dates[i - 1]
-        running_in[i] = delta if running_in[i] else datetime.timedelta(0)
-        running_out[i] = delta if running_out[i] else datetime.timedelta(0)
-    return dates, running_in, running_out
+            dates.append(row[0])
+            pump_in.append(row[1])
+            pump_out.append(row[2])
+    return dates, pump_in, pump_out
