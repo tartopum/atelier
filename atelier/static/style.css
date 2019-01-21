@@ -199,6 +199,10 @@ header .nav  ul li.active {
     position: absolute;
 }
 
+#content.tank_stats .modebar {
+    display: none;
+}
+
 #content.tank_stats .config {
     margin-bottom: 20px;    
 }

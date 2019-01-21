@@ -51,7 +51,7 @@ function plotHistoryOverTime(xTank, xCity, xWell, yTank, yCity, yWell) {
                 orientation: "v",
             },
             barmode: "relative",
-            margin: {t: 30, r: 60},
+            margin: {t: 30, r: 20},
             xaxis: {
                 showline: false,
             },
@@ -151,7 +151,7 @@ function plotHistoryStats(yTank, yCity, yWell) {
             grid: {rows: 2, columns: 2, pattern: "independent"},
             barmode: "grouped",
             showlegend: false,
-            margin: {t: 50, r: 10, l: 30},
+            margin: {t: 50, r: 10, l: 40},
             xaxis: {
                 showline: true,
                 fixedrange: true,
@@ -252,7 +252,9 @@ function plotPumpStats(pumpIn, pumpOut) {
     pumpIn = pumpIn.reduce(add, 0)
     pumpOut = pumpOut.reduce(add, 0)
     let total = pumpIn + pumpOut
-    total = (Math.floor(total / 60)) + "h" + (total % 60)
+    let minutes = total % 60
+    if (minutes < 10) minutes = "0" + minutes
+    total = (Math.floor(total / 60)) + "h" + minutes
     Plotly.newPlot(
         document.getElementById("pumps_stats_plot"),
         [{
@@ -292,8 +294,8 @@ function plotPumpStats(pumpIn, pumpOut) {
 }
 
 function plotPumpHistory(x, pumpIn, pumpOut) {
-    pumpIn = pumpIn.map(x => x / 60)
-    pumpOut = pumpOut.map(x => x / 60)
+    pumpIn = pumpIn.map(x => (x / 60).toPrecision(2))
+    pumpOut = pumpOut.map(x => (x / 60).toPrecision(2))
 
     Plotly.newPlot(
         document.getElementById("pumps_history_plot"),
@@ -447,6 +449,7 @@ function plotTankLevelPlot(x, y) {
         }],
         {
             margin: {t: 10, r: 10},
+            height: 300,
             xaxis: {
                 fixedrange: true,
                 showline: true,
@@ -464,13 +467,13 @@ function plotTankLevelPlot(x, y) {
 }
 
 function updateTankLevelPlot() {
-    loaderTankLevel.style.visibility = "visible"
+    loaderTankLevel.style.display = "block"
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             let data = JSON.parse(xhttp.responseText)
             plotTankLevelPlot(data.dates, data.volumes)
-            loaderTankLevel.style.visibility = "hidden"
+            loaderTankLevel.style.display = "none"
         }
     }
     xhttp.open("GET", TANK_LEVEL_URL, true)
