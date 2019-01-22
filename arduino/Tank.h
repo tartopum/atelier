@@ -35,6 +35,7 @@ class Tank
         unsigned long filterCleaningDuration = 30000; // ms
         unsigned long filterCleaningConsecutiveDelay = 5000; // ms
         unsigned long maxPumpOutRunningTime = 300000; // ms
+        unsigned long maxDurationWithoutFlowOut = 1800000; // ms
 
         void attachFlowInterrupts();
         void (*flowInInterrupt)();
@@ -55,6 +56,7 @@ class Tank
         bool pumpOutRunningForTooLong();
         bool canPumpOutRun();
         bool isFillingCycleEmpty();
+        bool isConsumptionMissing();
 
         void httpRoute(WebServer &server, WebServer::ConnectionType type);
         void httpRouteStats(WebServer &server, WebServer::ConnectionType type);
@@ -97,6 +99,7 @@ class Tank
         unsigned long _lastTimePumpOutOff = 0; // ms
         unsigned long _pumpOutRunningTimeStart = 0; // ms
         unsigned int _pumpOutRunningTime = 0; // s
+        unsigned long _lastTimeFlowOut = 0; // ms
 
         unsigned long _lastFilterCleaningTime = 0; // ms
         bool _filterFirstCleaningDone = false;
@@ -122,6 +125,7 @@ class Tank
         Alert _manualModeAlert;
         Alert _pumpOutRunningForTooLongAlert;
         Alert _noFlowInAlert;
+        Alert _noFlowOutAlert;
         Alert _pumpInDisabledAlert;
         Alert _pumpOutDisabledAlert;
 

@@ -177,6 +177,7 @@ schema.add_int("tank", "filter_cleaning_duration", min=1, max=30, title="Durée 
 schema.add_int("tank", "filter_cleaning_consecutive_delay", min=1, max=60, title="Durée entre deux ouvertures consécutives du filtre (s)")  # s
 schema.add_int("tank", "pump_in_start_duration", min=1, max=300, title="Temps mis par l'eau pour remonter le puits (s)")  # s
 schema.add_int("tank", "max_pump_out_running_time", min=1, max=60, title="Durée maximale de fonctionnement de la pompe du surpresseur (min)")  # min
+schema.add_int("tank", "max_duration_without_flow_out", min=1, max=120, title="Durée maximale sans consommation détectée (min)")  # min
 schema.add_int("tank", "height_between_sensors", min=1, max=1000, title="Distance entre les capteurs de niveau de la cuve (cm)")  # cm
 schema.add_int("tank", "radius", min=1, max=1000, title="Rayon de la cuve (cm)")  # cm
 

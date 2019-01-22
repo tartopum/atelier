@@ -44,6 +44,7 @@ def config_arduino():
             "filter_cleaning_consecutive_delay": config["tank"]["filter_cleaning_consecutive_delay"] * 1000,
             "pump_in_start_duration": config["tank"]["pump_in_start_duration"] * 1000,
             "max_pump_out_running_time": config["tank"]["max_pump_out_running_time"] * 1000 * 60,
+            "max_duration_without_flow_out": config["tank"]["max_duration_without_flow_out"] * 1000 * 60,
         }
     )
 

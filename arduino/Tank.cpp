@@ -85,6 +85,13 @@ Tank::Tank(
         lightFatal,
         MID_ALERT
     ),
+    _noFlowOutAlert(
+        "tank",
+        "Il n'y a pas eu de consommation détectée depuis trop longtemps.",
+        sendAlert,
+        lightFatal,
+        MID_ALERT
+    ),
     _pumpInDisabledAlert(
         "",
         "",
@@ -221,6 +228,11 @@ bool Tank::isFillingCycleEmpty()
     );
 }
 
+bool Tank::isConsumptionMissing()
+{
+    return millis() - _lastTimeFlowOut > maxDurationWithoutFlowOut;
+}
+
 /*
  * Output
  */
@@ -285,6 +297,7 @@ void Tank::loop()
     _pumpOutRunningForTooLongAlert.raise(pumpOutRunningForTooLong());
     _urbanNetworkUsedAlert.raise(isOn(_pinUrbanNetwork));
     _noFlowInAlert.raise(isFillingCycleEmpty());
+    _noFlowOutAlert.raise(isConsumptionMissing());
     _pumpInDisabledAlert.raise(!_pumpInActivated);
     _pumpOutDisabledAlert.raise(!_pumpOutActivated);
 
@@ -367,6 +380,7 @@ void Tank::flowOutPulsed()
     } else {
         _volumeOutTank++;
     }
+    _lastTimeFlowOut = millis();
 }
 
 void Tank::attachFlowInterrupts()
@@ -437,6 +451,7 @@ void Tank::_httpRouteGet(WebServer &server)
     server << "\"filter_cleaning_consecutive_delay\": " << filterCleaningConsecutiveDelay << ", ";
     server << "\"time_to_fill_up\": " << timeToFillUp << ", ";
     server << "\"max_pump_out_running_time\": " << maxPumpOutRunningTime << ", ";
+    server << "\"max_duration_without_flow_out\": " << maxDurationWithoutFlowOut << ", ";
     server << "\"flow_check_period\": " << flowCheckPeriod << ", ";
     server << "\"flow_in\": " << _flowIn << ", ";
     server << "\"flow_out\": " << _flowOut;
@@ -458,6 +473,9 @@ void Tank::_httpRouteSet(WebServer &server)
         }
         if (strcmp(key, "max_pump_out_running_time") == 0) {
             maxPumpOutRunningTime = atol(value);
+        }
+        if (strcmp(key, "max_duration_without_flow_out") == 0) {
+            maxDurationWithoutFlowOut = atol(value);
         }
         if (strcmp(key, "time_to_fill_up") == 0) {
             timeToFillUp = atol(value);

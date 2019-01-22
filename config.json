@@ -45,6 +45,7 @@
     "pump_in_start_duration": 10,
     "min_flow_in": 17,
     "max_pump_out_running_time": 10,
+    "max_duration_without_flow_out": 30,
     "time_to_fill_up": 30,
     "height_between_sensors": 190,
     "radius": 90
