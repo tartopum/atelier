@@ -33,9 +33,9 @@ sudo pip3.7 install pipenv
 pipenv install
 
 git config --global user.email "you@example.com"
-git config --global user.name "Your Name"
+git config --global user.name "Vincent Lefoulon"
 
-python3 credentials.py
+python3 config.py
 
 # Run web server at startup
 crontab -r
