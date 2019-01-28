@@ -17,9 +17,6 @@ def home():
 
 @app.route("/<page>", methods=["GET", "POST"])
 def route(page):
-    if page == "tank_stats":
-        page = "tank"
-
     with open(state_path) as f:
         data = json.load(f)
 
@@ -37,6 +34,20 @@ def route(page):
             json.dump(data, f, indent=2)
 
     return jsonify(data[page])
+
+
+@app.route("/tank_stats")
+def tank_stats():
+    with open(state_path) as f:
+        data = json.load(f)
+    return jsonify({
+        k: data["tank"][k]
+        for k in [
+            "volume_in", "volume_out_tank", "volume_out_urban_network",
+            "pump_in_running_duration", "pump_out_running_duration", "is_tank_full",
+            "is_tank_empty"
+        ]
+    })
 
 
 if __name__ == "__main__":

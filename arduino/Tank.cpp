@@ -422,11 +422,11 @@ void Tank::_httpRouteGet(WebServer &server)
     server << "{ ";
     server << "\"manual_mode\": " << _manualMode << ", ";
     server << "\"pump_in_activated\": " << _pumpInActivated << ", ";
-    server << "\"pump_in_running_time\": " << _pumpInRunningTime << ", ";
-    server << "\"pump_in_running_time_start\": " << _pumpInRunningTimeStart << ", ";
+    server << "\"pump_in_running_duration\": " << _pumpInRunningTime << ", ";
+    server << "\"pump_in_running_duration_start\": " << _pumpInRunningTimeStart << ", ";
     server << "\"pump_out_activated\": " << _pumpOutActivated << ", ";
-    server << "\"pump_out_running_time\": " << _pumpOutRunningTime << ", ";
-    server << "\"pump_out_running_time_start\": " << _pumpOutRunningTimeStart << ", ";
+    server << "\"pump_out_running_duration\": " << _pumpOutRunningTime << ", ";
+    server << "\"pump_out_running_duration_start\": " << _pumpOutRunningTimeStart << ", ";
     server << "\"urban_network_activated\": " << _urbanNetworkActivated << ", ";
     server << "\"pump_in\": " << isOn(_pinPumpIn) << ", ";
     server << "\"volume_in\": " << _volumeIn << ", ";
@@ -555,14 +555,14 @@ void Tank::httpRouteStats(WebServer &server, WebServer::ConnectionType type)
         _pumpInRunningTime += (millis() - _pumpInRunningTimeStart) / 1000;
         _pumpInRunningTimeStart = millis();
     }
-    server << "\"pump_in_running_time\": " << _pumpInRunningTime << ", ";
+    server << "\"pump_in_running_duration\": " << _pumpInRunningTime << ", ";
     _pumpInRunningTime = 0;
 
     if (isOn(_pinPumpOut)) {
         _pumpOutRunningTime += (millis() - _pumpOutRunningTimeStart) / 1000;
         _pumpOutRunningTimeStart = millis();
     }
-    server << "\"pump_out_running_time\": " << _pumpOutRunningTime << ", ";
+    server << "\"pump_out_running_duration\": " << _pumpOutRunningTime << ", ";
     _pumpOutRunningTime = 0;
 
     server << "\"is_tank_full\": " << isTankFull() << ", ";

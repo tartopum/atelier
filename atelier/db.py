@@ -100,16 +100,12 @@ def delete_old_alerts():
 
 
 def store_tank_stats(data):
-    data = {"now": datetime.datetime.now(), **data}
+    data = {"timestamp": datetime.datetime.now(), **data}
+    cols = ",".join(data)
+    vals = ",".join([f":{k}" for k in data])
     with _connect() as conn:
         cursor = conn.cursor()
-        cursor.execute(
-            "INSERT INTO tank_stats VALUES("
-            ":now, :volume_in, :volume_out_tank, :volume_out_urban_network, "
-            ":is_tank_full, :is_tank_empty, :pump_in_running_time, :pump_out_running_time"
-            ")",
-            data
-        )
+        cursor.execute(f"INSERT INTO tank_stats ({cols}) VALUES({vals})", data)
 
 
 def read_tank_stats(start, end=None):
