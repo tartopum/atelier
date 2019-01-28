@@ -25,11 +25,10 @@ lock = Lock()
 
 
 def backup():
-    bk_path = config["server"]["db_backup"]
-    if not bk_path:
-        bk_path = "backup_db.sqlite3"
-    bk_path = os.path.join(_HERE, "..", bk_path)
+    bk_path = os.path.join(_HERE, "..", "backup_db.sqlite3")
     sp.call(["sqlite3", _PATH, f".backup {bk_path}"])
+    for path in config["server"]["db_backup_paths"]:
+        sp.call(["cp", bk_path, path])
 
 
 @contextmanager
