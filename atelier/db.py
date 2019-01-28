@@ -106,7 +106,7 @@ def store_tank_stats(data):
         cursor.execute(
             "INSERT INTO tank_stats VALUES("
             ":now, :volume_in, :volume_out_tank, :volume_out_urban_network, "
-            ":pump_in_running_time, :pump_out_running_time, :is_tank_full, :is_tank_empty"
+            ":is_tank_full, :is_tank_empty, :pump_in_running_time, :pump_out_running_time"
             ")",
             data
         )
@@ -186,11 +186,11 @@ def read_pumps_history(n_days=7):
     with _connect() as conn:
         cursor = conn.cursor()
         q = (
-            "SELECT timestamp, pump_in_running_duration, pump_out_running_duration "
-            "FROM tank_stats WHERE timestamp >= :start ORDER BY timestamp"
+            "SELECT * FROM tank_stats WHERE timestamp >= :start ORDER BY timestamp"
         )
         for row in cursor.execute(q, (start,)):
-            dates.append(row[0])
-            pump_in.append(row[1])
-            pump_out.append(row[2])
+            print(row)
+            dates.append(row[TANK_DATE_COL])
+            pump_in.append(row[TANK_PUMP_IN_COL])
+            pump_out.append(row[TANK_PUMP_OUT_COL])
     return dates, pump_in, pump_out

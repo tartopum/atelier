@@ -422,7 +422,11 @@ void Tank::_httpRouteGet(WebServer &server)
     server << "{ ";
     server << "\"manual_mode\": " << _manualMode << ", ";
     server << "\"pump_in_activated\": " << _pumpInActivated << ", ";
+    server << "\"pump_in_running_time\": " << _pumpInRunningTime << ", ";
+    server << "\"pump_in_running_time_start\": " << _pumpInRunningTimeStart << ", ";
     server << "\"pump_out_activated\": " << _pumpOutActivated << ", ";
+    server << "\"pump_out_running_time\": " << _pumpOutRunningTime << ", ";
+    server << "\"pump_out_running_time_start\": " << _pumpOutRunningTimeStart << ", ";
     server << "\"urban_network_activated\": " << _urbanNetworkActivated << ", ";
     server << "\"pump_in\": " << isOn(_pinPumpIn) << ", ";
     server << "\"volume_in\": " << _volumeIn << ", ";
