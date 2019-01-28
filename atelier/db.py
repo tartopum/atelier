@@ -185,7 +185,6 @@ def read_pumps_history(n_days=7):
             "SELECT * FROM tank_stats WHERE timestamp >= :start ORDER BY timestamp"
         )
         for row in cursor.execute(q, (start,)):
-            print(row)
             dates.append(row[TANK_DATE_COL])
             pump_in.append(row[TANK_PUMP_IN_COL])
             pump_out.append(row[TANK_PUMP_OUT_COL])
