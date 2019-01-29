@@ -4,6 +4,7 @@ import threading
 import time
 import traceback
 import sys
+from uuid import uuid4
 
 import requests
 from requests.exceptions import ConnectionError, ReadTimeout
@@ -36,10 +37,16 @@ def run(interval=10):
     return cease_continuous_run
 
 
-class ArduinoConnectionJob:
+class Job:
+    def __init__(self):
+        self._id = str(uuid4())
+
+
+class ArduinoConnectionJob(Job):
     REMINDER_DELAY = 15 * 60
 
     def __init__(self):
+        super().__init__()
         self.alert_raised = False
         self.last_raise_time = None
     
@@ -69,6 +76,7 @@ class ArduinoConnectionJob:
 
 class PeriodJob(ArduinoConnectionJob, metaclass=abc.ABCMeta):
     def __init__(self, btime, etime):
+        super().__init__()
         self._time_range = None
         self.time_range = (btime, etime)
 
@@ -79,10 +87,9 @@ class PeriodJob(ArduinoConnectionJob, metaclass=abc.ABCMeta):
     @time_range.setter
     def time_range(self, range_):
         btime, etime = range_
-        schedule.cancel_job(self._safe_beginning)
-        schedule.cancel_job(self._safe_end)
-        schedule.every().day.at(btime).do(self._safe_beginning)
-        schedule.every().day.at(etime).do(self._safe_end)
+        schedule.clear(self._id)
+        schedule.every().day.at(btime).do(self._safe_beginning).tag(self._id)
+        schedule.every().day.at(etime).do(self._safe_end).tag(self._id)
 
     def _safe_beginning(self):
         self._run_job_safely(self.beginning)
@@ -122,6 +129,7 @@ class SleepJob(PeriodJob):
 
 class TankJob(ArduinoConnectionJob):
     def __init__(self, every):
+        super().__init__()
         self._every = None
         self.every = every
 
@@ -132,8 +140,8 @@ class TankJob(ArduinoConnectionJob):
     @every.setter
     def every(self, val):
         self._every = val
-        schedule.cancel_job(self.job)
-        schedule.every(self._every).seconds.do(self.job)
+        schedule.clear(self._id)
+        schedule.every(self._every).seconds.do(self.job).tag(self._id)
 
     def _unsafe_job(self):
         tank.read_and_store_stats()
