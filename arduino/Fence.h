@@ -19,6 +19,7 @@ class Fence
     private:
         int _pinControl;
         AlertLight *_light;
+        bool _activated = true;
         unsigned long _lightStateChangeTime = 0;
         void _httpRouteGet(WebServer &server);
         void _httpRouteSet(WebServer &server);

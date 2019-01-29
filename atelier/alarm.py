@@ -4,7 +4,6 @@ import requests
 from . import arduino, forms
 from .config import config
 
-state = dict(listening=False, movement=False)
 arduino_endpoint = "alarm"
 blueprint = Blueprint("alarm", __name__, template_folder="templates")
 

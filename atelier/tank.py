@@ -10,7 +10,6 @@ from .config import config
 from .helpers import auth
 
 
-state = dict()
 arduino_endpoint = "tank"
 blueprint = Blueprint("tank", __name__, template_folder="templates")
 

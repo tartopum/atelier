@@ -61,7 +61,6 @@ def home():
     
     return render_template(
         "home.html",
-        fence=arduino.read_state(fence),
         no_alerts=(len(alerts) < 1),
         alerts=grouped_alerts,
     )

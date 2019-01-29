@@ -14,6 +14,7 @@ Fence::Fence(int pinControl, AlertLight *light)
 
 void Fence::on()
 {
+    if (!_activated) return;
     digitalWrite(_pinControl, HIGH);
     _light->unsetLevel(MID_ALERT);
 }
@@ -21,7 +22,7 @@ void Fence::on()
 void Fence::off()
 {
     digitalWrite(_pinControl, LOW);
-    _light->setLevel(MID_ALERT);
+    if (_activated) _light->setLevel(MID_ALERT);
 }
 
 bool Fence::isOn()
@@ -36,7 +37,8 @@ void Fence::_httpRouteGet(WebServer &server)
 {
     server.httpSuccess("application/json");
     server << "{ ";
-    server << "\"state\": " << isOn();
+    server << "\"state\": " << isOn() << ",";
+    server << "\"activated\": " << _activated;
     server << " }";
 }
 
@@ -49,11 +51,17 @@ void Fence::_httpRouteSet(WebServer &server)
     while (server.readPOSTparam(key, keyLen, value, valueLen)) {
         if (strcmp(key, "state") == 0) {
             (strcmp(value, "1") == 0) ? on() : off();
-            server.httpSuccess();
-            return;
+        }
+        if (strcmp(key, "activated") == 0) {
+            _activated = (strcmp(value, "1") == 0);
         }
     }
-    server.httpFail();
+    server.httpSuccess();
+
+    if (!_activated) {
+        off();
+        _light->unsetLevel(MID_ALERT);
+    }
 }
 
 void Fence::httpRoute(WebServer &server, WebServer::ConnectionType type)

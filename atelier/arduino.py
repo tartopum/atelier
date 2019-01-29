@@ -17,9 +17,7 @@ def get(endpoint):
 
 
 def read_state(x):
-    for k, v in get(x.arduino_endpoint).items():
-        x.state[k] = v
-    return x.state
+    return get(x.arduino_endpoint)
 
 
 def build_url(endpoint):

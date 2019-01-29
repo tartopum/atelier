@@ -102,12 +102,6 @@ header .nav  ul li.active {
     text-align: center;
 }
 
-#content.home .quick-access > div {
-    display: inline-block;
-    vertical-align: top;
-    margin: 0 10px;
-}
-
 #content.home .alerts {
     margin-top: 50px;
 }
@@ -138,6 +132,11 @@ header .nav  ul li.active {
 #content.home .alert > div {
     display: inline-block;
     vertical-align: top;
+}
+
+#content.fence .switch-wrapper {
+    font-size: 18px;
+    margin-top: 15px;
 }
 
 #content.workshop h2 {

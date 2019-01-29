@@ -7,7 +7,6 @@ from .helpers import auth, redirect_prev
 
 
 turn_off_power = True
-state = dict(power_supply=True, inactivity_delay=(1000 * 60 * 30))
 arduino_endpoint = "workshop"
 blueprint = Blueprint("workshop", __name__, template_folder="templates")
 
