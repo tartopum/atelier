@@ -3,16 +3,16 @@
 {% block title %}Debug - {% endblock %}
 
 {% block content %}
+<h2>État de la Controllino</h2>
+
+<div id="controllino">
 {% for component, state in states.items() %}
-<div>
-    <h2>{{ component }}</h2>
-<pre style="text-align: left;">
-{
-{% for k, v in state.items() %}
-    "{{ k }}": {{ v }},
+    <div>
+        <h3>{{ component }}</h3>
+    <pre>
+{{ state }}
+    </pre>
+    </div>
 {% endfor %}
-}
-</pre>
 </div>
-{% endfor %}
 {% endblock %}

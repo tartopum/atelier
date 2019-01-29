@@ -155,6 +155,8 @@ def debug_route():
         for component in [alarm, fence, lights, workshop, tank]
     }
     states["api"] = arduino.get("config_api")
+    for component, conf in states.items():
+        states[component] = json.dumps(dict(sorted(conf.items())), indent=2)
     return render_template("debug.html", states=states)
 
 

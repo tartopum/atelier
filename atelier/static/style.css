@@ -275,10 +275,17 @@ header .nav  ul li.active {
     margin-bottom: 5px;
 }
 
-#content.debug > div {
+#content.debug #controllino > div {
     display: inline-block;
     vertical-align: top;
-    width: 300px;
+    width: 400px;
+    margin: 0 10px;
+}
+
+#content.debug #controllino > div pre {
+    text-align: left;
+    overflow: auto;
+    max-height: 200px;
 }
 
 #content.config table {
