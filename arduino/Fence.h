@@ -12,6 +12,7 @@ class Fence
         Fence(int pinControl, AlertLight *light);
         void on();
         void off();
+        void activate(bool);
         bool isOn();
         void loop();
         void httpRoute(WebServer &server, WebServer::ConnectionType type);

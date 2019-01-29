@@ -30,6 +30,20 @@ bool Fence::isOn()
     return digitalRead(_pinControl) == HIGH;
 }
 
+void Fence::activate(bool activated)
+{
+    _activated = activated;
+
+    if (!_activated) {
+        off();
+        _light->unsetLevel(MID_ALERT);
+    } else if (isOn()) {
+        _light->unsetLevel(MID_ALERT);
+    } else {
+        _light->setLevel(MID_ALERT);
+    }
+}
+
 void Fence::loop() {
 }
 
@@ -53,15 +67,10 @@ void Fence::_httpRouteSet(WebServer &server)
             (strcmp(value, "1") == 0) ? on() : off();
         }
         if (strcmp(key, "activated") == 0) {
-            _activated = (strcmp(value, "1") == 0);
+            activate(strcmp(value, "1") == 0);
         }
     }
     server.httpSuccess();
-
-    if (!_activated) {
-        off();
-        _light->unsetLevel(MID_ALERT);
-    }
 }
 
 void Fence::httpRoute(WebServer &server, WebServer::ConnectionType type)
