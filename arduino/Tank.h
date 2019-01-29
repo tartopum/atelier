@@ -34,7 +34,7 @@ class Tank
         unsigned long filterCleaningPeriod = 3600000; // ms
         unsigned long filterCleaningDuration = 30000; // ms
         unsigned long filterCleaningConsecutiveDelay = 5000; // ms
-        unsigned long maxPumpOutRunningTime = 300000; // ms
+        unsigned long maxPumpOutRunningDuration = 300000; // ms
         unsigned long maxDurationWithoutFlowOut = 1800000; // ms
 
         void attachFlowInterrupts();
@@ -89,22 +89,24 @@ class Tank
         unsigned long _timePumpInStarted = 0; // ms
         unsigned long _pumpInStartDuration = 60000; // ms
         int _volumeInCurCycle = -1;
-        unsigned int _pumpInRunningTime = 0; // s
-        unsigned long _pumpInRunningTimeStart = 0; // ms
+        unsigned int _pumpInRunningDuration = 0; // s
+        unsigned long _pumpInRunningDurationStart = 0; // ms
 
         bool _pumpOutActivated = true;
         unsigned int _volumeBeforePumpOut = 500; // L
         unsigned int _volumeCollectedSinceEmpty = 0; // L
         bool _tankFullEnough = true;
         unsigned long _lastTimePumpOutOff = 0; // ms
-        unsigned long _pumpOutRunningTimeStart = 0; // ms
-        unsigned int _pumpOutRunningTime = 0; // s
+        unsigned long _pumpOutRunningDurationStart = 0; // ms
+        unsigned int _pumpOutRunningDuration = 0; // s
         unsigned long _lastTimeFlowOut = 0; // ms
 
         unsigned long _lastFilterCleaningTime = 0; // ms
         bool _filterFirstCleaningDone = false;
 
         bool _urbanNetworkActivated = true;
+        unsigned long _urbanNetworkRunningDurationStart = 0; // ms
+        unsigned int _urbanNetworkRunningDuration = 0; // s
 
         // Stats
         unsigned long _volumeIn = 0; // L

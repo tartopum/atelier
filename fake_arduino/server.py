@@ -44,7 +44,7 @@ def tank_stats():
         k: data["tank"][k]
         for k in [
             "volume_in", "volume_out_tank", "volume_out_urban_network",
-            "pump_in_running_duration", "pump_out_running_duration", "is_tank_full",
+            "pump_in_running_duration", "pump_out_running_duration", "urban_network_running_duration", "is_tank_full",
             "is_tank_empty"
         ]
     })

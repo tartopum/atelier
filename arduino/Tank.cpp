@@ -211,7 +211,7 @@ bool Tank::canCleanFilter()
 
 bool Tank::pumpOutRunningForTooLong()
 {
-    return isOn(_pinPumpOut) && (millis() - _lastTimePumpOutOff > maxPumpOutRunningTime);
+    return isOn(_pinPumpOut) && (millis() - _lastTimePumpOutOff > maxPumpOutRunningDuration);
 }
 
 bool Tank::canPumpOutRun()
@@ -245,11 +245,11 @@ void Tank::_cmdPumpIn(bool on)
 
     if (!on && isOn(_pinPumpIn)) {
         _lastTimePumpInOff = millis();
-        _pumpInRunningTime += (millis() - _pumpInRunningTimeStart) / 1000;
+        _pumpInRunningDuration += (millis() - _pumpInRunningDurationStart) / 1000;
     }
     if (on && !isOn(_pinPumpIn)) {
         _timePumpInStarted = millis();
-        _pumpInRunningTimeStart = millis();
+        _pumpInRunningDurationStart = millis();
     }
 
     if (on) _volumeInCurCycle = 0;
@@ -264,9 +264,9 @@ void Tank::_cmdPumpOut(bool on)
     if (!_manualMode && !canPumpOutRun()) on = false;
     if (!_pumpOutActivated) on = false;
 
-    if (on && !isOn(_pinPumpOut)) _pumpOutRunningTimeStart = millis();
+    if (on && !isOn(_pinPumpOut)) _pumpOutRunningDurationStart = millis();
     if (!on && isOn(_pinPumpOut)) {
-        _pumpOutRunningTime += (millis() - _pumpOutRunningTimeStart) / 1000;
+        _pumpOutRunningDuration += (millis() - _pumpOutRunningDurationStart) / 1000;
     }
 
     digitalWrite(_pinPumpOut, on ? HIGH : LOW); 
@@ -275,6 +275,10 @@ void Tank::_cmdPumpOut(bool on)
 void Tank::_cmdUrbanNetwork(bool on)
 {
     if (!_urbanNetworkActivated) on = false;
+    if (on && !isOn(_pinUrbanNetwork)) _urbanNetworkRunningDurationStart = millis();
+    if (!on && isOn(_pinUrbanNetwork)) {
+        _urbanNetworkRunningDuration += (millis() - _urbanNetworkRunningDurationStart) / 1000;
+    }
     digitalWrite(_pinUrbanNetwork, on ? HIGH : LOW); 
 }
 
@@ -422,12 +426,14 @@ void Tank::_httpRouteGet(WebServer &server)
     server << "{ ";
     server << "\"manual_mode\": " << _manualMode << ", ";
     server << "\"pump_in_activated\": " << _pumpInActivated << ", ";
-    server << "\"pump_in_running_duration\": " << _pumpInRunningTime << ", ";
-    server << "\"pump_in_running_duration_start\": " << _pumpInRunningTimeStart << ", ";
+    server << "\"pump_in_running_duration\": " << _pumpInRunningDuration << ", ";
+    server << "\"pump_in_running_duration_start\": " << _pumpInRunningDurationStart << ", ";
     server << "\"pump_out_activated\": " << _pumpOutActivated << ", ";
-    server << "\"pump_out_running_duration\": " << _pumpOutRunningTime << ", ";
-    server << "\"pump_out_running_duration_start\": " << _pumpOutRunningTimeStart << ", ";
+    server << "\"pump_out_running_duration\": " << _pumpOutRunningDuration << ", ";
+    server << "\"pump_out_running_duration_start\": " << _pumpOutRunningDurationStart << ", ";
     server << "\"urban_network_activated\": " << _urbanNetworkActivated << ", ";
+    server << "\"urban_network_running_duration\": " << _urbanNetworkRunningDuration << ", ";
+    server << "\"urban_network_running_duration_start\": " << _urbanNetworkRunningDurationStart << ", ";
     server << "\"pump_in\": " << isOn(_pinPumpIn) << ", ";
     server << "\"volume_in\": " << _volumeIn << ", ";
     server << "\"volume_out_tank\": " << _volumeOutTank << ", ";
@@ -454,7 +460,7 @@ void Tank::_httpRouteGet(WebServer &server)
     server << "\"filter_cleaning_duration\": " << filterCleaningDuration << ", ";
     server << "\"filter_cleaning_consecutive_delay\": " << filterCleaningConsecutiveDelay << ", ";
     server << "\"time_to_fill_up\": " << timeToFillUp << ", ";
-    server << "\"max_pump_out_running_time\": " << maxPumpOutRunningTime << ", ";
+    server << "\"max_pump_out_running_time\": " << maxPumpOutRunningDuration << ", ";
     server << "\"max_duration_without_flow_out\": " << maxDurationWithoutFlowOut << ", ";
     server << "\"flow_check_period\": " << flowCheckPeriod << ", ";
     server << "\"flow_in\": " << _flowIn << ", ";
@@ -476,7 +482,7 @@ void Tank::_httpRouteSet(WebServer &server)
             minFlowIn = atoi(value);
         }
         if (strcmp(key, "max_pump_out_running_time") == 0) {
-            maxPumpOutRunningTime = atol(value);
+            maxPumpOutRunningDuration = atol(value);
         }
         if (strcmp(key, "max_duration_without_flow_out") == 0) {
             maxDurationWithoutFlowOut = atol(value);
@@ -552,18 +558,25 @@ void Tank::httpRouteStats(WebServer &server, WebServer::ConnectionType type)
     _volumeOutUrbanNetwork = 0;
 
     if (isOn(_pinPumpIn)) {
-        _pumpInRunningTime += (millis() - _pumpInRunningTimeStart) / 1000;
-        _pumpInRunningTimeStart = millis();
+        _pumpInRunningDuration += (millis() - _pumpInRunningDurationStart) / 1000;
+        _pumpInRunningDurationStart = millis();
     }
-    server << "\"pump_in_running_duration\": " << _pumpInRunningTime << ", ";
-    _pumpInRunningTime = 0;
+    server << "\"pump_in_running_duration\": " << _pumpInRunningDuration << ", ";
+    _pumpInRunningDuration = 0;
 
     if (isOn(_pinPumpOut)) {
-        _pumpOutRunningTime += (millis() - _pumpOutRunningTimeStart) / 1000;
-        _pumpOutRunningTimeStart = millis();
+        _pumpOutRunningDuration += (millis() - _pumpOutRunningDurationStart) / 1000;
+        _pumpOutRunningDurationStart = millis();
     }
-    server << "\"pump_out_running_duration\": " << _pumpOutRunningTime << ", ";
-    _pumpOutRunningTime = 0;
+    server << "\"pump_out_running_duration\": " << _pumpOutRunningDuration << ", ";
+    _pumpOutRunningDuration = 0;
+
+    if (isOn(_pinUrbanNetwork)) {
+        _urbanNetworkRunningDuration += (millis() - _urbanNetworkRunningDurationStart) / 1000;
+        _urbanNetworkRunningDurationStart = millis();
+    }
+    server << "\"urban_network_running_duration\": " << _urbanNetworkRunningDuration << ", ";
+    _urbanNetworkRunningDuration = 0;
 
     server << "\"is_tank_full\": " << isTankFull() << ", ";
     server << "\"is_tank_empty\": " << isTankEmpty();

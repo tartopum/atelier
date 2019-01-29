@@ -143,9 +143,9 @@ def _consumption_data(timestep, duration):
     })
 
 
-@blueprint.route("/stats/consommation")
+@blueprint.route("/stats/consommation-eau")
 @auth.login_required
-def consumption_data():
+def water_consumption_data():
     try:
         days = int(request.args.get("days"))
         assert days > 0, "The number of days must be positive"
@@ -178,9 +178,9 @@ def water_level_history():
     })
 
 
-@blueprint.route("/stats/pompes")
+@blueprint.route("/stats/consommation-electrique")
 @auth.login_required
-def pumps_data():
+def power_consumption_data():
     try:
         days = int(request.args.get("days"))
         assert days > 0, "The number of days must be positive"
@@ -190,13 +190,15 @@ def pumps_data():
         return str(e), 400
 
     timestep = dt.timedelta(minutes=timestep)
-    dates, pump_in, pump_out = db.read_pumps_history(n_days=days)
+    dates, pump_in, pump_out, city = db.read_tank_power_consumption(n_days=days)
     binned_dates, pump_in = _bin_time_series(dates, pump_in, timestep)
     _, pump_out = _bin_time_series(dates, pump_out, timestep)
+    _, city = _bin_time_series(dates, city, timestep)
     date_format = _date_format_from_step(timestep)
 
     return jsonify({
         "dates": [d.strftime(date_format) for d in binned_dates],
         "pump_in": [sum(period) // 60 for period in pump_in],
         "pump_out": [sum(period) // 60 for period in pump_out],
+        "city": [sum(period) // 60 for period in city],
     })

@@ -3,7 +3,7 @@
 {% block title %}Statistiques - Eau - {% endblock %}
 
 {% block content %}
-<h2>Historique de consommation</h2>
+<h2>Consommation d'eau</h2>
 
 <div class="config">
     Pendant
@@ -49,7 +49,7 @@
 
 <div id="tank_level_plot" style="margin: 0 30px;"></div>
 
-<h2>Historique de fonctionnement des pompes</h2>
+<h2>Consommation électrique</h2>
 
 <div class="config">
     Pendant
@@ -90,9 +90,9 @@
 
 {% block js %}
 <script>
-var CONSUMPTION_URL = "{{ url_for('tank.consumption_data') }}";
+var WATER_CONSUMPTION_URL = "{{ url_for('tank.water_consumption_data') }}";
 var TANK_LEVEL_URL = "{{ url_for('tank.water_level_history') }}";
-var PUMPS_URL = "{{ url_for('tank.pumps_data') }}";
+var POWER_CONSUMPTION_URL = "{{ url_for('tank.power_consumption_data') }}";
 var VOLUME_BETWEEN_SENSORS = {{ volume_between_sensors }};
 </script>
 

@@ -248,10 +248,11 @@ function plotHistoryStats(yTank, yCity, yWell) {
     )
 }
 
-function plotPumpStats(pumpIn, pumpOut) {
+function plotPowerConsumptionStats(pumpIn, pumpOut, city) {
     pumpIn = pumpIn.reduce(add, 0)
     pumpOut = pumpOut.reduce(add, 0)
-    let total = pumpIn + pumpOut
+    city = city.reduce(add, 0)
+    let total = pumpIn + pumpOut + city
     let minutes = total % 60
     if (minutes < 10) minutes = "0" + minutes
     total = (Math.floor(total / 60)) + "h" + minutes
@@ -261,9 +262,9 @@ function plotPumpStats(pumpIn, pumpOut) {
             type: "pie",
             hoverinfo: "label+value",
             hole: .6,
-            values: [pumpIn, pumpOut],
-            labels: ["Puits", "Surpresseur"],
-            marker: { colors: [WELL_COLOR, TANK_COLOR] },
+            values: [pumpIn, pumpOut, city],
+            labels: ["Puits", "Surpresseur", "Ville"],
+            marker: { colors: [WELL_COLOR, TANK_COLOR, CITY_COLOR] },
         }],
         {
             showlegend: false,
@@ -293,9 +294,10 @@ function plotPumpStats(pumpIn, pumpOut) {
     )
 }
 
-function plotPumpHistory(x, pumpIn, pumpOut) {
+function plotPowerConsumptionHistory(x, pumpIn, pumpOut, city) {
     pumpIn = pumpIn.map(x => (x / 60).toPrecision(2))
     pumpOut = pumpOut.map(x => (x / 60).toPrecision(2))
+    city = city.map(x => (x / 60).toPrecision(2))
 
     Plotly.newPlot(
         document.getElementById("pumps_history_plot"),
@@ -315,6 +317,14 @@ function plotPumpHistory(x, pumpIn, pumpOut) {
             mode: "lines",
             hoverinfo: "x+y",
             marker: { color: TANK_COLOR },
+        }, {
+            type: "bar",
+            x: x,
+            y: city,
+            name: "Ville",
+            mode: "lines",
+            hoverinfo: "x+y",
+            marker: { color: CITY_COLOR },
         }],
         {
             barmode: "relative",
@@ -377,7 +387,7 @@ function updateHistoryPlot() {
     };
     xhttp.open(
         "GET",
-        CONSUMPTION_URL + "?days=" + encodeURIComponent(period) + "&timestep=" + encodeURIComponent(timestep),
+        WATER_CONSUMPTION_URL + "?days=" + encodeURIComponent(period) + "&timestep=" + encodeURIComponent(timestep),
         true
     );
     xhttp.send();
@@ -394,29 +404,31 @@ function updatePumpsPlot() {
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             let data = JSON.parse(xhttp.responseText)
-            plotPumpHistory(
+            plotPowerConsumptionHistory(
                 data.dates,
                 data.pump_in,
-                data.pump_out
+                data.pump_out,
+                data.city
             )
-            plotPumpStats(
+            plotPowerConsumptionStats(
                 data.pump_in,
-                data.pump_out
+                data.pump_out,
+                data.city
             )
-            let csv = "date,puits (min),cuve (min)\r\n"
+            let csv = "date,puits (min),cuve (min),ville (min)\r\n"
             for (let i = 0; i < data.dates.length; i++) {
                 csv += (
-                    data.dates[i] + "," + data.pump_in[i] + "," + data.pump_out[i]
+                    data.dates[i] + "," + data.pump_in[i] + "," + data.pump_out[i] + "," + data.city[i]
                     + "\r\n"
                 )
             }
-            buildDownloadLink(downloadPumps, "consommation_pompes", period, timestep, csv)
+            buildDownloadLink(downloadPumps, "consommation_electrique", period, timestep, csv)
             loaderPumps.style.visibility = "hidden"
         }
     };
     xhttp.open(
         "GET",
-        PUMPS_URL + "?days=" + encodeURIComponent(period) + "&timestep=" + encodeURIComponent(timestep),
+        POWER_CONSUMPTION_URL + "?days=" + encodeURIComponent(period) + "&timestep=" + encodeURIComponent(timestep),
         true
     );
     xhttp.send();

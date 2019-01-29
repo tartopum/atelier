@@ -20,6 +20,7 @@ TANK_FULL_COL = 4
 TANK_EMPTY_COL = 5
 TANK_PUMP_IN_COL = 6
 TANK_PUMP_OUT_COL = 7
+TANK_CITY_COL = 8
 
 lock = Lock()
 
@@ -62,7 +63,8 @@ def create_tables():
              is_tank_full BOOLEAN,
              is_tank_empty BOOLEAN,
              pump_in_running_duration INTEGER,
-             pump_out_running_duration INTEGER
+             pump_out_running_duration INTEGER,
+             urban_network_running_duration INTEGER
         )
         """)
 
@@ -174,11 +176,12 @@ def read_tank_volume_history(n_days=7):
     return ref_empty, dates[::-1], rel_volumes[::-1], delta_volume
 
 
-def read_pumps_history(n_days=7):
+def read_tank_power_consumption(n_days=7):
     start = datetime.datetime.now() - datetime.timedelta(n_days)
     dates = []
     pump_in = []
     pump_out = []
+    city = []
     with _connect() as conn:
         cursor = conn.cursor()
         q = (
@@ -188,4 +191,5 @@ def read_pumps_history(n_days=7):
             dates.append(row[TANK_DATE_COL])
             pump_in.append(row[TANK_PUMP_IN_COL])
             pump_out.append(row[TANK_PUMP_OUT_COL])
-    return dates, pump_in, pump_out
+            city.append(row[TANK_CITY_COL])
+    return dates, pump_in, pump_out, city
