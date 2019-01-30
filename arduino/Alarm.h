@@ -19,8 +19,9 @@ class Alarm
             AlertLight *alertLight,
             void (*sendAlert)(const char *, const char *, byte)
         );
+        unsigned long delayBeforeAlert = 3000;
         // The movement detector stays active ~ 8 seconds after we leave the room
-        unsigned long millisBeforeAlert = 15000;
+        unsigned long delayBeforeListening = 20000;
 
         void loop();
         bool listening();
@@ -38,8 +39,10 @@ class Alarm
 
         bool _breachDetected = false;
         bool _listening = false;
-        uint8_t _oldListenSwitchState; 
+        uint8_t _curListenSwitchState; 
         unsigned long _breachTime = 0;
+        unsigned long _switchTime = 0;
+        bool _switchChanged = false;
 
         void _httpRouteGet(WebServer &server);
         void _httpRouteSet(WebServer &server);

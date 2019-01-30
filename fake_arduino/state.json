@@ -3,7 +3,8 @@
     "listen": 1,
     "movement": 0,
     "breach": 0,
-    "ms_before_alert": 15000
+    "delay_before_listening": 20000,
+    "delay_before_alert": 3000
   },
   "lights": {
     "0": 0,

@@ -28,7 +28,7 @@ Alarm::Alarm(
     pinMode(_pinListening, OUTPUT);
     pinMode(_pinNotListening, OUTPUT);
 
-    _oldListenSwitchState = digitalRead(_pinListenSwitch);
+    _curListenSwitchState = digitalRead(_pinListenSwitch);
 }
 
 bool Alarm::breachDetected()
@@ -38,10 +38,15 @@ bool Alarm::breachDetected()
 
 bool Alarm::listening()
 {
-    uint8_t curState = digitalRead(_pinListenSwitch);
-    if (curState != _oldListenSwitchState) { // The key was turned
-        _oldListenSwitchState = curState;
-        _listening = !_listening;
+    if (!_switchChanged) return _listening;
+    // The key was turned
+    // We wait a little before activating the alarm to let time to leave the building
+    if (!_listening && millis() - _switchTime > delayBeforeListening) {
+        _listening = true;
+        _switchChanged = false;
+    } else if (_listening) { // If the alarm is turned off, we don't need to wait
+        _listening = false;
+        _switchChanged = false;
     }
     return _listening;
 }
@@ -53,6 +58,13 @@ bool Alarm::movementDetected()
 
 void Alarm::loop()
 {
+    uint8_t switchState = digitalRead(_pinListenSwitch);
+    if (switchState != _curListenSwitchState) { // The key was turned
+        _switchTime = millis();
+        _curListenSwitchState = switchState;
+        _switchChanged = true;
+    }
+
     _alert.raise(_breachDetected);
 
     if (!listening()) {
@@ -79,7 +91,7 @@ void Alarm::loop()
     }
 
     // We wait a bit before raising the alert
-    if (millis() - _breachTime < millisBeforeAlert) {
+    if (millis() - _breachTime < delayBeforeAlert) {
         return;
     }
 
@@ -94,7 +106,8 @@ void Alarm::_httpRouteGet(WebServer &server)
     server << "{ ";
     server << "\"listen\": " << listening() << ", ";
     server << "\"breach\": " << breachDetected() << ", ";
-    server << "\"ms_before_alert\": " << millisBeforeAlert << ", ";
+    server << "\"delay_before_alert\": " << delayBeforeAlert << ", ";
+    server << "\"delay_before_listening\": " << delayBeforeListening << ", ";
     server << "\"movement\": " << movementDetected();
     server << " }";
 }
@@ -109,8 +122,11 @@ void Alarm::_httpRouteSet(WebServer &server)
         if (strcmp(key, "listen") == 0) {
             _listening = (strcmp(value, "1") == 0);
         }
-        if (strcmp(key, "ms_before_alert") == 0) {
-            millisBeforeAlert = atol(value);
+        if (strcmp(key, "delay_before_alert") == 0) {
+            delayBeforeAlert = atol(value);
+        }
+        if (strcmp(key, "delay_before_listening") == 0) {
+            delayBeforeListening = atol(value);
         }
     }
     server.httpSuccess();

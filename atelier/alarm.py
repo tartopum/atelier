@@ -11,7 +11,10 @@ blueprint = Blueprint("alarm", __name__, template_folder="templates")
 def config_arduino():
     arduino.post(
         arduino_endpoint,
-        {"ms_before_alert": config["alarm"]["delay"] * 1000}
+        {
+            "delay_before_alert": config["alarm"]["delay_before_alert"] * 1000,
+            "delay_before_listening": config["alarm"]["delay_before_listening"] * 1000,
+        }
     )
 
 

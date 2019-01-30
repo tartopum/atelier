@@ -165,7 +165,8 @@ schema.add_period("lunch_period", title="Période de midi")
 schema.add_period("sleep_period", title="Période de nuit")
 
 schema.add_section("alarm", "Alarme")
-schema.add_int("alarm", "delay", min=0, max=60, title="Délai de déclenchement (s)")  # s
+schema.add_int("alarm", "delay_before_alert", min=0, max=60, title="Délai avant déclenchement (s)")  # s
+schema.add_int("alarm", "delay_before_listening", min=0, max=60, title="Délai avant mise en écoute (s)")  # s
 
 schema.add_section("lights", "Lumières")
 schema.add_int("lights", "press_delay", min=1, max=10, title="Durée de pression des boutons (s)")  # s

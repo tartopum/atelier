@@ -29,7 +29,8 @@
     "end": "06:30"
   },
   "alarm": {
-    "delay": 15
+    "delay_before_listening": 20,
+    "delay_before_alert": 3
   },
   "lights": {
     "press_delay": 1,
