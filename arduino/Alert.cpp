@@ -20,11 +20,13 @@ Alert::Alert(
 void Alert::raise(bool problemDetected)
 {
     if (!problemDetected) {
-        _light->unsetLevel(_level);
+        if (_raised) _light->unsetLevel(_level);
         _sent = false;
+        _raised = false;
         return;
     }
 
+    _raised = true;
     _light->setLevel(_level);
 
     if (strlen(_name) == 0 || strlen(_msg) == 0) return;

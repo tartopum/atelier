@@ -24,6 +24,7 @@ class Alert
         alert_level_t _level;
         unsigned long _reminderDelay;
         bool _sent = false;
+        bool _raised = false;
         unsigned long _lastTimeSent = 0;
         void (*_send)(const char *, const char *, byte);
 };
