@@ -94,6 +94,10 @@ var WATER_CONSUMPTION_URL = "{{ url_for('tank.water_consumption_data') }}";
 var TANK_LEVEL_URL = "{{ url_for('tank.water_level_history') }}";
 var POWER_CONSUMPTION_URL = "{{ url_for('tank.power_consumption_data') }}";
 var VOLUME_BETWEEN_SENSORS = {{ volume_between_sensors }};
+var VOLUME_BELOW_LOW_SENSOR = {{ volume_below_low_sensor }};
+var PUMP_IN_POWER = {{ pump_in_power }};
+var PUMP_OUT_POWER = {{ pump_out_power }};
+var URBAN_NETWORK_POWER = {{ urban_network_power }};
 </script>
 
 <script src="{{ url_for('static', filename='js/plotly-latest.min.js') }}"></script>

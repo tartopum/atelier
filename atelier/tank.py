@@ -14,19 +14,23 @@ arduino_endpoint = "tank"
 blueprint = Blueprint("tank", __name__, template_folder="templates")
 
 
-def total_volume():
-    return (
-        config["tank"]["height_between_sensors"]
-        * math.pi * config["tank"]["radius"] ** 2
-        / 1000
-    )
+def _volume(height):
+    return height * math.pi * config["tank"]["radius"] ** 2 / 1000
+
+
+def volume_below_low_sensor():
+    return _volume(config["tank"]["low_sensor_height"])
+
+
+def volume_between_sensors():
+    return _volume(config["tank"]["height_between_sensors"])
 
 
 def water_level():
     start_empty, volume_in, volume_out = db.read_tank_volume_in_out()
-    water_volume = 0 if start_empty else total_volume()
+    water_volume = 0 if start_empty else volume_between_sensors()
     water_volume = water_volume + volume_in - volume_out
-    ratio = water_volume / total_volume()
+    ratio = water_volume / volume_between_sensors()
     return min(max(0, ratio), 1)
 
 
@@ -163,7 +167,7 @@ def water_consumption_data():
 @auth.login_required
 def water_level_history():
     ref_empty, dates, rel_volumes, delta_volume = db.read_tank_volume_history()
-    start_volume = (0 if ref_empty else total_volume()) + delta_volume
+    start_volume = (0 if ref_empty else volume_between_sensors()) + delta_volume
     dates, rel_volumes = _bin_time_series(dates, rel_volumes, dt.timedelta(hours=1))
     rel_volumes = [sum(bin_vol) for bin_vol in rel_volumes]
     for i, delta in enumerate(rel_volumes):

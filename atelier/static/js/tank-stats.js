@@ -249,20 +249,18 @@ function plotHistoryStats(yTank, yCity, yWell) {
 }
 
 function plotPowerConsumptionStats(pumpIn, pumpOut, city) {
-    pumpIn = pumpIn.reduce(add, 0)
-    pumpOut = pumpOut.reduce(add, 0)
-    city = city.reduce(add, 0)
-    let total = pumpIn + pumpOut + city
-    let minutes = total % 60
-    if (minutes < 10) minutes = "0" + minutes
-    total = (Math.floor(total / 60)) + "h" + minutes
+    pumpIn = pumpIn.reduce(add, 0) / 60.0 * PUMP_IN_POWER / 1000.0
+    pumpOut = pumpOut.reduce(add, 0) / 60.0 * PUMP_OUT_POWER / 1000.0
+    city = city.reduce(add, 0) / 60.0 * URBAN_NETWORK_POWER / 1000.0
+    let total = (pumpIn + pumpOut + city).toPrecision(2)
+
     Plotly.newPlot(
         document.getElementById("pumps_stats_plot"),
         [{
             type: "pie",
             hoverinfo: "label+value",
             hole: .6,
-            values: [pumpIn, pumpOut, city],
+            values: [pumpIn.toPrecision(2), pumpOut.toPrecision(2), city.toPrecision(2)],
             labels: ["Puits", "Surpresseur", "Ville"],
             marker: { colors: [WELL_COLOR, TANK_COLOR, CITY_COLOR] },
         }],
@@ -282,7 +280,7 @@ function plotPowerConsumptionStats(pumpIn, pumpOut, city) {
                     size: 30,
                 },
                 showarrow: false,
-                text: total,
+                text: total + " kWh",
                 x: 0.5,
                 y: 0.5,
                 xanchor: "center",
@@ -295,9 +293,9 @@ function plotPowerConsumptionStats(pumpIn, pumpOut, city) {
 }
 
 function plotPowerConsumptionHistory(x, pumpIn, pumpOut, city) {
-    pumpIn = pumpIn.map(x => (x / 60).toPrecision(2))
-    pumpOut = pumpOut.map(x => (x / 60).toPrecision(2))
-    city = city.map(x => (x / 60).toPrecision(2))
+    pumpIn = pumpIn.map(x => (x / 60 * PUMP_IN_POWER / 1000.0).toPrecision(2))
+    pumpOut = pumpOut.map(x => (x / 60 * PUMP_OUT_POWER / 1000.0).toPrecision(2))
+    city = city.map(x => (x / 60 * URBAN_NETWORK_POWER / 1000.0).toPrecision(2))
 
     Plotly.newPlot(
         document.getElementById("pumps_history_plot"),
@@ -335,7 +333,7 @@ function plotPowerConsumptionHistory(x, pumpIn, pumpOut, city) {
                 zeroline: false,
             },
             yaxis: {
-                title: "Durée de fonctionnement (h)",
+                title: "Énergie (kWh)",
                 showline: true,
                 zeroline: false,
                 fixedrange: true,
@@ -393,7 +391,7 @@ function updateHistoryPlot() {
     xhttp.send();
 }
 
-function updatePumpsPlot() {
+function updatePowerConsumptionPlot() {
     downloadPumps.style.visibility = "hidden"
     loaderPumps.style.visibility = "visible"
 
@@ -451,6 +449,7 @@ function buildDownloadLink(link, prefix, period, timestep, csv) {
 }
 
 function plotTankLevelPlot(x, y) {
+    y = y.map(x => x + VOLUME_BELOW_LOW_SENSOR)
     Plotly.newPlot(
         document.getElementById("tank_level_plot"),
         [{
@@ -468,11 +467,11 @@ function plotTankLevelPlot(x, y) {
                 zeroline: false,
             },
             yaxis: {
-                title: "Volume entre les capteurs (L)",
+                title: "Volume (L)",
                 showline: true,
                 zeroline: false,
                 fixedrange: true,
-                range: [0, VOLUME_BETWEEN_SENSORS],
+                range: [0, VOLUME_BETWEEN_SENSORS + VOLUME_BELOW_LOW_SENSOR],
             },
         }
     )
@@ -494,9 +493,9 @@ function updateTankLevelPlot() {
 
 document.getElementById("period-consumption").addEventListener("change", updateHistoryPlot)
 document.getElementById("timestep-consumption").addEventListener("change", updateHistoryPlot)
-document.getElementById("period-pumps").addEventListener("change", updatePumpsPlot)
-document.getElementById("timestep-pumps").addEventListener("change", updatePumpsPlot)
+document.getElementById("period-pumps").addEventListener("change", updatePowerConsumptionPlot)
+document.getElementById("timestep-pumps").addEventListener("change", updatePowerConsumptionPlot)
 
 updateHistoryPlot()
 updateTankLevelPlot()
-updatePumpsPlot()
+updatePowerConsumptionPlot()

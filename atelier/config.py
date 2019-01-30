@@ -186,5 +186,9 @@ schema.add_int("tank", "max_pump_out_running_time", min=1, max=60, title="Durée
 schema.add_int("tank", "max_duration_without_flow_out", min=1, max=120, title="Durée maximale sans consommation détectée (min)")  # min
 schema.add_int("tank", "height_between_sensors", min=1, max=1000, title="Distance entre les capteurs de niveau de la cuve (cm)")  # cm
 schema.add_int("tank", "radius", min=1, max=1000, title="Rayon de la cuve (cm)")  # cm
+schema.add_int("tank", "low_sensor_height", min=1, max=1000, title="Hauteur du capteur de niveau bas (cm)")  # cm
+schema.add_int("tank", "pump_in_power", min=1, max=5000, title="Puissance de la pompe de puits (W)")
+schema.add_int("tank", "pump_out_power", min=1, max=5000, title="Puissance de la pompe du surpresseur (W)")
+schema.add_int("tank", "urban_network_power", min=1, max=1000, title="Puissance de l'électrovanne de ville (W)")
 
 config = Config(schema, _PATH)

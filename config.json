@@ -49,6 +49,10 @@
     "max_duration_without_flow_out": 30,
     "time_to_fill_up": 30,
     "height_between_sensors": 190,
+    "low_sensor_height": 13,
+    "pump_in_power": 1100,
+    "pump_out_power": 1500,
+    "urban_network_power": 16,
     "radius": 90
   }
 }

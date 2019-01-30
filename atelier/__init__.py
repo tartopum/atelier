@@ -142,7 +142,11 @@ def tank_state():
 def tank_stats_route():
     return render_template(
         "tank_stats.html",
-        volume_between_sensors=tank.total_volume(),
+        volume_between_sensors=tank.volume_between_sensors(),
+        volume_below_low_sensor=tank.volume_below_low_sensor(),
+        pump_in_power=config["tank"]["pump_in_power"],
+        pump_out_power=config["tank"]["pump_out_power"],
+        urban_network_power=config["tank"]["urban_network_power"],
     )
 
 
