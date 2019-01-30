@@ -7,10 +7,17 @@
 #include "Alert.h"
 #include "AlertLight.h"
 
+typedef enum {
+    DISABLED,
+    STARTING,
+    LISTENING,
+} alarm_state_t;
+
 class Alarm
 {
     public:
         Alarm(
+            int,
             int,
             int,
             int,
@@ -27,22 +34,26 @@ class Alarm
         bool listening();
         bool breachDetected();
         bool movementDetected();
+        void enable(bool);
         void httpRoute(WebServer &server, WebServer::ConnectionType type);
 
     private:
         int _pinDetector;
         int _pinBuzzer;
+        int _pinBuzzerStart;
         int _pinListening;
         int _pinNotListening;
         int _pinListenSwitch;
         Alert _alert;
 
         bool _breachDetected = false;
-        bool _listening = false;
-        uint8_t _curListenSwitchState; 
+        alarm_state_t _state = DISABLED;
+        uint8_t _curSwitchState; 
         unsigned long _breachTime = 0;
-        unsigned long _switchTime = 0;
-        bool _switchChanged = false;
+        unsigned long _enabledTime = 0;
+
+        void _handleSwitch();
+        void _updateState();
 
         void _httpRouteGet(WebServer &server);
         void _httpRouteSet(WebServer &server);
