@@ -135,7 +135,7 @@ void Alarm::_httpRouteGet(WebServer &server)
 {
     server.httpSuccess("application/json");
     server << "{ ";
-    server << "\"listen\": " << listening() << ", ";
+    server << "\"listen\": " << (_state != DISABLED) << ", ";
     server << "\"breach\": " << breachDetected() << ", ";
     server << "\"delay_before_alert\": " << delayBeforeAlert << ", ";
     server << "\"delay_before_listening\": " << delayBeforeListening << ", ";
