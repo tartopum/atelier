@@ -51,6 +51,7 @@ class Alarm
         uint8_t _curSwitchState; 
         unsigned long _breachTime = 0;
         unsigned long _enabledTime = 0;
+        bool _warnStarting = true;
 
         void _handleSwitch();
         void _updateState();

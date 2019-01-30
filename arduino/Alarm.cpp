@@ -64,6 +64,10 @@ void Alarm::_handleSwitch()
     uint8_t switchState = digitalRead(_pinListenSwitch);
     if (switchState == _curSwitchState) return;
     // The key was turned
+    // We don't want to make the warning buzzer ring because the user already
+    // knows if the alarm is starting and would trigger the buzzer when leaving
+    // the building.
+    _warnStarting = false;
     _curSwitchState = switchState;
     enable(_state == DISABLED);
 }
@@ -96,7 +100,7 @@ void Alarm::loop()
         // Show orange light
         digitalWrite(_pinListening, HIGH);
         digitalWrite(_pinNotListening, HIGH);
-        if (movementDetected()) {
+        if (movementDetected() && _warnStarting) {
             digitalWrite(_pinBuzzerStart, HIGH);
         }
         return;
@@ -147,6 +151,7 @@ void Alarm::_httpRouteSet(WebServer &server)
     char value[valueLen];
     while (server.readPOSTparam(key, keyLen, value, valueLen)) {
         if (strcmp(key, "listen") == 0) {
+            _warnStarting = true;
             enable(strcmp(value, "1") == 0);
         }
         if (strcmp(key, "delay_before_alert") == 0) {
