@@ -223,6 +223,7 @@ bool Tank::isFillingCycleEmpty()
 {
     return (
         isOn(_pinPumpIn) &&
+        isOff(_pinFilterCleaning) &&
         (millis() - _timePumpInStarted > _pumpInStartDuration) &&
         _volumeInCurCycle == 0
     );

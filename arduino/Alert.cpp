@@ -20,9 +20,7 @@ Alert::Alert(
 void Alert::raise(bool problemDetected)
 {
     if (!problemDetected) {
-        if (_sent) {
-            _light->unsetLevel(_level);
-        }
+        _light->unsetLevel(_level);
         _sent = false;
         return;
     }
