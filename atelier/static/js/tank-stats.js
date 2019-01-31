@@ -2,11 +2,11 @@ let TANK_COLOR = "#e9e9e9"
 let CITY_COLOR = "#ff6961"
 let WELL_COLOR = "#aec5e0"
 let WATER_COLOR = "#aec5e0"
-let downloadConsumption = document.getElementById("download-consumption")
-let downloadPumps = document.getElementById("download-pumps")
-let loaderConsumption = document.getElementById("loader-consumption")
+let downloadWaterConsumption = document.getElementById("download-water-consumption")
+let downloaderPowerConsumption = document.getElementById("download-power-consumption")
+let loaderWaterConsumption = document.getElementById("loader-water-consumption")
 let loaderTankLevel = document.getElementById("loader-tank-level")
-let loaderPumps = document.getElementById("loader-pumps")
+let loaderPowerConsumption = document.getElementById("loader-power-consumption")
 
 function add(a, b) {
     return a + b;
@@ -17,7 +17,7 @@ function plotHistoryOverTime(xTank, xCity, xWell, yTank, yCity, yWell) {
     yTank = yTank.map(x => -1 * x)
     
     Plotly.newPlot(
-        document.getElementById("history_time_plot"),
+        document.getElementById("water_consumption_plot"),
         [{
             type: "bar",
             x: xWell,
@@ -99,7 +99,7 @@ function plotHistoryStats(yTank, yCity, yWell) {
     let maxWell = Math.max(...yWell)
 
     Plotly.newPlot(
-        document.getElementById("history_stats_plot"),
+        document.getElementById("water_consumption_stats_plot"),
         [{
             type: "bar",
             x: ["Puits", "Cuve", "Ville"],
@@ -248,14 +248,14 @@ function plotHistoryStats(yTank, yCity, yWell) {
     )
 }
 
-function plotPowerConsumptionStats(pumpIn, pumpOut, city) {
-    pumpIn = pumpIn.reduce(add, 0) / 60.0 * PUMP_IN_POWER / 1000.0
-    pumpOut = pumpOut.reduce(add, 0) / 60.0 * PUMP_OUT_POWER / 1000.0
-    city = city.reduce(add, 0) / 60.0 * URBAN_NETWORK_POWER / 1000.0
+function plotPowerConsumptionStats(pumpIn, pumpOut, city, unit) {
+    pumpIn = pumpIn.reduce(add, 0)
+    pumpOut = pumpOut.reduce(add, 0)
+    city = city.reduce(add, 0)
     let total = (pumpIn + pumpOut + city).toPrecision(2)
 
     Plotly.newPlot(
-        document.getElementById("pumps_stats_plot"),
+        document.getElementById("power_consumption_stats_plot"),
         [{
             type: "pie",
             hoverinfo: "label+value",
@@ -280,7 +280,7 @@ function plotPowerConsumptionStats(pumpIn, pumpOut, city) {
                     size: 30,
                 },
                 showarrow: false,
-                text: total + " kWh",
+                text: total + " " + unit,
                 x: 0.5,
                 y: 0.5,
                 xanchor: "center",
@@ -292,13 +292,13 @@ function plotPowerConsumptionStats(pumpIn, pumpOut, city) {
     )
 }
 
-function plotPowerConsumptionHistory(x, pumpIn, pumpOut, city) {
-    pumpIn = pumpIn.map(x => (x / 60 * PUMP_IN_POWER / 1000.0).toPrecision(2))
-    pumpOut = pumpOut.map(x => (x / 60 * PUMP_OUT_POWER / 1000.0).toPrecision(2))
-    city = city.map(x => (x / 60 * URBAN_NETWORK_POWER / 1000.0).toPrecision(2))
+function plotPowerConsumptionHistory(x, pumpIn, pumpOut, city, unit) {
+    pumpIn = pumpIn.map(x => x.toPrecision(2))
+    pumpOut = pumpOut.map(x => x.toPrecision(2))
+    city = city.map(x => x.toPrecision(2))
 
     Plotly.newPlot(
-        document.getElementById("pumps_history_plot"),
+        document.getElementById("power_consumption_plot"),
         [{
             type: "bar",
             x: x,
@@ -333,7 +333,7 @@ function plotPowerConsumptionHistory(x, pumpIn, pumpOut, city) {
                 zeroline: false,
             },
             yaxis: {
-                title: "Énergie (kWh)",
+                title: "Consommation (" + unit + ")",
                 showline: true,
                 zeroline: false,
                 fixedrange: true,
@@ -349,11 +349,11 @@ function plotPowerConsumptionHistory(x, pumpIn, pumpOut, city) {
 }
 
 function updateHistoryPlot() {
-    downloadConsumption.style.visibility = "hidden"
-    loaderConsumption.style.visibility = "visible"
+    downloadWaterConsumption.style.visibility = "hidden"
+    loaderWaterConsumption.style.visibility = "visible"
 
-    var period = document.getElementById("period-consumption").value
-    var timestep = document.getElementById("timestep-consumption").value
+    var period = document.getElementById("period-water-consumption").value
+    var timestep = document.getElementById("timestep-water-consumption").value
 
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
@@ -379,8 +379,8 @@ function updateHistoryPlot() {
                     data.y_city[i] + "\r\n"
                 )
             }
-            buildDownloadLink(downloadConsumption, "consommation_eau", period, timestep, csv)
-            loaderConsumption.style.visibility = "hidden"
+            buildDownloadLink(downloadWaterConsumption, "consommation_eau", period, timestep, csv)
+            loaderWaterConsumption.style.visibility = "hidden"
         }
     };
     xhttp.open(
@@ -392,36 +392,51 @@ function updateHistoryPlot() {
 }
 
 function updatePowerConsumptionPlot() {
-    downloadPumps.style.visibility = "hidden"
-    loaderPumps.style.visibility = "visible"
+    downloaderPowerConsumption.style.visibility = "hidden"
+    loaderPowerConsumption.style.visibility = "visible"
 
-    var period = document.getElementById("period-pumps").value
-    var timestep = document.getElementById("timestep-pumps").value
+    var period = document.getElementById("period-power-consumption").value
+    var timestep = document.getElementById("timestep-power-consumption").value
+    var unit = document.getElementById("unit-power-consumption").value
 
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             let data = JSON.parse(xhttp.responseText)
+
+            // min -> h
+            data.pump_in = data.pump_in.map(x => x / 60.0)
+            data.pump_out = data.pump_out.map(x => x / 60.0)
+            data.city = data.city.map(x => x / 60.0)
+
+            if (unit == "kWh") {
+                data.pump_in = data.pump_in.map(x => x * PUMP_IN_POWER / 1000.0)
+                data.pump_out = data.pump_out.map(x => x * PUMP_OUT_POWER / 1000.0)
+                data.city = data.city.map(x => x * URBAN_NETWORK_POWER / 1000.0)
+            }
+
             plotPowerConsumptionHistory(
                 data.dates,
                 data.pump_in,
                 data.pump_out,
-                data.city
+                data.city,
+                unit
             )
             plotPowerConsumptionStats(
                 data.pump_in,
                 data.pump_out,
-                data.city
+                data.city,
+                unit
             )
-            let csv = "date,puits (min),cuve (min),ville (min)\r\n"
+            let csv = "date,puits (" + unit + "),cuve (" + unit + "),ville (" + unit + ")\r\n"
             for (let i = 0; i < data.dates.length; i++) {
                 csv += (
                     data.dates[i] + "," + data.pump_in[i] + "," + data.pump_out[i] + "," + data.city[i]
                     + "\r\n"
                 )
             }
-            buildDownloadLink(downloadPumps, "consommation_electrique", period, timestep, csv)
-            loaderPumps.style.visibility = "hidden"
+            buildDownloadLink(downloaderPowerConsumption, "consommation_electrique", period, timestep, csv)
+            loaderPowerConsumption.style.visibility = "hidden"
         }
     };
     xhttp.open(
@@ -491,10 +506,11 @@ function updateTankLevelPlot() {
     xhttp.send()
 }
 
-document.getElementById("period-consumption").addEventListener("change", updateHistoryPlot)
-document.getElementById("timestep-consumption").addEventListener("change", updateHistoryPlot)
-document.getElementById("period-pumps").addEventListener("change", updatePowerConsumptionPlot)
-document.getElementById("timestep-pumps").addEventListener("change", updatePowerConsumptionPlot)
+document.getElementById("period-water-consumption").addEventListener("change", updateHistoryPlot)
+document.getElementById("timestep-water-consumption").addEventListener("change", updateHistoryPlot)
+document.getElementById("period-power-consumption").addEventListener("change", updatePowerConsumptionPlot)
+document.getElementById("timestep-power-consumption").addEventListener("change", updatePowerConsumptionPlot)
+document.getElementById("unit-power-consumption").addEventListener("change", updatePowerConsumptionPlot)
 
 updateHistoryPlot()
 updateTankLevelPlot()

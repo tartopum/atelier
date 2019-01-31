@@ -223,6 +223,10 @@ header .nav  ul li.active {
     width: 120px;
 }
 
+#content.tank_stats .config .styled-select.unit {
+    width: 75px;
+}
+
 #content.tank_stats .config .styled-select select {
     background: transparent;
     padding: 5px;

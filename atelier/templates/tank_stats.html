@@ -8,7 +8,7 @@
 <div class="config">
     Pendant
     <div class="styled-select period">
-        <select id="period-consumption">
+        <select id="period-water-consumption">
             <option value="1">1 jour</option>
             <option value="7">1 semaine</option>
             <option value="30">1 mois</option>
@@ -20,7 +20,7 @@
     </div>
     par
     <div class="styled-select timestep">
-        <select id="timestep-consumption">
+        <select id="timestep-water-consumption">
             <option value="60">heure</option>
             <option value="240">4 heures</option>
             <option value="720">demi-journée</option>
@@ -31,16 +31,16 @@
         </select>
     </div>
 
-    <img id="loader-consumption" class="loader" src="{{ url_for('static', filename='img/loader.gif') }}" alt="Chargement..." />
+    <img id="loader-water-consumption" class="loader" src="{{ url_for('static', filename='img/loader.gif') }}" alt="Chargement..." />
 
-    <a id="download-consumption" class="download" title="Exporter" href="" download="consommation_eau.csv" style="visibility: hidden;">
+    <a id="download-water-consumption" class="download" title="Exporter" href="" download="consommation_eau.csv" style="visibility: hidden;">
         <img src="{{ url_for('static', filename='img/download.png') }}" alt="Exporter" />
     </a>
 </div>
 
-<div id="history_wrapper" class="wrapper">
-    <div id="history_time_plot"></div>
-    <div id="history_stats_plot"></div>
+<div id="water_consumption_wrapper" class="wrapper">
+    <div id="water_consumption_plot"></div>
+    <div id="water_consumption_stats_plot"></div>
 </div>
 
 <h2>Niveau de la cuve cette semaine</h2>
@@ -54,7 +54,7 @@
 <div class="config">
     Pendant
     <div class="styled-select period">
-        <select id="period-pumps">
+        <select id="period-power-consumption">
             <option value="7">1 semaine</option>
             <option value="30">1 mois</option>
             <option value="90">3 mois</option>
@@ -65,7 +65,7 @@
     </div>
     par
     <div class="styled-select timestep">
-        <select id="timestep-pumps">
+        <select id="timestep-power-consumption">
             <option value="60">heure</option>
             <option value="240">4 heures</option>
             <option value="720">demi-journée</option>
@@ -75,16 +75,23 @@
             <option value="43200">mois</option>
         </select>
     </div>
+    en
+    <div class="styled-select unit">
+        <select id="unit-power-consumption">
+            <option value="kWh">kWh</option>
+            <option value="h">h</option>
+        </select>
+    </div>
 
-    <img id="loader-pumps" class="loader" src="{{ url_for('static', filename='img/loader.gif') }}" alt="Chargement..." />
+    <img id="loader-power-consumption" class="loader" src="{{ url_for('static', filename='img/loader.gif') }}" alt="Chargement..." />
 
-    <a id="download-pumps" class="download" title="Exporter" href="" download="consommation_pompes.csv" style="visibility: hidden;">
+    <a id="download-power-consumption" class="download" title="Exporter" href="" download="consommation_electrique.csv" style="visibility: hidden;">
         <img src="{{ url_for('static', filename='img/download.png') }}" alt="Exporter" />
     </a>
 </div>
-<div id="pumps_wrapper" class="wrapper">
-    <div id="pumps_history_plot"></div>
-    <div id="pumps_stats_plot"></div>
+<div id="power_consumption_wrapper" class="wrapper">
+    <div id="power_consumption_plot"></div>
+    <div id="power_consumption_stats_plot"></div>
 </div>
 {% endblock %}
 
