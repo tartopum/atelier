@@ -20,7 +20,7 @@ Atelier::Atelier(
         "L'alimentation est en manuel depuis longtemps.",
         sendAlert,
         NULL,
-        NO_ALERT
+        MID_ALERT // Need mid alert to send SMS
     )
 {
     _alarm = alarm;
@@ -77,7 +77,7 @@ void Atelier::loop()
         _lastActivityTime = millis();
     }
 
-    if (!_isAlarmListening && _alarm->listening() || millis() - _lastActivityTime > inactivityDelay) {
+    if ((!_isAlarmListening && _alarm->listening()) || (millis() - _lastActivityTime > inactivityDelay)) {
         _lights->cmdLight(LIGHT_IN1, false);
         _lights->cmdLight(LIGHT_IN2, false);
     }
