@@ -42,18 +42,18 @@
     {% endif %}
 
         <div class="switch-wrapper">
-            <span class="switch-label">Nuit prochaine :</span>
-        {% if turn_off_power %}
-            <a href="{{ url_for('workshop.turn_off_power_route', turn_on=1) }}" class="">
-                <div class="switch off">
+            <span class="switch-label">Mode :</span>
+        {% if not workshop["power_manual_mode"] %}
+            <a href="{{ url_for('workshop.power_manual_mode', on=1) }}" class="">
+                <div class="switch on">
                     <span class="btn"></span>
-                    <span class="text">non alimenté</span>
+                    <span class="text">auto</span>
                 </div>
             </a>
         {% else %}
-            <a href="{{ url_for('workshop.turn_off_power_route', turn_on=0) }}" class="">
-                <div class="switch on">
-                    <span class="text">alimenté</span>
+            <a href="{{ url_for('workshop.power_manual_mode', on=0) }}" class="">
+                <div class="switch off">
+                    <span class="text">manuel</span>
                     <span class="btn"></span>
                 </div>
             </a>

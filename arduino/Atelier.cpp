@@ -12,8 +12,16 @@ Atelier::Atelier(
     int pinPowerSupply,
     unsigned long inactivityDelay_,
     Alarm *alarm,
-    Lights *lights
-)
+    Lights *lights,
+    void (*sendAlert)(const char *, const char *, byte)
+) :
+    _powerManualModeAlert(
+        "workshop",
+        "L'alimentation est en manuel depuis longtemps.",
+        sendAlert,
+        NULL,
+        NO_ALERT
+    )
 {
     _alarm = alarm;
     _lights = lights;
@@ -28,10 +36,31 @@ void Atelier::cmdPowerSupply(bool on)
     digitalWrite(_pinPowerSupply, on ? HIGH : LOW);
 }
 
+void Atelier::_setManualMode(bool manualMode)
+{
+    _powerManualMode = manualMode;
+    if (_powerManualMode) _powerManualModeTime = millis();
+}
+
 void Atelier::loop()
 {
     _alarm->loop();
     _lights->loop();
+
+    // Power
+    if (!_powerManualMode && _alarm->listening()) {
+        cmdPowerSupply(false);
+    }
+    if (_isAlarmListening && !_alarm->listening()) { // The alarm was just turned off
+        cmdPowerSupply(true);
+    }
+    // Send reminder when power supply has been in manual mode for long
+    if (_powerManualMode && millis() - _powerManualModeTime > powerManualModeReminderDelay) {
+        _powerManualModeAlert.raise(true);
+        _powerManualModeTime = millis();
+    } else {
+        _powerManualModeAlert.raise(false);
+    }
 
     // The light inside was just turned on
     // We need this to be able to turn lights on through the web interface
@@ -48,7 +77,7 @@ void Atelier::loop()
         _lastActivityTime = millis();
     }
 
-    if (millis() - _lastActivityTime > inactivityDelay) {
+    if (!_isAlarmListening && _alarm->listening() || millis() - _lastActivityTime > inactivityDelay) {
         _lights->cmdLight(LIGHT_IN1, false);
         _lights->cmdLight(LIGHT_IN2, false);
     }
@@ -60,6 +89,8 @@ void Atelier::loop()
         if (_breach) _lights->cmdLight(LIGHT_OUT, false); // The alarm was just stopped
         _breach = false;
     }
+
+    _isAlarmListening = _alarm->listening();
 }
 
 void Atelier::_httpRouteGet(WebServer &server)
@@ -67,6 +98,8 @@ void Atelier::_httpRouteGet(WebServer &server)
     server.httpSuccess("application/json");
     server << "{ ";
     server << "\"power_supply\": " << (digitalRead(_pinPowerSupply) == HIGH) << ",";
+    server << "\"power_reminder_delay\": " << powerManualModeReminderDelay << ",";
+    server << "\"power_manual_mode\": " << _powerManualMode << ",";
     server << "\"inactivity_delay\": " << inactivityDelay;
     server << " }";
 }
@@ -89,6 +122,12 @@ void Atelier::_httpRouteSet(WebServer &server)
         }
         if (strcmp(key, "power_supply") == 0) {
             (strcmp(value, "1") == 0) ? cmdPowerSupply(true) : cmdPowerSupply(false);
+        }
+        if (strcmp(key, "power_manual_mode") == 0) {
+            _setManualMode(strcmp(value, "1") == 0);
+        }
+        if (strcmp(key, "power_reminder_delay") == 0) {
+            powerManualModeReminderDelay = atol(value);
         }
     }
     server.httpSuccess();

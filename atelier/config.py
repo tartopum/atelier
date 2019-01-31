@@ -154,39 +154,42 @@ schema.add_parameter("server", "sms_credentials", {
     }
 })
 schema.add_int("server", "debug", min=0, max=1)
-schema.add_int("server", "max_alert_day_old", min=1, max=365) # days
+schema.add_int("server", "max_alert_day_old", min=1, max=365)
 
 schema.add_section("arduino", "Arduino")
 schema.add_ip("arduino", "ip")
 schema.add_port("arduino", "port")
-schema.add_int("arduino", "timeout", min=1, max=10)  # s
+schema.add_int("arduino", "timeout", min=1, max=10)
 
 schema.add_period("lunch_period", title="Période de midi")
 schema.add_period("sleep_period", title="Période de nuit")
 
+schema.add_section("power", "Alimentation")
+schema.add_int("power", "delay_before_reminder", min=1, max=500, title="Délai en mode manuel avant rappel (h)")
+
 schema.add_section("alarm", "Alarme")
-schema.add_int("alarm", "delay_before_alert", min=0, max=60, title="Délai avant déclenchement (s)")  # s
-schema.add_int("alarm", "delay_before_listening", min=0, max=60, title="Délai avant mise en écoute (s)")  # s
+schema.add_int("alarm", "delay_before_alert", min=0, max=60, title="Délai avant déclenchement (s)")
+schema.add_int("alarm", "delay_before_listening", min=0, max=60, title="Délai avant mise en écoute (s)")
 
 schema.add_section("lights", "Lumières")
-schema.add_int("lights", "press_delay", min=1, max=10, title="Durée de pression des boutons (s)")  # s
-schema.add_int("lights", "inactivity_delay", min=1, max=60, title="Délai d'inactivité (min)")  # min
+schema.add_int("lights", "press_delay", min=1, max=10, title="Durée de pression des boutons (s)")
+schema.add_int("lights", "inactivity_delay", min=1, max=60, title="Délai d'inactivité (min)")
 
 schema.add_section("tank", "Eau")
-schema.add_int("tank", "stats_collection_period", min=10, max=3600, title="Fréquence de collection des statistiques (s)")  # s
-schema.add_int("tank", "flow_check_period", min=5, max=120, title="Durée entre deux calculs de débit (s)")  # s
-schema.add_int("tank", "min_flow_in", min=0, max=100, title="Débit minimal de la pompe du puits (L/min)")  # L/min
-schema.add_int("tank", "time_to_fill_up", min=1, max=(60 * 24), title="Durée entre deux remplissages (min)")  # min
-schema.add_int("tank", "volume_before_pump_out", min=1, max=10000, title="Volume dans la cuve avant d'éteindre la ville (L)")  # L
-schema.add_int("tank", "filter_cleaning_period", min=1, max=(60 * 24 * 7), title="Durée entre deux nettoyages du filtre (min)")  # min
-schema.add_int("tank", "filter_cleaning_duration", min=1, max=30, title="Durée d'ouverture du filtre (s)")  # s
-schema.add_int("tank", "filter_cleaning_consecutive_delay", min=1, max=60, title="Durée entre deux ouvertures consécutives du filtre (s)")  # s
-schema.add_int("tank", "pump_in_start_duration", min=1, max=300, title="Temps mis par l'eau pour remonter le puits (s)")  # s
-schema.add_int("tank", "max_pump_out_running_time", min=1, max=60, title="Durée maximale de fonctionnement de la pompe du surpresseur (min)")  # min
-schema.add_int("tank", "max_duration_without_flow_out", min=1, max=120, title="Durée maximale sans consommation détectée (min)")  # min
-schema.add_int("tank", "height_between_sensors", min=1, max=1000, title="Distance entre les capteurs de niveau de la cuve (cm)")  # cm
-schema.add_int("tank", "radius", min=1, max=1000, title="Rayon de la cuve (cm)")  # cm
-schema.add_int("tank", "low_sensor_height", min=1, max=1000, title="Hauteur du capteur de niveau bas (cm)")  # cm
+schema.add_int("tank", "stats_collection_period", min=10, max=3600, title="Fréquence de collection des statistiques (s)")
+schema.add_int("tank", "flow_check_period", min=5, max=120, title="Durée entre deux calculs de débit (s)")
+schema.add_int("tank", "min_flow_in", min=0, max=100, title="Débit minimal de la pompe du puits (L/min)")
+schema.add_int("tank", "time_to_fill_up", min=1, max=(60 * 24), title="Durée entre deux remplissages (min)")
+schema.add_int("tank", "volume_before_pump_out", min=1, max=10000, title="Volume dans la cuve avant d'éteindre la ville (L)")
+schema.add_int("tank", "filter_cleaning_period", min=1, max=(60 * 24 * 7), title="Durée entre deux nettoyages du filtre (min)")
+schema.add_int("tank", "filter_cleaning_duration", min=1, max=30, title="Durée d'ouverture du filtre (s)")
+schema.add_int("tank", "filter_cleaning_consecutive_delay", min=1, max=60, title="Durée entre deux ouvertures consécutives du filtre (s)")
+schema.add_int("tank", "pump_in_start_duration", min=1, max=300, title="Temps mis par l'eau pour remonter le puits (s)")
+schema.add_int("tank", "max_pump_out_running_time", min=1, max=60, title="Durée maximale de fonctionnement de la pompe du surpresseur (min)")
+schema.add_int("tank", "max_duration_without_flow_out", min=1, max=120, title="Durée maximale sans consommation détectée (min)")
+schema.add_int("tank", "height_between_sensors", min=1, max=1000, title="Distance entre les capteurs de niveau de la cuve (cm)")
+schema.add_int("tank", "radius", min=1, max=1000, title="Rayon de la cuve (cm)")
+schema.add_int("tank", "low_sensor_height", min=1, max=1000, title="Hauteur du capteur de niveau bas (cm)")
 schema.add_int("tank", "pump_in_power", min=1, max=5000, title="Puissance de la pompe de puits (W)")
 schema.add_int("tank", "pump_out_power", min=1, max=5000, title="Puissance de la pompe du surpresseur (W)")
 schema.add_int("tank", "urban_network_power", min=1, max=1000, title="Puissance de l'électrovanne de ville (W)")

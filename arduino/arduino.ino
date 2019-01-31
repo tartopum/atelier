@@ -96,7 +96,8 @@ Atelier atelier(
     CONTROLLINO_RELAY_05,
     15000 * (long)60,
     &alarm,
-    &lights
+    &lights,
+    &sendAlert
 );
 
 Tank tank(
