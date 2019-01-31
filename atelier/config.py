@@ -170,7 +170,7 @@ schema.add_section("alarm", "Alarme")
 schema.add_int("alarm", "delay_before_alert", min=0, max=60, title="Délai avant déclenchement (s)")
 schema.add_int("alarm", "delay_before_listening", min=0, max=60, title="Délai avant mise en écoute (s)")
 schema.add_time("alarm", "lunch", title="Midi")
-schema.add_time("alarm", "night", title="Night")
+schema.add_time("alarm", "night", title="Nuit")
 
 schema.add_section("lights", "Lumières")
 schema.add_int("lights", "press_delay", min=1, max=10, title="Durée de pression des boutons (s)")
