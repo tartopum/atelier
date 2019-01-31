@@ -47,6 +47,21 @@ h1, h2, h3 {
     background: #ff6961;
 }
 
+ul.errors {
+    margin: 0;
+}
+
+ul.errors li {
+    list-style-type: none;
+}
+
+.errors {
+    padding: 10px;
+    background: rgba(255,105,97, 0.5);
+    border: 1px solid #ff6961;
+    display: inline-block;
+}
+
 header {
     display: flex;
     padding: 10px 50px;
@@ -291,6 +306,10 @@ header .nav  ul li.active {
     max-height: 200px;
 }
 
+#content.config .section {
+    margin-bottom: 50px;
+}
+
 #content.config table {
     margin: auto;
 }
@@ -312,7 +331,7 @@ header .nav  ul li.active {
 }
 
 #content.config input[type="submit"] {
-    padding: 5px;
+    padding: 3px;
     cursor: pointer;
-    margin-top: 15px;
+    margin-top: 5px;
 }

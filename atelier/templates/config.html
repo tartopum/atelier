@@ -4,7 +4,7 @@
 
 {% block content %}
 {% if form_errors %}
-<div>Il y a des erreurs.</div>
+<div class="errors">Il y a des erreurs.</div>
 {% endif %}
 
 <form action="{{ url_for('config_route') }}" method="POST">
@@ -26,8 +26,8 @@
         </tr>
     {% endfor %}
     </table>
+    <input type="submit" value="Sauvegarder" />
 </div>
 {% endfor %}
-    <input type="submit" value="Sauvegarder" />
 </form>
 {% endblock %}
