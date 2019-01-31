@@ -20,18 +20,12 @@
     "port": 80,
     "timeout": 5
   },
-  "lunch_period": {
-    "beginning": "13:00",
-    "end": "14:00"
-  },
-  "sleep_period": {
-    "beginning": "21:30",
-    "end": "06:30"
-  },
   "power": {
     "delay_before_reminder": 24
   },
   "alarm": {
+    "lunch": "13:00",
+    "night": "21:30",
     "delay_before_listening": 20,
     "delay_before_alert": 3
   },

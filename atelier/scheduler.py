@@ -106,57 +106,61 @@ class PeriodJob(ArduinoConnectionJob, metaclass=abc.ABCMeta):
         raise NotImplementedError()
 
 
-class LunchJob(PeriodJob):
-    def beginning(self):
-        alarm.listen(1)
-        lights.activate_all(0)
-
-    def end(self):
-        pass
-
-
-class SleepJob(PeriodJob):
-    def beginning(self):
-        alarm.listen(1)
-        lights.activate_all(0)
-
-    def end(self):
-        workshop.power_supply(1)
-
-
-class TankJob(ArduinoConnectionJob):
-    def __init__(self, every):
+class SafeJob(ArduinoConnectionJob, metaclass=abc.ABCMeta):
+    def __init__(self, unsafe_job):
         super().__init__()
+        self.unsafe_job = unsafe_job
+
+    def job(self):
+        self._run_job_safely(self.unsafe_job)
+
+
+class EveryJob(SafeJob, metaclass=abc.ABCMeta):
+    def __init__(self, unit, every, unsafe_job):
+        super().__init__(unsafe_job)
+        self.unit = unit
         self._every = None
         self.every = every
 
     @property
     def every(self):
-        self._every
-
+        return self._every
+    
     @every.setter
     def every(self, val):
         self._every = val
         schedule.clear(self._id)
-        schedule.every(self._every).seconds.do(self.job).tag(self._id)
-
-    def _unsafe_job(self):
-        tank.read_and_store_stats()
-
-    def job(self):
-        self._run_job_safely(self._unsafe_job)
+        getattr(schedule.every(self.every), self.unit).do(self.job).tag(self._id)
 
 
-lunch_job = LunchJob(
-    config["lunch_period"]["beginning"],
-    config["lunch_period"]["end"]
+class DayJob(SafeJob, metaclass=abc.ABCMeta):
+    def __init__(self, at, unsafe_job):
+        super().__init__(unsafe_job)
+        self._at = None
+        self.at = at
+
+    @property
+    def at(self):
+        return self._at
+    
+    @at.setter
+    def at(self, val):
+        self._at = val
+        schedule.clear(self._id)
+        schedule.every().day.at(self.at).do(self.job).tag(self._id)
+
+
+def start_alarm():
+    alarm.listen(1)
+
+
+tank_job = EveryJob(
+    "seconds",
+    config["tank"]["stats_collection_period"],
+    tank.read_and_store_stats
 )
-sleep_job = SleepJob(
-    config["sleep_period"]["beginning"],
-    config["sleep_period"]["end"]
-)
-
-tank_job = TankJob(config["tank"]["stats_collection_period"])
+lunch_job = DayJob(config["alarm"]["lunch"], start_alarm)
+night_job = DayJob(config["alarm"]["night"], start_alarm)
 
 schedule.every().day.at("00:00").do(db.delete_old_alerts)
 schedule.every().day.at("00:05").do(db.backup)

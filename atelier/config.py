@@ -55,14 +55,16 @@ class Schema(dict):
     def add_port(self, section, parameter, **kwargs):
         self.add_int(section, parameter, min=0, max=65535, **kwargs)
 
-    def add_period(self, section, **kwargs):
-        self.add_section(section, **kwargs)
-        parameter_schema = {
+    def add_time(self, section, parameter, **kwargs):
+        schema = {
             "type": "string",
             "pattern": "^[0-9]{2}:[0-9]{2}$"
         }
-        self.add_parameter(section, "beginning", parameter_schema, title="Début")
-        self.add_parameter(section, "end", parameter_schema, title="Fin")
+        self.add_parameter(section, parameter, schema, **kwargs)
+
+    def add_period(self, section, **kwargs):
+        self.add_time(section, "beginning", title="Début")
+        self.add_time(section, "end", title="Fin")
 
 
 class Config(dict):
@@ -161,15 +163,14 @@ schema.add_ip("arduino", "ip")
 schema.add_port("arduino", "port")
 schema.add_int("arduino", "timeout", min=1, max=10)
 
-schema.add_period("lunch_period", title="Période de midi")
-schema.add_period("sleep_period", title="Période de nuit")
-
 schema.add_section("power", "Alimentation")
 schema.add_int("power", "delay_before_reminder", min=1, max=500, title="Délai en mode manuel avant rappel (h)")
 
 schema.add_section("alarm", "Alarme")
 schema.add_int("alarm", "delay_before_alert", min=0, max=60, title="Délai avant déclenchement (s)")
 schema.add_int("alarm", "delay_before_listening", min=0, max=60, title="Délai avant mise en écoute (s)")
+schema.add_time("alarm", "lunch", title="Midi")
+schema.add_time("alarm", "night", title="Night")
 
 schema.add_section("lights", "Lumières")
 schema.add_int("lights", "press_delay", min=1, max=10, title="Durée de pression des boutons (s)")

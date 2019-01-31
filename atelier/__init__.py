@@ -75,14 +75,8 @@ def config_route():
         config_arduino()
         config.save()
 
-        scheduler.lunch_job.time_range = (
-            config["lunch_period"]["beginning"],
-            config["lunch_period"]["end"],
-        )
-        scheduler.sleep_job.time_range = (
-            config["sleep_period"]["beginning"],
-            config["sleep_period"]["end"],
-        )
+        scheduler.lunch_job.at = config["alarm"]["lunch"]
+        scheduler.night_job.at = config["alarm"]["night"]
         scheduler.tank_job.every = config["tank"]["stats_collection_period"]
         return
 
