@@ -19,11 +19,23 @@ Here are some pictures of the interface (in French) and of the system. More of t
 
 ![The Controllino.](docs/photos/circuit_controllino.png)
 
+______
+
 ![The system to store water from a well into a tank.](docs/photos/pipes.png)
+
+______
 
 ![The interface to control the water system.](docs/screenshots/tank.png)
 
+______
+
 ![Statistics about water consumption.](docs/screenshots/water_consumption.png)
+
+______
+
+![Statistics about water consumption.](docs/screenshots/power_consumption.png)
+
+______
 
 ![The interface to control the building.](docs/screenshots/workshop.png)
 
