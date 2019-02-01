@@ -31,7 +31,7 @@
   },
   "lights": {
     "press_delay": 0.5,
-    "inactivity_delay": 30
+    "inactivity_delay": 15
   },
   "tank": {
     "stats_collection_period": 300,

@@ -54,6 +54,7 @@ void Lights::_httpRouteGet(WebServer &server)
 {
     server.httpSuccess("application/json");
     server << "{ ";
+    server << "\"press_delay\": " << _buttons.pressDelay << ", ";
 
     for (int i = 0; i < _N_PINS; i++) {
         server << "\"" << i << "\": " << (digitalRead(_pins[i]) == HIGH);
