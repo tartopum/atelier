@@ -14,17 +14,18 @@
     <div class="alert-list">
     {% for day, day_alerts in alerts %}
         <h3>{{ day }}</h3>
-        <table>
+        <div class="day">
         {% for alert in day_alerts %}
-            <tr>
-                <td class="name">
+            <div class="row">
+                <div class="name">
                     <img src="{{ url_for('static', filename='img/alerts/' + alert[1] + '.png') }}" alt="{{ alert[1] }}" />
-                </td>
-                <td class="time">{{ alert[0].strftime("%Hh%M") }}</td>
-                <td class="message">{{ alert[2] }}</td>
-            </tr>
+                </div>
+                <div class="time">{{ alert[0].strftime("%Hh%M") }}</div>
+                <div class="message">{{ alert[2] }}</div>
+            </div>
+            <hr />
         {% endfor %}
-        </table>
+        </div>
     {% endfor %}
     </div>
 </div>

@@ -65,7 +65,7 @@ ul.errors li {
 header {
     display: flex;
     padding: 10px 50px;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
     font-family: Slabo, Helvetica, Arial, sans-serif;
     text-transform: uppercase;
     font-size: 16px;
@@ -117,10 +117,6 @@ header .nav  ul li.active {
     text-align: center;
 }
 
-#content.home .alerts {
-    margin-top: 50px;
-}
-
 #content.home .alerts h2 img {
     vertical-align: middle;
 }
@@ -136,17 +132,33 @@ header .nav  ul li.active {
     margin: auto;
 }
 
-#content.home .alert-list table {
+#content.home .alert-list .day {
     margin-left: 20px;
 }
 
-#content.home .alert-list td {
-    padding: 5px;
+#content.home .alert-list hr {
+    border: 0;
+    height: 1px;
+    background: #e7edf2;
+    background-image: linear-gradient(to right, #fff, #e7edf2, #fff);
 }
 
-#content.home .alert > div {
+#content.home .alert-list .row > div {
+    padding: 5px;
     display: inline-block;
-    vertical-align: top;
+    vertical-align: middle;
+}
+
+#content.home .alert-list .row .time {
+    font-family: courier;
+    position: relative;
+    top: 1px;
+}
+
+#content.home .alert-list .row .message {
+    font-size: 14px;
+    position: relative;
+    bottom: 2px;
 }
 
 #content.fence .switch-wrapper {
