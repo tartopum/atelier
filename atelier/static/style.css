@@ -143,10 +143,13 @@ header .nav  ul li.active {
     background-image: linear-gradient(to right, #fff, #e7edf2, #fff);
 }
 
+#content.home .alert-list .row {
+    display: flex;
+    align-items: center;
+}
+
 #content.home .alert-list .row > div {
     padding: 5px;
-    display: inline-block;
-    vertical-align: middle;
 }
 
 #content.home .alert-list .row .time {
