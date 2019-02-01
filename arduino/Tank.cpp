@@ -55,8 +55,8 @@ Tank::Tank(
         15
     ),
     _urbanNetworkUsedAlert(
-        "tank",
-        "Le réseau urbain est utilisé.",
+        "",
+        "",
         sendAlert,
         lightWarning,
         LOW_ALERT,
