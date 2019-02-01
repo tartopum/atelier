@@ -12,7 +12,7 @@ blueprint = Blueprint("lights", __name__, template_folder="templates")
 def config_arduino():
     arduino.post(
         arduino_endpoint,
-        {"press_delay": config["lights"]["press_delay"] * 1000}
+        {"press_delay": int(config["lights"]["press_delay"] * 1000)}
     )
 
 

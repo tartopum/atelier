@@ -1,5 +1,5 @@
 import jsonschema
-from wtforms import Form, IntegerField, StringField
+from wtforms import Form, FloatField, IntegerField, StringField
 from wtforms.validators import InputRequired, ValidationError
 
 from .config import config, schema
@@ -21,6 +21,8 @@ def _parameter_to_field(name, parameter):
         field_cls = StringField
     if parameter["type"] == "integer":
         field_cls = IntegerField
+    if parameter["type"] == "number":
+        field_cls = FloatField 
     return field_cls(
         parameter.get("title") or name, 
         [InputRequired(), _make_parameter_validator(parameter)]

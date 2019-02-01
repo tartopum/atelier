@@ -30,7 +30,7 @@
     "delay_before_alert": 3
   },
   "lights": {
-    "press_delay": 1,
+    "press_delay": 0.5,
     "inactivity_delay": 30
   },
   "tank": {

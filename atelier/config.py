@@ -44,13 +44,16 @@ class Schema(dict):
             **kwargs
         )
 
-    def add_int(self, section, parameter, min=None, max=None, **kwargs):
-        schema = {"type": "integer"}
+    def add_number(self, section, parameter, min=None, max=None, type="number", **kwargs):
+        schema = {"type": type}
         if min is not None:
             schema["minimum"] = min
         if max is not None:
             schema["maximum"] = max
         self.add_parameter(section, parameter, schema, **kwargs)
+
+    def add_int(self, *args, **kwargs):
+        self.add_number(*args, type="integer", **kwargs)
 
     def add_port(self, section, parameter, **kwargs):
         self.add_int(section, parameter, min=0, max=65535, **kwargs)
@@ -173,7 +176,7 @@ schema.add_time("alarm", "lunch", title="Midi")
 schema.add_time("alarm", "night", title="Nuit")
 
 schema.add_section("lights", "Lumières")
-schema.add_int("lights", "press_delay", min=1, max=10, title="Durée de pression des boutons (s)")
+schema.add_number("lights", "press_delay", min=0.1, max=5, title="Durée de pression des boutons (s)")
 schema.add_int("lights", "inactivity_delay", min=1, max=60, title="Délai d'inactivité (min)")
 
 schema.add_section("tank", "Eau")

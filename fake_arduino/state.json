@@ -10,7 +10,7 @@
     "0": 0,
     "1": 0,
     "2": 0,
-    "press_delay": 1000
+    "press_delay": 500
   },
   "fence": {
     "state": 0,
