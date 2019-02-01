@@ -77,9 +77,13 @@ void Atelier::loop()
         _lastActivityTime = millis();
     }
 
-    if ((!_isAlarmListening && _alarm->listening()) || (millis() - _lastActivityTime > inactivityDelay)) {
+    if (millis() - _lastActivityTime > inactivityDelay) {
         _lights->cmdLight(LIGHT_IN1, false);
         _lights->cmdLight(LIGHT_IN2, false);
+    }
+
+    if (!_isAlarmListening && _alarm->listening()) { // The alarm was just turned on
+        _lights->cmdAll(false);
     }
 
     if (_alarm->breachDetected()) {
