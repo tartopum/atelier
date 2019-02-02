@@ -425,6 +425,7 @@ void Tank::_httpRouteGet(WebServer &server)
 {
     server.httpSuccess("application/json");
     server << "{ ";
+    server << "\"now\": " << millis() << ", ";
     server << "\"manual_mode\": " << _manualMode << ", ";
     server << "\"pump_in_activated\": " << _pumpInActivated << ", ";
     server << "\"pump_in_running_duration\": " << _pumpInRunningDuration << ", ";
@@ -462,6 +463,7 @@ void Tank::_httpRouteGet(WebServer &server)
     server << "\"filter_cleaning_consecutive_delay\": " << filterCleaningConsecutiveDelay << ", ";
     server << "\"time_to_fill_up\": " << timeToFillUp << ", ";
     server << "\"max_pump_out_running_time\": " << maxPumpOutRunningDuration << ", ";
+    server << "\"last_time_flow_out\": " << _lastTimeFlowOut << ", ";
     server << "\"max_duration_without_flow_out\": " << maxDurationWithoutFlowOut << ", ";
     server << "\"flow_check_period\": " << flowCheckPeriod << ", ";
     server << "\"flow_in\": " << _flowIn << ", ";

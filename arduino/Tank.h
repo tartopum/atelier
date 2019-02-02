@@ -35,7 +35,7 @@ class Tank
         unsigned long filterCleaningDuration = 30000; // ms
         unsigned long filterCleaningConsecutiveDelay = 5000; // ms
         unsigned long maxPumpOutRunningDuration = 300000; // ms
-        unsigned long maxDurationWithoutFlowOut = 1800000; // ms
+        unsigned long maxDurationWithoutFlowOut = 3600000; // ms
 
         void attachFlowInterrupts();
         void (*flowInInterrupt)();
