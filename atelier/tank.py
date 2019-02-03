@@ -201,7 +201,7 @@ def power_consumption_data():
 
     return jsonify({
         "dates": [d.strftime(date_format) for d in binned_dates],
-        "pump_in": [sum(period) // 60 for period in pump_in],
-        "pump_out": [sum(period) // 60 for period in pump_out],
-        "city": [sum(period) // 60 for period in city],
+        "pump_in": [sum(period) / 60 for period in pump_in],
+        "pump_out": [sum(period) / 60 for period in pump_out],
+        "city": [sum(period) / 60 for period in city],
     })
