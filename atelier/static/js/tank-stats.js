@@ -7,6 +7,7 @@ let downloaderPowerConsumption = document.getElementById("download-power-consump
 let loaderWaterConsumption = document.getElementById("loader-water-consumption")
 let loaderTankLevel = document.getElementById("loader-tank-level")
 let loaderPowerConsumption = document.getElementById("loader-power-consumption")
+let loaderWellPumpEfficiency = document.getElementById("loader-well-pump-efficiency")
 
 function add(a, b) {
     return a + b;
@@ -480,7 +481,7 @@ function plotTankLevelPlot(x, y) {
             marker: { color: WATER_COLOR },
         }],
         {
-            margin: {t: 10, r: 10},
+            margin: {t: 10, r: 30},
             height: 300,
             xaxis: {
                 fixedrange: true,
@@ -494,6 +495,36 @@ function plotTankLevelPlot(x, y) {
                 fixedrange: true,
                 range: [0, VOLUME_BETWEEN_SENSORS + VOLUME_BELOW_LOW_SENSOR],
             },
+        }
+    )
+}
+
+function plotWellPumpEfficiency(dates, eff) {
+    Plotly.newPlot(
+        document.getElementById("well_pump_efficiency_plot"),
+        [{
+            type: "bar",
+            x: dates,
+            y: eff,
+            name: "Puits",
+            mode: "lines",
+            hoverinfo: "x+y",
+            marker: { color: WELL_COLOR },
+        }],
+        {
+            barmode: "relative",
+            margin: {t: 10, r: 10},
+            xaxis: {
+                fixedrange: true,
+                showline: true,
+                zeroline: false,
+            },
+            yaxis: {
+                title: "Rendement (L/kWh)",
+                showline: true,
+                zeroline: false,
+                fixedrange: true,
+            }
         }
     )
 }
@@ -512,12 +543,67 @@ function updateTankLevelPlot() {
     xhttp.send()
 }
 
+function updateWellPumpEfficiencyPlot() {
+    loaderWellPumpEfficiency.style.visibility = "visible"
+
+    var dates, volumeData, powerData
+    var period = document.getElementById("period-well-pump-efficiency").value
+    var timestep = document.getElementById("timestep-well-pump-efficiency").value
+
+    function update() {
+        if (!dates || !volumeData || !powerData) return
+        let eff = []
+        for (let i = 0; i < powerData.length; i++) {
+            if (!powerData[i]) {
+                eff.push(0)
+            } else {
+                eff.push(volumeData[i] / powerData[i])
+            }
+        }
+        plotWellPumpEfficiency(dates, eff)
+        loaderWellPumpEfficiency.style.visibility = "hidden"
+    }
+
+    var xhttpVolume = new XMLHttpRequest();
+    xhttpVolume.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            volumeData = JSON.parse(xhttpVolume.responseText).y_well
+            update()
+        }
+    }
+    xhttpVolume.open(
+        "GET",
+        WATER_CONSUMPTION_URL + "?days=" + encodeURIComponent(period) + "&timestep=" + encodeURIComponent(timestep),
+        true
+    )
+    xhttpVolume.send()
+    
+    var xhttpPower = new XMLHttpRequest();
+    xhttpPower.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            let data = JSON.parse(xhttpPower.responseText)
+            dates = data.dates
+            powerData = data.pump_in.map(x => x / 60.0 * PUMP_IN_POWER / 1000.0)
+            update()
+        }
+    }
+    xhttpPower.open(
+        "GET",
+        POWER_CONSUMPTION_URL + "?days=" + encodeURIComponent(period) + "&timestep=" + encodeURIComponent(timestep),
+        true
+    )
+    xhttpPower.send()
+}
+
 document.getElementById("period-water-consumption").addEventListener("change", updateWaterConsumptionPlot)
 document.getElementById("timestep-water-consumption").addEventListener("change", updateWaterConsumptionPlot)
 document.getElementById("period-power-consumption").addEventListener("change", updatePowerConsumptionPlot)
 document.getElementById("timestep-power-consumption").addEventListener("change", updatePowerConsumptionPlot)
 document.getElementById("unit-power-consumption").addEventListener("change", updatePowerConsumptionPlot)
+document.getElementById("period-well-pump-efficiency").addEventListener("change", updateWellPumpEfficiencyPlot)
+document.getElementById("timestep-well-pump-efficiency").addEventListener("change", updateWellPumpEfficiencyPlot)
 
 updateWaterConsumptionPlot()
 updateTankLevelPlot()
 updatePowerConsumptionPlot()
+updateWellPumpEfficiencyPlot()
