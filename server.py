@@ -1,9 +1,15 @@
 import argparse
+import locale
 import logging
 import logging.config
 import os
 
 from gevent.pywsgi import WSGIServer
+
+try:
+    locale.setlocale(locale.LC_ALL, ("fr_FR", "UTF-8"))
+except locale.Error:
+    pass
 
 HERE = os.path.dirname(__file__)
 logging.getLogger(__name__).addHandler(logging.NullHandler())
