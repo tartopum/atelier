@@ -248,7 +248,7 @@ function plotHistoryStats(yTank, yCity, yWell) {
     )
 }
 
-function plotPowerConsumptionStats(pumpIn, pumpOut, city, unit) {
+function plotPowerConsumptionStats(pumpIn, pumpOut, city, unit, period) {
     pumpIn = pumpIn.reduce(add, 0)
     pumpOut = pumpOut.reduce(add, 0)
     city = city.reduce(add, 0)
@@ -268,7 +268,7 @@ function plotPowerConsumptionStats(pumpIn, pumpOut, city, unit) {
             showlegend: false,
             margin: {t: 50, r: 10, l: 30},
             title: {
-                text: "Total",
+                text: "Total sur " + period,
                 font: {
                     family: "Slabo, Helvetica, Arial, sans-serif",
                     size: 30,
@@ -395,7 +395,8 @@ function updatePowerConsumptionPlot() {
     downloaderPowerConsumption.style.visibility = "hidden"
     loaderPowerConsumption.style.visibility = "visible"
 
-    var period = document.getElementById("period-power-consumption").value
+    var periodSelect = document.getElementById("period-power-consumption")
+    var period = periodSelect.value
     var timestep = document.getElementById("timestep-power-consumption").value
     var unit = document.getElementById("unit-power-consumption").value
 
@@ -426,7 +427,8 @@ function updatePowerConsumptionPlot() {
                 data.pump_in,
                 data.pump_out,
                 data.city,
-                unit
+                unit,
+                periodSelect.options[periodSelect.selectedIndex].text
             )
             let csv = "date,puits (" + unit + "),cuve (" + unit + "),ville (" + unit + ")\r\n"
             for (let i = 0; i < data.dates.length; i++) {
