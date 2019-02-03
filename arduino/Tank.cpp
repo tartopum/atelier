@@ -425,7 +425,6 @@ void Tank::_httpRouteGet(WebServer &server)
 {
     server.httpSuccess("application/json");
     server << "{ ";
-    server << "\"now\": " << millis() << ", ";
     server << "\"manual_mode\": " << _manualMode << ", ";
     server << "\"pump_in_activated\": " << _pumpInActivated << ", ";
     server << "\"pump_in_running_duration\": " << _pumpInRunningDuration << ", ";
