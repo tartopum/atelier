@@ -116,7 +116,7 @@ def read_tank_stats(start, end=None):
     with _connect() as conn:
         cursor = conn.cursor()
         cursor.execute(
-            "SELECT * FROM tank_stats WHERE timestamp > :start AND timestamp < :end ORDER BY timestamp",
+            "SELECT * FROM tank_stats WHERE timestamp > :start AND timestamp <= :end ORDER BY timestamp",
             dict(start=start, end=end)
         )
         return cursor.fetchall()
@@ -140,8 +140,9 @@ def read_tank_volume_in_out():
     return start_empty, volume_in, volume_out
 
 
-def read_tank_volume_history(n_days=7):
-    start = datetime.datetime.now() - datetime.timedelta(n_days)
+def read_tank_volume_history(start, end=None):
+    if end is None:
+        end = datetime.datetime.now()
     dates = []
     rel_volumes = []
     volume_delta_before = 0
@@ -150,7 +151,10 @@ def read_tank_volume_history(n_days=7):
     ref_empty = None
     with _connect() as conn:
         cursor = conn.cursor()
-        for row in cursor.execute("SELECT * FROM tank_stats ORDER BY timestamp DESC"):
+        q = (
+            "SELECT * FROM tank_stats WHERE timestamp <= :end ORDER BY timestamp DESC"
+        )
+        for row in cursor.execute(q, (end,)):
             if ref_empty is not None and row[TANK_DATE_COL] < start:
                 break
             is_ref_before = row[TANK_DATE_COL] < start
@@ -176,8 +180,9 @@ def read_tank_volume_history(n_days=7):
     return ref_empty, dates[::-1], rel_volumes[::-1], delta_volume
 
 
-def read_tank_power_consumption(n_days=7):
-    start = datetime.datetime.now() - datetime.timedelta(n_days)
+def read_tank_power_consumption(start, end=None):
+    if end is None:
+        end = datetime.datetime.now()
     dates = []
     pump_in = []
     pump_out = []
@@ -185,9 +190,9 @@ def read_tank_power_consumption(n_days=7):
     with _connect() as conn:
         cursor = conn.cursor()
         q = (
-            "SELECT * FROM tank_stats WHERE timestamp >= :start ORDER BY timestamp"
+            "SELECT * FROM tank_stats WHERE timestamp > :start AND timestamp <= :end ORDER BY timestamp"
         )
-        for row in cursor.execute(q, (start,)):
+        for row in cursor.execute(q, (start, end)):
             dates.append(row[TANK_DATE_COL])
             pump_in.append(row[TANK_PUMP_IN_COL])
             pump_out.append(row[TANK_PUMP_OUT_COL])

@@ -98,25 +98,50 @@ def read_and_store_stats():
     db.store_tank_stats(arduino.get("tank_stats"))
 
 
-def _bin_time_series(dates, data, binsize):
+def _bin_time_series(dates, data, binsize, start_date=None):
+    if start_date is None:
+        start_date = dates[0]
     binned_data = defaultdict(list)
     for date, val in zip(dates, data):
-        bin_index = abs(date - dates[0]) // binsize
-        binned_data[dates[0] + bin_index * binsize + binsize / 2].append(val)
+        bin_index = abs(date - start_date) // binsize
+        binned_data[start_date + bin_index * binsize].append(val)
     binned_dates = sorted(binned_data)
     return binned_dates, [binned_data[d] for d in binned_dates]
 
 
 def _date_format_from_step(timestep):
-    if timestep >= dt.timedelta(days=365):
+    if timestep > dt.timedelta(days=365):
         return "%Y"
-    if timestep >= dt.timedelta(days=31):
+    if timestep > dt.timedelta(days=31):
         return "%Y-%m"
-    if timestep >= dt.timedelta(days=1):
+    if timestep > dt.timedelta(days=1):
         return "%Y-%m-%d"
-    if timestep >= dt.timedelta(hours=1):
+    if timestep > dt.timedelta(hours=1):
         return "%Y-%m-%d %H"
     return "%Y-%m-%d %H:%M"
+
+
+def _end_date(timestep, end=None):
+    if end is None:
+        end = dt.datetime.now()
+    if timestep < dt.timedelta(days=1):
+        return dt.datetime(end.year, end.month, end.day, end.hour)
+    if timestep < dt.timedelta(days=30):
+        return dt.datetime(end.year, end.month, end.day)
+    if timestep >= dt.timedelta(days=30):
+        return dt.datetime(end.year, end.month, 1)
+    return end
+
+
+def _start_date(end, duration, timestep):
+    start = end - duration
+    if timestep <= dt.timedelta(hours=1):
+        return dt.datetime(start.year, start.month, start.day, start.hour)
+    if timestep <= dt.timedelta(days=1):
+        return dt.datetime(start.year, start.month, start.day)
+    if timestep <= dt.timedelta(days=30):
+        return dt.datetime(start.year, start.month, 1)
+    return start
 
 
 def _consumption_data(timestep, duration):
@@ -125,15 +150,16 @@ def _consumption_data(timestep, duration):
     except (ValueError, KeyError):
         end = dt.datetime.now()
 
-    start = end - duration
+    end = _end_date(timestep, end=end)
+    start = _start_date(end, duration, timestep)
     stats = db.read_tank_stats(start, end)
     dates = [row[0] for row in stats]
     y_well = [row[1] for row in stats]
     y_tank = [row[2] for row in stats]
     y_city = [row[3] for row in stats]
-    dates_well, y_well = _bin_time_series(dates, y_well, timestep)
-    dates_tank, y_tank = _bin_time_series(dates, y_tank, timestep)
-    dates_city, y_city = _bin_time_series(dates, y_city, timestep)
+    dates_well, y_well = _bin_time_series(dates, y_well, timestep, start_date=start)
+    dates_tank, y_tank = _bin_time_series(dates, y_tank, timestep, start_date=start)
+    dates_city, y_city = _bin_time_series(dates, y_city, timestep, start_date=start)
     date_format = _date_format_from_step(timestep)
 
     return jsonify({
@@ -166,9 +192,14 @@ def water_consumption_data():
 @blueprint.route("/stats/niveau-cuve")
 @auth.login_required
 def water_level_history():
-    ref_empty, dates, rel_volumes, delta_volume = db.read_tank_volume_history()
+    timestep = dt.timedelta(hours=1)
+    end = _end_date(timestep)
+    start = _start_date(end, dt.timedelta(7), timestep)
+    ref_empty, dates, rel_volumes, delta_volume = db.read_tank_volume_history(start, end=end)
     start_volume = (0 if ref_empty else volume_between_sensors()) + delta_volume
-    dates, rel_volumes = _bin_time_series(dates, rel_volumes, dt.timedelta(hours=1))
+    dates, rel_volumes = _bin_time_series(dates, rel_volumes, timestep)
+    # The deltas during h:... lead to the volume at (h+1), not at h
+    dates = [d + timestep for d in dates]
     rel_volumes = [sum(bin_vol) for bin_vol in rel_volumes]
     for i, delta in enumerate(rel_volumes):
         if i == 0:
@@ -193,10 +224,12 @@ def power_consumption_data():
         return str(e), 400
 
     timestep = dt.timedelta(minutes=timestep)
-    dates, pump_in, pump_out, city = db.read_tank_power_consumption(n_days=days)
-    binned_dates, pump_in = _bin_time_series(dates, pump_in, timestep)
-    _, pump_out = _bin_time_series(dates, pump_out, timestep)
-    _, city = _bin_time_series(dates, city, timestep)
+    end = _end_date(timestep)
+    start = _start_date(end, dt.timedelta(days), timestep)
+    dates, pump_in, pump_out, city = db.read_tank_power_consumption(start, end=end)
+    binned_dates, pump_in = _bin_time_series(dates, pump_in, timestep, start_date=start)
+    _, pump_out = _bin_time_series(dates, pump_out, timestep, start_date=start)
+    _, city = _bin_time_series(dates, city, timestep, start_date=start)
     date_format = _date_format_from_step(timestep)
 
     return jsonify({

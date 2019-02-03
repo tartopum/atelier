@@ -52,7 +52,7 @@ function plotWaterConsumptionHistory(xTank, xCity, xWell, yTank, yCity, yWell) {
                 orientation: "v",
             },
             barmode: "relative",
-            margin: {t: 30, r: 20},
+            margin: {t: 30, r: 60},
             xaxis: {
                 showline: false,
             },
@@ -327,9 +327,8 @@ function plotPowerConsumptionHistory(x, pumpIn, pumpOut, city, unit) {
         }],
         {
             barmode: "relative",
-            margin: {t: 10, r: 10},
+            margin: {t: 10, r: 60},
             xaxis: {
-                fixedrange: true,
                 showline: true,
                 zeroline: false,
             },
@@ -481,7 +480,7 @@ function plotTankLevelPlot(x, y) {
             marker: { color: WATER_COLOR },
         }],
         {
-            margin: {t: 10, r: 30},
+            margin: {t: 10, r: 60},
             height: 300,
             xaxis: {
                 fixedrange: true,
@@ -513,7 +512,7 @@ function plotWellPumpEfficiency(dates, eff) {
         }],
         {
             barmode: "relative",
-            margin: {t: 10, r: 10},
+            margin: {t: 10, r: 60},
             xaxis: {
                 fixedrange: true,
                 showline: true,
