@@ -24,7 +24,11 @@
             * Change Wi-fi country
         * Interfacing Options
             * SSH: enable
-    6. Reboot the RPi
+    6. Install French locale
+        * Uncomment `fr_FR.UTF-8` in `/etc/locale.gen`
+        * `sudo locale-gen`
+        * Make sure `fr_FR.UTF-8` is installed: `locale -a`
+    7. Reboot the RPi: `sudo reboot`
 3. Configure the network
     1. Connect the RPi to the computer through Ethernet
     2. Make sure you are on the same network as displayed in 2.3
