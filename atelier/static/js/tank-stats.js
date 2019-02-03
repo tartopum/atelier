@@ -12,7 +12,7 @@ function add(a, b) {
     return a + b;
 }    
 
-function plotHistoryOverTime(xTank, xCity, xWell, yTank, yCity, yWell) {
+function plotWaterConsumptionHistory(xTank, xCity, xWell, yTank, yCity, yWell) {
     yCity = yCity.map(x => -1 * x)
     yTank = yTank.map(x => -1 * x)
     
@@ -81,7 +81,7 @@ function plotHistoryOverTime(xTank, xCity, xWell, yTank, yCity, yWell) {
     )
 }
 
-function plotHistoryStats(yTank, yCity, yWell) {
+function plotWaterConsumptionStats(yTank, yCity, yWell, timestep, period) {
     let sumTank = yTank.reduce(add, 0)
     let sumCity = yCity.reduce(add, 0)
     let sumWell = yWell.reduce(add, 0)
@@ -198,7 +198,7 @@ function plotHistoryStats(yTank, yCity, yWell) {
                 yref: "paper",
                 xanchor: "center",
                 yanchor: "bottom",
-                text: "Total",
+                text: "Total sur " + period,
                 showarrow: false,
                 font: {
                     family: "Slabo, Helvetica, Arial, sans-serif",
@@ -211,7 +211,7 @@ function plotHistoryStats(yTank, yCity, yWell) {
                 yref: "paper",
                 xanchor: "center",
                 yanchor: "bottom",
-                text: "Moyenne",
+                text: "Moy. par " + timestep,
                 showarrow: false,
                 font: {
                     family: "Slabo, Helvetica, Arial, sans-serif",
@@ -224,7 +224,7 @@ function plotHistoryStats(yTank, yCity, yWell) {
                 yref: "paper",
                 xanchor: "center",
                 yanchor: "top",
-                text: "Minimum",
+                text: "Min. par " + timestep,
                 showarrow: false,
                 font: {
                     family: "Slabo, Helvetica, Arial, sans-serif",
@@ -237,7 +237,7 @@ function plotHistoryStats(yTank, yCity, yWell) {
                 yref: "paper",
                 xanchor: "center",
                 yanchor: "top",
-                text: "Maximum",
+                text: "Max. par " + timestep,
                 showarrow: false,
                 font: {
                     family: "Slabo, Helvetica, Arial, sans-serif",
@@ -348,18 +348,20 @@ function plotPowerConsumptionHistory(x, pumpIn, pumpOut, city, unit) {
     )
 }
 
-function updateHistoryPlot() {
+function updateWaterConsumptionPlot() {
     downloadWaterConsumption.style.visibility = "hidden"
     loaderWaterConsumption.style.visibility = "visible"
 
-    var period = document.getElementById("period-water-consumption").value
-    var timestep = document.getElementById("timestep-water-consumption").value
+    var periodSelect = document.getElementById("period-water-consumption")
+    var timestepSelect = document.getElementById("timestep-water-consumption")
+    var period = periodSelect.value
+    var timestep = timestepSelect.value
 
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             let data = JSON.parse(xhttp.responseText)
-            plotHistoryOverTime(
+            plotWaterConsumptionHistory(
                 data.x_tank,
                 data.x_city,
                 data.x_well,
@@ -367,10 +369,12 @@ function updateHistoryPlot() {
                 data.y_city,
                 data.y_well
             )
-            plotHistoryStats(
+            plotWaterConsumptionStats(
                 data.y_tank,
                 data.y_city,
-                data.y_well
+                data.y_well,
+                timestepSelect.options[timestepSelect.selectedIndex].text,
+                periodSelect.options[periodSelect.selectedIndex].text
             )
             let csv = "date,puits (L),cuve (L),ville (L)\r\n"
             for (let i = 0; i < data.x_tank.length; i++) {
@@ -508,12 +512,12 @@ function updateTankLevelPlot() {
     xhttp.send()
 }
 
-document.getElementById("period-water-consumption").addEventListener("change", updateHistoryPlot)
-document.getElementById("timestep-water-consumption").addEventListener("change", updateHistoryPlot)
+document.getElementById("period-water-consumption").addEventListener("change", updateWaterConsumptionPlot)
+document.getElementById("timestep-water-consumption").addEventListener("change", updateWaterConsumptionPlot)
 document.getElementById("period-power-consumption").addEventListener("change", updatePowerConsumptionPlot)
 document.getElementById("timestep-power-consumption").addEventListener("change", updatePowerConsumptionPlot)
 document.getElementById("unit-power-consumption").addEventListener("change", updatePowerConsumptionPlot)
 
-updateHistoryPlot()
+updateWaterConsumptionPlot()
 updateTankLevelPlot()
 updatePowerConsumptionPlot()
