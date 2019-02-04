@@ -159,6 +159,7 @@ schema.add_parameter("server", "sms_credentials", {
     }
 })
 schema.add_int("server", "debug", min=0, max=1)
+schema.add_int("server", "debug_period", min=1, max=86400)
 schema.add_int("server", "max_alert_day_old", min=1, max=365)
 
 schema.add_section("arduino", "Arduino")

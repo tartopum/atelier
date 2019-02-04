@@ -4,7 +4,7 @@ from itertools import groupby
 import json
 import logging
 
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 from jsonschema import ValidationError
 import requests
 
@@ -19,6 +19,8 @@ app.register_blueprint(fence.blueprint, url_prefix="/cloture")
 app.register_blueprint(lights.blueprint, url_prefix="/lumieres")
 app.register_blueprint(workshop.blueprint, url_prefix="/atelier")
 app.register_blueprint(tank.blueprint, url_prefix="/cuve")
+
+debug = False
 
 
 @app.after_request
@@ -153,7 +155,16 @@ def debug_route():
     states["api"] = arduino.get("config_api")
     for component, conf in states.items():
         states[component] = json.dumps(dict(sorted(conf.items())), indent=2)
-    return render_template("debug.html", states=states)
+    return render_template("debug.html", states=states, debug=debug)
+
+
+@app.route("/debug/<int:on>")
+@arduino.get_route
+def set_debug_route(on):
+    global debug
+    debug = on
+    scheduler.debug_job.every = config["server"]["debug_period"] if debug else None
+    return redirect(url_for("debug_route"))
 
 
 @app.route("/alert", methods=["POST"])

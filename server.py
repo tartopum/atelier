@@ -38,6 +38,14 @@ logging.config.dictConfig(dict(
             "backupCount": 3,
 
         },
+        "file_debug": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": os.path.join(HERE, "debug_controllino.txt"),
+            "formatter": "date",
+            "level": logging.DEBUG,
+            "maxBytes": 50000000,
+            "backupCount": 3,
+        },
     },
     root = {
         "handlers": ["file", "console"],
@@ -47,6 +55,10 @@ logging.config.dictConfig(dict(
         "scheduler": {
             "handlers": ["file", "console"],
             "level": logging.WARNING,
+        },
+        "debug": {
+            "handlers": ["file_debug"],
+            "level": logging.DEBUG,
         },
         "flask.app": {
             "handlers": ["file", "console"],

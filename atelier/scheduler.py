@@ -1,4 +1,5 @@
 import abc
+import json
 import logging
 import threading
 import time
@@ -12,9 +13,10 @@ import schedule
 
 from .config import config
 from .helpers import raise_alert
-from . import alarm, arduino, db, lights, tank, workshop
+from . import alarm, arduino, db, fence, lights, tank, workshop
 
 logger = logging.getLogger("scheduler")
+debug_logger = logging.getLogger("debug")
 
 
 class ScheduleThread(threading.Thread):
@@ -40,6 +42,9 @@ def run(interval=10):
 class Job:
     def __init__(self):
         self._id = str(uuid4())
+
+    def clear(self):
+        schedule.clear(self._id)
 
 
 class ArduinoConnectionJob(Job):
@@ -129,8 +134,9 @@ class EveryJob(SafeJob, metaclass=abc.ABCMeta):
     @every.setter
     def every(self, val):
         self._every = val
-        schedule.clear(self._id)
-        getattr(schedule.every(self.every), self.unit).do(self.job).tag(self._id)
+        self.clear()
+        if self.every is not None:
+            getattr(schedule.every(self.every), self.unit).do(self.job).tag(self._id)
 
 
 class DayJob(SafeJob, metaclass=abc.ABCMeta):
@@ -146,8 +152,9 @@ class DayJob(SafeJob, metaclass=abc.ABCMeta):
     @at.setter
     def at(self, val):
         self._at = val
-        schedule.clear(self._id)
-        schedule.every().day.at(self.at).do(self.job).tag(self._id)
+        self.clear()
+        if self.at is not None:
+            schedule.every().day.at(self.at).do(self.job).tag(self._id)
 
 
 def start_alarm():
@@ -164,3 +171,14 @@ night_job = DayJob(config["alarm"]["night"], start_alarm)
 
 schedule.every().day.at("00:00").do(db.delete_old_alerts)
 schedule.every().day.at("00:05").do(db.backup)
+
+
+def debug():
+    states = {
+        component.__name__.split(".")[1]: arduino.read_state(component)
+        for component in [alarm, fence, lights, workshop, tank]
+    }
+    debug_logger.debug(json.dumps(states, indent=2))
+
+
+debug_job = EveryJob("seconds", None, debug)
