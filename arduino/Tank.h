@@ -81,25 +81,25 @@ class Tank
         float _flowIn = 0.0; // L/min
         float _flowOut = 0.0; // L/min
         unsigned long _oldTimeFlow = 0;
-        volatile unsigned int _flowInPulses = 0; // L
-        volatile unsigned int _flowOutPulses = 0; // L
+        volatile byte _flowInPulses = 0; // L
+        volatile byte _flowOutPulses = 0; // L
 
         bool _pumpInActivated = true;
         unsigned long _lastTimePumpInOff = 0; // ms
         unsigned long _timePumpInStarted = 0; // ms
         unsigned long _pumpInStartDuration = 60000; // ms
-        int _volumeInCurCycle = -1;
+        volatile int _volumeInCurCycle = -1;
         unsigned int _pumpInRunningDuration = 0; // s
         unsigned long _pumpInRunningDurationStart = 0; // ms
 
         bool _pumpOutActivated = true;
         unsigned int _volumeBeforePumpOut = 500; // L
-        unsigned int _volumeCollectedSinceEmpty = 0; // L
+        volatile unsigned int _volumeCollectedSinceEmpty = 0; // L
         bool _tankFullEnough = true;
         unsigned long _lastTimePumpOutOff = 0; // ms
         unsigned long _pumpOutRunningDurationStart = 0; // ms
         unsigned int _pumpOutRunningDuration = 0; // s
-        unsigned long _lastTimeFlowOut = 0; // ms
+        volatile unsigned long _lastTimeFlowOut = 0; // ms
 
         unsigned long _lastFilterCleaningTime = 0; // ms
         bool _filterFirstCleaningDone = false;
@@ -109,9 +109,9 @@ class Tank
         unsigned int _urbanNetworkRunningDuration = 0; // s
 
         // Stats
-        unsigned long _volumeIn = 0; // L
-        unsigned long _volumeOutTank = 0; // L
-        unsigned long _volumeOutUrbanNetwork = 0; // L
+        volatile unsigned long _volumeIn = 0; // L
+        volatile unsigned long _volumeOutTank = 0; // L
+        volatile unsigned long _volumeOutUrbanNetwork = 0; // L
 
         void _computeFlowRates();
         void _cmdPumpIn(bool);

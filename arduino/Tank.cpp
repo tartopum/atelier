@@ -1,3 +1,4 @@
+#include <util/atomic.h>
 #include "Tank.h"
 
 template<class T>
@@ -221,17 +222,25 @@ bool Tank::canPumpOutRun()
 
 bool Tank::isFillingCycleEmpty()
 {
+    int volumeInCurCycle;
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        volumeInCurCycle = _volumeInCurCycle;
+    }
     return (
         isOn(_pinPumpIn) &&
         isOff(_pinFilterCleaning) &&
         (millis() - _timePumpInStarted > _pumpInStartDuration) &&
-        _volumeInCurCycle == 0
+        volumeInCurCycle == 0
     );
 }
 
 bool Tank::isConsumptionMissing()
 {
-    return millis() - _lastTimeFlowOut > maxDurationWithoutFlowOut;
+    unsigned long lastTimeFlowOut;
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        lastTimeFlowOut = _lastTimeFlowOut;
+    }
+    return millis() - lastTimeFlowOut > maxDurationWithoutFlowOut;
 }
 
 /*
@@ -253,7 +262,11 @@ void Tank::_cmdPumpIn(bool on)
         _pumpInRunningDurationStart = millis();
     }
 
-    if (on) _volumeInCurCycle = 0;
+    if (on) {
+        ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+            _volumeInCurCycle = 0;
+        }
+    }
 
     digitalWrite(_pinPumpIn, on ? HIGH : LOW); 
 }
@@ -339,6 +352,10 @@ void Tank::loop()
     }
 
     // Command pump-out and urban network
+    unsigned int volumeCollectedSinceEmpty;
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        volumeCollectedSinceEmpty = _volumeCollectedSinceEmpty;
+    }
     if (!_pumpOutActivated) {
         _cmdUrbanNetwork(true);
     }
@@ -346,11 +363,13 @@ void Tank::loop()
         _tankFullEnough = false;
         _cmdPumpOut(false);
         _cmdUrbanNetwork(true);
-        _volumeCollectedSinceEmpty = 0;
+        ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+            _volumeCollectedSinceEmpty = 0;
+        }
     } else if (_tankFullEnough && _pumpOutActivated) {
         _cmdPumpOut(isOn(_pinPumpOutCanRun));
         _cmdUrbanNetwork(false);
-    } else if (_volumeCollectedSinceEmpty > _volumeBeforePumpOut) {
+    } else if (volumeCollectedSinceEmpty > _volumeBeforePumpOut) {
         // We need this state because the tank could stay always full and
         // _volumeCollectedSinceEmpty could loop back to 0. So we can only rely on
         // it when it's "low".
@@ -371,21 +390,37 @@ void Tank::loop()
  */
 void Tank::flowInPulsed()
 {
-    _flowInPulses++;
-    _volumeCollectedSinceEmpty++;
-    _volumeIn++;
-    _volumeInCurCycle++;
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        _flowInPulses++;
+    }
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        _volumeCollectedSinceEmpty++;
+    }
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        _volumeIn++;
+    }
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        _volumeInCurCycle++;
+    }
 }
 
 void Tank::flowOutPulsed()
 {
-    _flowOutPulses++;
-    if (isOn(_pinUrbanNetwork)) {
-        _volumeOutUrbanNetwork++;
-    } else {
-        _volumeOutTank++;
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        _flowOutPulses++;
     }
-    _lastTimeFlowOut = millis();
+    if (isOn(_pinUrbanNetwork)) {
+        ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+            _volumeOutUrbanNetwork++;
+        }
+    } else {
+        ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+            _volumeOutTank++;
+        }
+    }
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        _lastTimeFlowOut = millis();
+    }
 }
 
 void Tank::attachFlowInterrupts()
@@ -403,13 +438,14 @@ void Tank::_computeFlowRates()
 
     // We detach interrupts to avoid editing millis() and _flowInPulses during
     // the computations
-    noInterrupts();
-    flowInPulses = _flowInPulses;
-    flowOutPulses = _flowOutPulses;
-    time = millis();
-    _flowInPulses = 0;
-    _flowOutPulses = 0;
-    interrupts();
+    // https://www.arduino.cc/reference/en/language/variables/variable-scope--qualifiers/volatile/
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        flowInPulses = _flowInPulses;
+        flowOutPulses = _flowOutPulses;
+        time = millis();
+        _flowInPulses = 0;
+        _flowOutPulses = 0;
+    }
 
     // 1 pulse = 1L
     // flow rates in L/min
@@ -436,9 +472,15 @@ void Tank::_httpRouteGet(WebServer &server)
     server << "\"urban_network_running_duration\": " << _urbanNetworkRunningDuration << ", ";
     server << "\"urban_network_running_duration_start\": " << _urbanNetworkRunningDurationStart << ", ";
     server << "\"pump_in\": " << isOn(_pinPumpIn) << ", ";
-    server << "\"volume_in\": " << _volumeIn << ", ";
-    server << "\"volume_out_tank\": " << _volumeOutTank << ", ";
-    server << "\"volume_out_urban_network\": " << _volumeOutUrbanNetwork << ", ";
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        server << "\"volume_in\": " << _volumeIn << ", ";
+    }
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        server << "\"volume_out_tank\": " << _volumeOutTank << ", ";
+    }
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        server << "\"volume_out_urban_network\": " << _volumeOutUrbanNetwork << ", ";
+    }
     server << "\"millis\": " << millis() << ", ";
     server << "\"last_time_pump_in_off\": " << _lastTimePumpInOff << ", ";
     server << "\"last_time_pump_in_started\": " << _timePumpInStarted << ", ";
@@ -455,14 +497,18 @@ void Tank::_httpRouteGet(WebServer &server)
     server << "\"is_filter_in_blocked\": " << isFilterInBlocked() << ", ";
     server << "\"min_flow_in\": " << minFlowIn << ", ";
     server << "\"volume_before_pump_out\": " << _volumeBeforePumpOut << ", ";
-    server << "\"volume_collected_since_empty \": " << _volumeCollectedSinceEmpty << ", ";
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        server << "\"volume_collected_since_empty \": " << _volumeCollectedSinceEmpty << ", ";
+    }
     server << "\"filter_cleaning\": " << isOn(_pinFilterCleaning) << ", ";
     server << "\"filter_cleaning_period\": " << filterCleaningPeriod << ", ";
     server << "\"filter_cleaning_duration\": " << filterCleaningDuration << ", ";
     server << "\"filter_cleaning_consecutive_delay\": " << filterCleaningConsecutiveDelay << ", ";
     server << "\"time_to_fill_up\": " << timeToFillUp << ", ";
     server << "\"max_pump_out_running_time\": " << maxPumpOutRunningDuration << ", ";
-    server << "\"last_time_flow_out\": " << _lastTimeFlowOut << ", ";
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        server << "\"last_time_flow_out\": " << _lastTimeFlowOut << ", ";
+    }
     server << "\"max_duration_without_flow_out\": " << maxDurationWithoutFlowOut << ", ";
     server << "\"flow_check_period\": " << flowCheckPeriod << ", ";
     server << "\"flow_in\": " << _flowIn << ", ";
@@ -550,14 +596,20 @@ void Tank::httpRouteStats(WebServer &server, WebServer::ConnectionType type)
     
     server.httpSuccess("application/json");
     server << "{ ";
-    server << "\"volume_in\": " << _volumeIn << ", ";
-    _volumeIn = 0;
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        server << "\"volume_in\": " << _volumeIn << ", ";
+        _volumeIn = 0;
+    }
 
-    server << "\"volume_out_tank\": " << _volumeOutTank << ", ";
-    _volumeOutTank = 0;
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        server << "\"volume_out_tank\": " << _volumeOutTank << ", ";
+        _volumeOutTank = 0;
+    }
 
-    server << "\"volume_out_urban_network\": " << _volumeOutUrbanNetwork << ", ";
-    _volumeOutUrbanNetwork = 0;
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        server << "\"volume_out_urban_network\": " << _volumeOutUrbanNetwork << ", ";
+        _volumeOutUrbanNetwork = 0;
+    }
 
     if (isOn(_pinPumpIn)) {
         _pumpInRunningDuration += (millis() - _pumpInRunningDurationStart) / 1000;
