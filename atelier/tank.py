@@ -135,13 +135,11 @@ def _end_date(timestep, end=None):
 
 def _start_date(end, duration, timestep):
     start = end - duration
-    if timestep <= dt.timedelta(hours=1):
+    if timestep < dt.timedelta(days=1):
         return dt.datetime(start.year, start.month, start.day, start.hour)
-    if timestep <= dt.timedelta(days=1):
+    if timestep < dt.timedelta(days=30):
         return dt.datetime(start.year, start.month, start.day)
-    if timestep <= dt.timedelta(days=30):
-        return dt.datetime(start.year, start.month, 1)
-    return start
+    return dt.datetime(start.year, start.month, 1)
 
 
 def _consumption_data(timestep, duration):
