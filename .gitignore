@@ -125,6 +125,7 @@ ENV/
 .swp
 
 logs*.txt*
+debug_controllino*.txt*
 pid
 server.log
 server.err

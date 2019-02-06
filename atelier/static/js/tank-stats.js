@@ -54,6 +54,7 @@ function plotWaterConsumptionHistory(xTank, xCity, xWell, yTank, yCity, yWell) {
             barmode: "relative",
             margin: {t: 30, r: 60},
             xaxis: {
+                title: "Heure de début",
                 showline: false,
             },
             yaxis: {
@@ -331,6 +332,7 @@ function plotPowerConsumptionHistory(x, pumpIn, pumpOut, city, unit) {
             xaxis: {
                 showline: true,
                 zeroline: false,
+                title: "Heure de début",
             },
             yaxis: {
                 title: "Consommation (" + unit + ")",
@@ -514,9 +516,9 @@ function plotWellPumpEfficiency(dates, eff) {
             barmode: "relative",
             margin: {t: 10, r: 60},
             xaxis: {
-                fixedrange: true,
                 showline: true,
                 zeroline: false,
+                title: "Heure de début",
             },
             yaxis: {
                 title: "Rendement (L/kWh)",
