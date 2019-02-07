@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<div class="switch-wrapper">
+<div class="switch-wrapper debug-switch">
 <span class="switch-label">Mode Debug :</span>
 {% if debug %}
     <a href="{{ url_for('set_debug_route', on=0) }}" class="">
@@ -36,9 +36,13 @@
 {% endfor %}
 </div>
 
+<hr class="sep" />
+
 <h2>État de la Raspberry</h2>
 <div id="rpi">
     <div id="rpi_disk_usage" style="margin: 0 30px;"></div>
+    <div id="rpi_cpu" style="margin: 0 30px;"></div>
+    <div id="rpi_memory" style="margin: 0 30px;"></div>
 </div>
 {% endblock %}
 
@@ -46,6 +50,8 @@
 <script src="{{ url_for('static', filename='js/plotly-latest.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/debug.js') }}"></script>
 <script>
-plotRPiDiskUsage({{ rpi["total_disk_space"] }}, {{ rpi["used_disk_space"] }})
+plotRPiDisk({{ rpi["disk_usage"].total }}, {{ rpi["disk_usage"].used }})
+plotRPiCPU({{ rpi["cpu_percent"] }})
+plotRPiMemory({{ rpi["virtual_memory"].total }}, {{ rpi["virtual_memory"].used }})
 </script>
 {% endblock %}

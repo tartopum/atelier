@@ -17,7 +17,7 @@
     "activated": 1
   },
   "workshop": {
-    "inactivity_delay": 1800000,
+    "inactivity_delay": 900000,
     "power_reminder_delay": 86400000,
     "power_manual_mode": 0,
     "power_supply": 1

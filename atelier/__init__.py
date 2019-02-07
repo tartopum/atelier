@@ -3,10 +3,10 @@ from collections import defaultdict
 from itertools import groupby
 import json
 import logging
-import os
 
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from jsonschema import ValidationError
+import psutil
 import requests
 
 from .config import config
@@ -157,17 +157,14 @@ def debug_route():
     for component, conf in states.items():
         states[component] = json.dumps(dict(sorted(conf.items())), indent=2)
 
-    st = os.statvfs(__file__)
-    total_disk_space = st.f_blocks * st.f_frsize
-    used_disk_space = (st.f_blocks - st.f_bfree) * st.f_frsize
-
     return render_template(
         "debug.html",
         states=states,
         debug=debug,
         rpi=dict(
-            total_disk_space=total_disk_space,
-            used_disk_space=used_disk_space,
+            disk_usage=psutil.disk_usage(__file__),
+            cpu_percent=psutil.cpu_percent(),
+            virtual_memory=psutil.virtual_memory(),
         )
     )
 

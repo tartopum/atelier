@@ -308,6 +308,30 @@ header .nav  ul li.active {
     margin-bottom: 5px;
 }
 
+#content.debug .debug-switch {
+    text-align: left;
+    padding-left: 20px;
+    font-size: 15px;
+    margin-bottom: -40px;
+}
+
+#content.debug .debug-switch .text {
+    position: relative;
+    top: 2px;
+}
+
+#content.debug .debug-switch .btn {
+    top: 0px;
+}
+
+#content.debug .sep {
+    margin: 20px auto;
+    width: 500px;
+    border: 0;
+    height: 1px;
+    background: #e7edf2;
+}
+
 #content.debug #controllino > div {
     display: inline-block;
     vertical-align: top;
@@ -319,6 +343,12 @@ header .nav  ul li.active {
     text-align: left;
     overflow: auto;
     max-height: 200px;
+}
+
+#content.debug #rpi > div {
+    display: inline-block;
+    vertical-align: top;
+    margin: 20px;
 }
 
 #content.debug .modebar {
