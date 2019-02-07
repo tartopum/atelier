@@ -157,6 +157,13 @@ def debug_route():
     for component, conf in states.items():
         states[component] = json.dumps(dict(sorted(conf.items())), indent=2)
 
+    cpu_temp = None
+    try:
+        with open("/sys/class/thermal/thermal_zone0/temp") as f:
+            cpu_temp = int(f.read()) / 1000
+    except (FileNotFoundError, ValueError):
+        cpu_temp = None
+
     return render_template(
         "debug.html",
         states=states,
@@ -164,6 +171,7 @@ def debug_route():
         rpi=dict(
             disk_usage=psutil.disk_usage(__file__),
             cpu_percent=psutil.cpu_percent(),
+            cpu_temp=cpu_temp,
             virtual_memory=psutil.virtual_memory(),
         )
     )

@@ -13,9 +13,9 @@ function plotRPiDisk(total, used) {
         }],
         {
             showlegend: true,
-            width: 350,
-            height: 350,
-            margin: {t: 50},
+            width: 300,
+            height: 300,
+            margin: {t: 50, l: 50, r: 50, b: 10},
             title: {
                 text: "Espace disque",
                 font: {
@@ -61,10 +61,17 @@ function plotRPiDisk(total, used) {
     )
 }
 
-function plotRPiCPU(percent) {
+function plotRPiCPU(percent, temp) {
     Plotly.newPlot(
-        document.getElementById("rpi_cpu"),
+        document.getElementById("rpi_cpu_usage"),
         [{
+            type: "pie",
+            hoverinfo: "label+value",
+            hole: .6,
+            values: [percent, 100 - percent],
+            labels: ["Utilisé", "Libre"],
+            marker: { colors: ["#ff6961", "#e9e9e9"] },
+        }, {
             type: "pie",
             hoverinfo: "label+value",
             hole: .6,
@@ -74,9 +81,9 @@ function plotRPiCPU(percent) {
         }],
         {
             showlegend: true,
-            width: 350,
-            height: 350,
-            margin: {t: 50},
+            width: 300,
+            height: 300,
+            margin: {t: 50, l: 50, r: 50, b: 10},
             title: {
                 text: "Processeur",
                 font: {
@@ -91,6 +98,73 @@ function plotRPiCPU(percent) {
                 xanchor: "center",
                 yanchor: "middle",
             },
+        }
+    )
+
+    temp = Math.round(temp)
+    let MIN_TEMP = 20
+    let MID_TEMP = 60
+    let HIGH_TEMP = 75 
+    let MAX_TEMP = 90
+    let tempBarColor = "#e9e9e9"
+    let tempTitleSuffix = "normale"
+    if (temp >= MID_TEMP) {
+        tempBarColor = "#ffb347"
+        tempTitleSuffix = "légère chauffe"
+    }
+    if (temp >= HIGH_TEMP) {
+        tempBarColor = "#ff6961"
+        tempTitleSuffix = "surchauffe !"
+    }
+    Plotly.newPlot(
+        document.getElementById("rpi_cpu_temp"),
+        [{
+            type: "bar",
+            y: [""],
+            x: [temp],
+            orientation: "h",
+            marker: { color: [tempBarColor] },
+            hoverinfo: "skip",
+        }],
+        {
+            showlegend: false,
+            width: 350,
+            height: 100,
+            margin: {t: 30, l: 50, r: 50, b: 30},
+            title: {
+                text: "Température (°C)",
+                font: {
+                    family: "Slabo, Helvetica, Arial, sans-serif",
+                    size: 20,
+                },
+            },
+            xaxis: {
+                showgrid: false,
+                fixedrange: true,
+                showline: false,
+                zeroline: false,
+                range: [20, MAX_TEMP],
+                ticks: "outside",
+                dtick: 10,
+            },
+            yaxis: {
+                fixedrange: true,
+                showline: false,
+                zeroline: false,
+            },
+            annotations: [{
+                font: {
+                    family: "Slabo, Helvetica, Arial, sans-serif",
+                    size: 14,
+                },
+                showarrow: false,
+                text: tempTitleSuffix,
+                x: (temp - MIN_TEMP) / 2.0 + MIN_TEMP,
+                y: 0.5,
+                xanchor: "center",
+                yanchor: "middle",
+                yref: "paper",
+            }]
         }
     )
 }
@@ -110,9 +184,9 @@ function plotRPiMemory(total, used) {
         }],
         {
             showlegend: true,
-            width: 350,
-            height: 350,
-            margin: {t: 50},
+            width: 300,
+            height: 300,
+            margin: {t: 50, l: 50, r: 50, b: 10},
             title: {
                 text: "Mémoire vive",
                 font: {
