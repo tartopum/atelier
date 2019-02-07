@@ -3,6 +3,7 @@ from collections import defaultdict
 from itertools import groupby
 import json
 import logging
+import os
 
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from jsonschema import ValidationError
@@ -155,7 +156,20 @@ def debug_route():
     states["api"] = arduino.get("config_api")
     for component, conf in states.items():
         states[component] = json.dumps(dict(sorted(conf.items())), indent=2)
-    return render_template("debug.html", states=states, debug=debug)
+
+    st = os.statvfs(__file__)
+    total_disk_space = st.f_blocks * st.f_frsize
+    used_disk_space = (st.f_blocks - st.f_bfree) * st.f_frsize
+
+    return render_template(
+        "debug.html",
+        states=states,
+        debug=debug,
+        rpi=dict(
+            total_disk_space=total_disk_space,
+            used_disk_space=used_disk_space,
+        )
+    )
 
 
 @app.route("/debug/<int:on>")

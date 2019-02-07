@@ -35,4 +35,17 @@
     </div>
 {% endfor %}
 </div>
+
+<h2>État de la Raspberry</h2>
+<div id="rpi">
+    <div id="rpi_disk_usage" style="margin: 0 30px;"></div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/plotly-latest.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/debug.js') }}"></script>
+<script>
+plotRPiDiskUsage({{ rpi["total_disk_space"] }}, {{ rpi["used_disk_space"] }})
+</script>
 {% endblock %}

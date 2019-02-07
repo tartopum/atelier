@@ -321,6 +321,10 @@ header .nav  ul li.active {
     max-height: 200px;
 }
 
+#content.debug .modebar {
+    display: none;
+}
+
 #content.config .section {
     margin-bottom: 50px;
 }
