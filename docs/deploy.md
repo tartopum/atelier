@@ -43,6 +43,7 @@
     * On your machine (not on the RPi): `make download`
     * On your machine (not on the RPi): `make install`
 6. Reboot the RPi to start the web server: `make reboot`
+7. Open `http://<rpi-ip>:5000/debug` and observe the CPU usage. If it's low, you can [reduce the frequency](http://with-raspberrypi.blogspot.com/2014/03/cpu-frequency.html).
 
 ### Controllino
 
