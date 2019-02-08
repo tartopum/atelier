@@ -172,6 +172,7 @@ def debug_route():
             disk_usage=psutil.disk_usage(__file__),
             cpu_percent=psutil.cpu_percent(),
             cpu_temp=cpu_temp,
+            cpu_freq=psutil.cpu_freq(),
             virtual_memory=psutil.virtual_memory(),
         )
     )

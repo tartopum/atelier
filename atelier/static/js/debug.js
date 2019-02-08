@@ -61,7 +61,8 @@ function plotRPiDisk(total, used) {
     )
 }
 
-function plotRPiCPU(percent, temp) {
+function plotRPiCPU(percent, temp, freq) {
+    freq = Math.round(freq)
     Plotly.newPlot(
         document.getElementById("rpi_cpu_usage"),
         [{
@@ -98,6 +99,20 @@ function plotRPiCPU(percent, temp) {
                 xanchor: "center",
                 yanchor: "middle",
             },
+            annotations: [{
+                font: {
+                    family: "Slabo, Helvetica, Arial, sans-serif",
+                    size: 25,
+                },
+                showarrow: false,
+                text: freq + "MHz",
+                x: 0.5,
+                y: 0.5,
+                xanchor: "center",
+                yanchor: "middle",
+                xref: "paper",
+                yref: "paper",
+            }]
         }
     )
 

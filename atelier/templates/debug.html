@@ -54,7 +54,7 @@
 <script src="{{ url_for('static', filename='js/debug.js') }}"></script>
 <script>
 plotRPiDisk({{ rpi["disk_usage"].total }}, {{ rpi["disk_usage"].used }})
-plotRPiCPU({{ rpi["cpu_percent"] }}, {{ rpi["cpu_temp"] }})
+plotRPiCPU({{ rpi["cpu_percent"] }}, {{ rpi["cpu_temp"] }}, {{ rpi["cpu_freq"].current }})
 plotRPiMemory({{ rpi["virtual_memory"].total }}, {{ rpi["virtual_memory"].used }})
 </script>
 {% endblock %}
