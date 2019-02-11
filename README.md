@@ -41,7 +41,7 @@ ______
 
 ## Usage
 
-See `docs/dev.md` and `docs/deploy.md`.
+See `docs/manuel.md` (in French), `docs/dev.md` and `docs/deploy.md`.
 
 ## Credits
 
