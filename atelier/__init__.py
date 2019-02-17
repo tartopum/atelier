@@ -4,7 +4,7 @@ from itertools import groupby
 import json
 import logging
 
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, render_template, request, redirect, url_for, jsonify, Response
 from jsonschema import ValidationError
 import psutil
 import requests
@@ -12,6 +12,7 @@ import requests
 from .config import config
 from .helpers import auth, raise_alert
 from . import arduino, db, forms, scheduler, alarm, lights, fence, tank, workshop
+from .debug import read_controllino_state, controllino_logs_to_csv
 
 app = Flask(__name__)
 
@@ -149,13 +150,10 @@ def tank_stats_route():
 @app.route("/debug")
 @arduino.get_route
 def debug_route():
-    states = {
-        component.__name__.split(".")[1]: arduino.read_state(component)
-        for component in [alarm, fence, lights, workshop, tank]
-    }
+    states = read_controllino_state()
     states["api"] = arduino.get("config_api")
     for component, conf in states.items():
-        states[component] = json.dumps(dict(sorted(conf.items())), indent=2)
+        states[component] = json.dumps(conf, indent=2)
 
     cpu_temp = None
     try:
@@ -185,6 +183,19 @@ def set_debug_route(on):
     debug = on
     scheduler.debug_job.every = config["server"]["debug_period"] if debug else None
     return redirect(url_for("debug_route"))
+
+
+@app.route("/debug/download/controllino")
+def download_controllino_debug():
+    rows = controllino_logs_to_csv()
+    csv = "\n".join([",".join(map(str, row)) for row in rows])
+    return Response(
+        csv,
+        mimetype="text/csv",
+        headers={
+            "Content-disposition": "attachment; filename=debug_controllino.csv"
+        }
+    )
 
 
 @app.route("/alert", methods=["POST"])

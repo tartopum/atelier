@@ -4,23 +4,29 @@
 
 {% block content %}
 
-<div class="switch-wrapper debug-switch">
-<span class="switch-label">Mode Debug :</span>
-{% if debug %}
-    <a href="{{ url_for('set_debug_route', on=0) }}" class="">
-        <div class="switch on">
-            <span class="btn"></span>
-            <span class="text">oui</span>
-        </div>
+<div id="debug_mode_wrapper">
+    <div class="switch-wrapper debug-switch">
+    <span class="switch-label">Mode Debug :</span>
+    {% if debug %}
+        <a href="{{ url_for('set_debug_route', on=0) }}" class="">
+            <div class="switch on">
+                <span class="btn"></span>
+                <span class="text">oui</span>
+            </div>
+        </a>
+    {% else %}
+        <a href="{{ url_for('set_debug_route', on=1) }}" class="">
+            <div class="switch off">
+                <span class="text">non</span>
+                <span class="btn"></span>
+            </div>
+        </a>
+    {% endif %}
+    </div>
+
+    <a class="download" title="Exporter les logs" href="{{ url_for('download_controllino_debug') }}">
+        <img src="{{ url_for('static', filename='img/download.png') }}" alt="Exporter les logs" />
     </a>
-{% else %}
-    <a href="{{ url_for('set_debug_route', on=1) }}" class="">
-        <div class="switch off">
-            <span class="text">non</span>
-            <span class="btn"></span>
-        </div>
-    </a>
-{% endif %}
 </div>
 
 <h2>État de la Controllino</h2>

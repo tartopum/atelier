@@ -1,5 +1,4 @@
 import abc
-import json
 import logging
 import threading
 import time
@@ -14,6 +13,7 @@ import schedule
 from .config import config
 from .helpers import raise_alert
 from . import alarm, arduino, db, fence, lights, tank, workshop
+from .debug import get_controllino_log
 
 logger = logging.getLogger("scheduler")
 debug_logger = logging.getLogger("debug")
@@ -172,13 +172,7 @@ night_job = DayJob(config["alarm"]["night"], start_alarm)
 schedule.every().day.at("00:00").do(db.delete_old_alerts)
 schedule.every().day.at("00:05").do(db.backup)
 
-
 def debug():
-    states = {
-        component.__name__.split(".")[1]: arduino.read_state(component)
-        for component in [alarm, fence, lights, workshop, tank]
-    }
-    debug_logger.debug(json.dumps(states, indent=2))
-
+    debug_logger.debug(get_controllino_log())
 
 debug_job = EveryJob("seconds", None, debug)

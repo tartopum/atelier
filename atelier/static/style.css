@@ -313,11 +313,17 @@ header .help {
     margin-bottom: 5px;
 }
 
-#content.debug .debug-switch {
+#content.debug #debug_mode_wrapper {
+    margin-bottom: -40px;
     text-align: left;
     padding-left: 20px;
+}
+
+
+#content.debug .debug-switch {
     font-size: 15px;
-    margin-bottom: -40px;
+    display: inline-block;
+    margin-right: 20px;
 }
 
 #content.debug .debug-switch .text {
@@ -327,6 +333,11 @@ header .help {
 
 #content.debug .debug-switch .btn {
     top: 0px;
+}
+
+#content.debug #debug_mode_wrapper .download {
+    position: relative;
+    top: 8px;
 }
 
 #content.debug .sep {

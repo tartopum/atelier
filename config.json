@@ -5,7 +5,7 @@
     "db_path": "db.sqlite3",
     "db_backup_paths": [],
     "debug": 0,
-    "debug_period": 10,
+    "debug_period": 5,
     "http_credentials": [
       "test",
       "test"
