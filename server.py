@@ -92,5 +92,5 @@ def run_server():
 if __name__ == "__main__":
     db.create_tables()
     config_arduino()
-    scheduler.run()
+    scheduler.run(min(10, config["server"]["debug_period"]))
     run_server()

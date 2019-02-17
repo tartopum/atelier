@@ -31,7 +31,7 @@ class ScheduleThread(threading.Thread):
             time.sleep(self.interval)
 
 
-def run(interval=10):
+def run(interval):
     # https://schedule.readthedocs.io/en/stable/faq.html#how-to-continuously-run-the-scheduler-without-blocking-the-main-thread
     cease_continuous_run = threading.Event()
     continuous_thread = ScheduleThread(interval, cease_continuous_run)
