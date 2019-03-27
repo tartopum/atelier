@@ -36,8 +36,8 @@ logging.config.dictConfig(dict(
             "filename": os.path.join(HERE, "logs.txt"),
             "formatter": "date",
             "level": logging.WARNING,
-            "maxBytes": 50000,
-            "backupCount": 3,
+            "maxBytes": 1000000,
+            "backupCount": 1,  # If zero, rollover never occurs
 
         },
         "file_debug": {
@@ -45,7 +45,8 @@ logging.config.dictConfig(dict(
             "filename": CONTROLLINO_LOG_PATH,
             "formatter": "message",
             "level": logging.DEBUG,
-            "maxBytes": 10000000,
+            "maxBytes": 5000000,
+            "backupCount": 1,  # If zero, rollover never occurs
         },
     },
     root = {
