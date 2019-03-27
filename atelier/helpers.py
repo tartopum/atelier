@@ -11,6 +11,8 @@ from .config import config
 logger = logging.getLogger("flask.app")
 auth = HTTPBasicAuth()
 
+ALERT_LEVEL_SMS = 2
+
 
 @auth.get_password
 def get_pw(username):
@@ -40,7 +42,7 @@ def raise_alert(name, msg, level):
         params={
             "user": user,
             "pass": password,
-            "msg": f'La Controllino dit : "{msg}"',
+            "msg": f'Controllino : "{msg}"',
         }
     )
     if resp.status_code != 200:

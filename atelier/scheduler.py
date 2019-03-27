@@ -11,7 +11,7 @@ from requests.exceptions import ConnectionError, ReadTimeout
 import schedule
 
 from .config import config
-from .helpers import raise_alert
+from .helpers import raise_alert, ALERT_LEVEL_SMS
 from . import alarm, arduino, db, fence, lights, tank, workshop
 from .debug import get_controllino_log
 
@@ -27,7 +27,10 @@ class ScheduleThread(threading.Thread):
 
     def run(self):
         while not self.stop_event.is_set():
-            schedule.run_pending()
+            try:
+                schedule.run_pending()
+            except Exception as e:
+                logger.error(e)
             time.sleep(self.interval)
 
 
@@ -73,7 +76,8 @@ class ArduinoConnectionJob(Job):
             logger.error(e)
             raise_alert(
                 "arduino_connection_error",
-                "La Controllino est injoignable."
+                "La Controllino est injoignable.",
+                level=ALERT_LEVEL_SMS
             )
         else:
             self.alert_raised = False
