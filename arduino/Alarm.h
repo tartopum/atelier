@@ -47,7 +47,7 @@ class Alarm
         Alert _alert;
 
         bool _breachDetected = false;
-        alarm_state_t _state = DISABLED;
+        alarm_state_t _state = LISTENING;
         uint8_t _curSwitchState; 
         unsigned long _breachTime = 0;
         unsigned long _enabledTime = 0;
