@@ -7,12 +7,12 @@
     <div>
     {% if alarm["listen"] %}
         <h2>Alarme en écoute</h2>
-        <a href="{{ url_for('alarm.listen', on=0) }}">
+        <a href="{{ url_for('alarm.listen', on=0) }}" title="Alarme en écoute. Cliquer pour désactiver.">
             <img src="{{ url_for('static', filename='img/alarm_listen_on.png') }}" alt="Alarme en écoute. Cliquer pour désactiver." />
         </a>
     {% else %}
         <h2>Alarme désactivée</h2>
-        <a href="{{ url_for('alarm.listen', on=1) }}">
+        <a href="{{ url_for('alarm.listen', on=1) }}" title="Alarme désactivée. Cliquer pour activer." >
             <img src="{{ url_for('static', filename='img/alarm_listen_off.png') }}" alt="Alarme désactivée. Cliquer pour activer." />
         </a>
     {% endif %}
@@ -20,23 +20,24 @@
     <div>
     {% if alarm["breach"] or alarm["listen"] and alarm["movement"] %}
         <h2>Intrusion détectée !</h2>
-        <img src="{{ url_for('static', filename='img/alarm_breach_on.png') }}" alt="Intrusion détectée !" />
+        <img src="{{ url_for('static', filename='img/alarm_breach_on.png') }}" title="Intrusion détectée !" alt="Intrusion détectée !" />
     {% elif alarm["movement"] %}
         <h2>Bricoleur détecté</h2>
-        <img src="{{ url_for('static', filename='img/alarm_movement_on.png') }}" alt="Présence dans l'atelier" />
+        <img src="{{ url_for('static', filename='img/alarm_movement_on.png') }}" title="Présence dans l'atelier" alt="Présence dans l'atelier" />
     {% else %}
-        <h2>Aucune présence</h2>
+        <h2>Aucune présence détectée</h2>
+        <img src="{{ url_for('static', filename='img/alarm_movement_off.png') }}" title="Aucune présence détectée dans l'atelier" alt="Aucune présence détectée dans l'atelier" />
     {% endif %}
     </div>
     <div>
     {% if workshop["power_supply"] %}
         <h2>Atelier alimenté</h2>
-        <a href="{{ url_for('workshop.power_supply', on=0) }}">
+        <a href="{{ url_for('workshop.power_supply', on=0) }}" title="Alimentation allumée. Cliquer pour éteindre." >
             <img src="{{ url_for('static', filename='img/power_supply_on.png') }}" alt="Alimentation allumée. Cliquer pour éteindre." />
         </a>
     {% else %}
         <h2>Alimentation coupée</h2>
-        <a href="{{ url_for('workshop.power_supply', on=1) }}">
+        <a href="{{ url_for('workshop.power_supply', on=1) }}" title="Alimentation coupée. Cliquer pour allumer." >
             <img src="{{ url_for('static', filename='img/power_supply_off.png') }}" alt="Alimentation coupée. Cliquer pour allumer." />
         </a>
     {% endif %}
@@ -66,37 +67,40 @@
 
 <div class="lights row">
     <div>
-        <h2>Extérieure</h2>
     {% if lights["0"] %}
-        <a href="{{ url_for('lights.activate', n=0, on=0) }}">
+        <h2>Extérieure allumée</h2>
+        <a href="{{ url_for('lights.activate', n=0, on=0) }}" title="Extérieur allumé. Cliquer pour éteindre." >
             <img src="{{ url_for('static', filename='img/light_on.png') }}" alt="Extérieur allumé. Cliquer pour éteindre." />
         </a>
     {% else %}
-        <a href="{{ url_for('lights.activate', n=0, on=1) }}">
+        <h2>Extérieure éteinte</h2>
+        <a href="{{ url_for('lights.activate', n=0, on=1) }}" title="Extérieur éteint. Cliquer pour allumer." >
             <img src="{{ url_for('static', filename='img/light_off.png') }}" alt="Extérieur éteint. Cliquer pour allumer." />
         </a>
     {% endif %}
     </div>
     <div>
-        <h2>Intérieure 1</h2>
     {% if lights["1"] %}
-        <a href="{{ url_for('lights.activate', n=1, on=0) }}">
+        <h2>Intérieure 1 allumée</h2>
+        <a href="{{ url_for('lights.activate', n=1, on=0) }}" title="Intérieur 1 allumé. Cliquer pour éteindre." >
             <img src="{{ url_for('static', filename='img/light_on.png') }}" alt="Intérieur 1 allumé. Cliquer pour éteindre." />
         </a>
     {% else %}
-        <a href="{{ url_for('lights.activate', n=1, on=1) }}">
+        <h2>Intérieure 1 éteinte</h2>
+        <a href="{{ url_for('lights.activate', n=1, on=1) }}" title="Intérieur 1 éteint. Cliquer pour allumer." >
             <img src="{{ url_for('static', filename='img/light_off.png') }}" alt="Intérieur 1 éteint. Cliquer pour allumer." />
         </a>
     {% endif %}
     </div>
     <div>
-        <h2>Intérieure 2</h2>
     {% if lights["2"] %}
-        <a href="{{ url_for('lights.activate', n=2, on=0) }}">
+        <h2>Intérieure 2 allumée</h2>
+        <a href="{{ url_for('lights.activate', n=2, on=0) }}" title="Intérieur 2 allumé. Cliquer pour éteindre." >
             <img src="{{ url_for('static', filename='img/light_on.png') }}" alt="Intérieur 2 allumé. Cliquer pour éteindre." />
         </a>
     {% else %}
-        <a href="{{ url_for('lights.activate', n=2, on=1) }}">
+        <h2>Intérieure 2 éteinte</h2>
+        <a href="{{ url_for('lights.activate', n=2, on=1) }}" title="Intérieur 2 éteint. Cliquer pour allumer." >
             <img src="{{ url_for('static', filename='img/light_off.png') }}" alt="Intérieur 2 éteint. Cliquer pour allumer." />
         </a>
     {% endif %}
