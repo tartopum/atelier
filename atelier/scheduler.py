@@ -15,7 +15,7 @@ from .helpers import raise_alert, ALERT_LEVEL_SMS
 from . import alarm, arduino, db, fence, lights, tank, workshop
 from .debug import get_controllino_log
 
-logger = logging.getLogger("scheduler")
+logger = logging.getLogger("atelier")
 debug_logger = logging.getLogger("debug")
 
 

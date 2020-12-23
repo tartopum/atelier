@@ -1,6 +1,6 @@
 {
   "alarm": {
-    "listen": 1,
+    "listen": 0,
     "movement": 0,
     "breach": 0,
     "delay_before_listening": 20000,

@@ -30,15 +30,15 @@
     {% endif %}
     </div>
     <div>
-    {% if workshop["power_supply"] %}
-        <h2>Atelier alimenté</h2>
-        <a href="{{ url_for('workshop.power_supply', on=0) }}" title="Alimentation allumée. Cliquer pour éteindre." >
-            <img src="{{ url_for('static', filename='img/power_supply_on.png') }}" alt="Alimentation allumée. Cliquer pour éteindre." />
-        </a>
-    {% else %}
+    {% if not workshop["power_supply"] or not workshop["power_manual_mode"] and alarm["listen"] %}
         <h2>Alimentation coupée</h2>
         <a href="{{ url_for('workshop.power_supply', on=1) }}" title="Alimentation coupée. Cliquer pour allumer." >
             <img src="{{ url_for('static', filename='img/power_supply_off.png') }}" alt="Alimentation coupée. Cliquer pour allumer." />
+        </a>
+    {% else %}
+        <h2>Atelier alimenté</h2>
+        <a href="{{ url_for('workshop.power_supply', on=0) }}" title="Alimentation allumée. Cliquer pour éteindre." >
+            <img src="{{ url_for('static', filename='img/power_supply_on.png') }}" alt="Alimentation allumée. Cliquer pour éteindre." />
         </a>
     {% endif %}
 
@@ -60,6 +60,9 @@
             </a>
         {% endif %}
         </div>
+      <div style="font-size: 0.7rem; margin-top: 20px; max-width: 250px;">
+        En mode auto, l'alimentation est coupée quand l'alarme est en écoute.
+      </div>
     </div>
 </div>
 
