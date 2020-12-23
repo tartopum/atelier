@@ -11,7 +11,7 @@ import requests
 from .config import config
 from .helpers import auth, raise_alert
 from . import arduino, db, forms, scheduler, alarm, lights, fence, tank, workshop
-from .debug import read_controllino_state, controllino_logs_to_csv, parse_logs, ATELIER_LOG_PATH
+from .debug import read_controllino_state, controllino_logs_to_csv, parse_logs, ATELIER_LOG_PATH, CONTROLLINO_LOG_PATH
 
 app = Flask(__name__)
 
@@ -183,6 +183,9 @@ def set_debug_route(on):
     global debug
     debug = on
     scheduler.debug_job.every = config["server"]["debug_period"] if debug else None
+    if debug:
+        # Empty the log file first
+        open(CONTROLLINO_LOG_PATH, "w").close()
     return redirect(url_for("debug_route", _anchor="debug"))
 
 
