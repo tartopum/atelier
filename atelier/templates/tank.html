@@ -4,9 +4,8 @@
 
 {% block content %}
 <div class="stats">
-    <a href="{{ url_for('tank_stats_route') }}">
-        <img src="{{ url_for('static', filename='img/stats.png') }}" alt="Statistiques" />
-        <span>Consulter les statistiques</span>
+    <a href="{{ url_for('tank_stats_route') }}" title="Consulter les statistiques">
+        <img src="{{ url_for('static', filename='img/stats.png') }}" alt="Statistiques" style="max-width: 32px;" />
     </a>
 </div>
 
@@ -27,6 +26,10 @@
             </div>
         </a>
     {% endif %}
+</div>
+
+<div id="loader" style="margin: 20px 0;">
+    <img src="{{ url_for('static', filename='img/loader.gif') }}" alt="Chargement..." />
 </div>
 
 <div id="schema-wrapper" style="position: relative;">
@@ -77,6 +80,12 @@
                 let tmp = displayedSvg 
                 displayedSvg = drawingSvg
                 drawingSvg = tmp
+
+                // Since we draw on a second svg and then switch the shown svg,
+                // the update is seemless for the user and we don't need to show
+                // every time. We just need it for the first load. As it is displayed
+                // by default, we just hide it.
+                document.getElementById("loader").style.display = "none"
             }
         };
         xhttp.open("GET", "{{ url_for('tank_state') }}", true);
