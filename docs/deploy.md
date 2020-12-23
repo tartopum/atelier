@@ -4,11 +4,7 @@
 
 ### Raspberry Pi
 
-1. Prepare the SD card
-    1. Download the last version of [Raspbian](https://www.raspberrypi.org/downloads/raspbian/) Lite
-    2. Unzip it
-    3. Format a SD card of at least 16G with `gnome-disks` (in Ext4)
-    4. [Write the OS](https://www.raspberrypi.org/documentation/installation/installing-images/linux.md) on the card
+1. [Prepare the SD card](https://www.framboise314.fr/preparez-votre-carte-sd-raspbian-sur-le-raspberry-pi/)
 2. Initialize the RPi
     1. Plug the SD card, a screen and a keyboard to the RPi
     2. Start the RPi (make sure to have enough power)
