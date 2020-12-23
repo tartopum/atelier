@@ -13,7 +13,7 @@
     "press_delay": 500
   },
   "fence": {
-    "state": 0,
+    "state": 1,
     "activated": 0
   },
   "workshop": {

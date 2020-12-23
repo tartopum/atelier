@@ -3,7 +3,7 @@
 {% block title %}Clôture{% endblock %}
 
 {% block content %}
-{% if state["state"] %}
+{% if state["state"] and state["activated"] %}
     <h2>Clôture allumée</h2>
     {% if state["activated"] %}
       <a href="{{ url_for('fence.command', on="0") }}">
