@@ -280,6 +280,10 @@ header .help {
     vertical-align: bottom;
 }
 
+#content.tank_stats .download img {
+    max-width: 32px;
+}
+
 #content.tank_stats .wrapper {
     padding: 0 30px;
 }
