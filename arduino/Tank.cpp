@@ -68,7 +68,7 @@ Tank::Tank(
         "La cuve est en mode manuel.",
         sendAlert,
         lightFatal,
-        LOW_ALERT,
+        HIGH_ALERT,
         1440
     ),
     _pumpOutRunningForTooLongAlert(
