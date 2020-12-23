@@ -22,7 +22,7 @@ logging.config.dictConfig(dict(
             "format": "%(message)s"
         },
         "date": {
-            "format": "%(asctime)s %(name)-12s %(levelname)-8s %(message)s"
+            "format": "[%(asctime)s][%(name)-12s][%(levelname)-8s] %(message)s"
         }
     },
     handlers = {
@@ -38,7 +38,6 @@ logging.config.dictConfig(dict(
             "level": logging.WARNING,
             "maxBytes": 1000000,
             "backupCount": 1,  # If zero, rollover never occurs
-
         },
         "file_debug": {
             "class": "logging.handlers.RotatingFileHandler",
@@ -62,7 +61,7 @@ logging.config.dictConfig(dict(
             "handlers": ["file_debug"],
             "level": logging.DEBUG,
         },
-        "flask.app": {
+        "atelier": {
             "handlers": ["file", "console"],
             "level": logging.WARNING,
         },

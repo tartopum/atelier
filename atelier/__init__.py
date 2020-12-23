@@ -2,7 +2,6 @@ from base64 import b64encode
 from collections import defaultdict
 from itertools import groupby
 import json
-import logging
 
 from flask import Flask, render_template, request, redirect, url_for, jsonify, Response
 from jsonschema import ValidationError

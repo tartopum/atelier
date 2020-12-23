@@ -8,7 +8,7 @@ from . import db
 from .config import config
 
 
-logger = logging.getLogger("flask.app")
+logger = logging.getLogger("atelier")
 auth = HTTPBasicAuth()
 
 ALERT_LEVEL_SMS = 2
