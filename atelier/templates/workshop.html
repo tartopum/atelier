@@ -70,42 +70,45 @@
 
 <div class="lights row">
     <div>
+        <h2>Extérieure</h2>
     {% if lights["0"] %}
-        <h2>Extérieure allumée</h2>
         <a href="{{ url_for('lights.activate', n=0, on=0) }}" title="Extérieur allumé. Cliquer pour éteindre." >
             <img src="{{ url_for('static', filename='img/light_on.png') }}" alt="Extérieur allumé. Cliquer pour éteindre." />
         </a>
+        <h3>Allumée</h3>
     {% else %}
-        <h2>Extérieure éteinte</h2>
         <a href="{{ url_for('lights.activate', n=0, on=1) }}" title="Extérieur éteint. Cliquer pour allumer." >
             <img src="{{ url_for('static', filename='img/light_off.png') }}" alt="Extérieur éteint. Cliquer pour allumer." />
         </a>
+        <h3>Éteinte</h3>
     {% endif %}
     </div>
     <div>
+        <h2>Intérieure 1</h2>
     {% if lights["1"] %}
-        <h2>Intérieure 1 allumée</h2>
         <a href="{{ url_for('lights.activate', n=1, on=0) }}" title="Intérieur 1 allumé. Cliquer pour éteindre." >
             <img src="{{ url_for('static', filename='img/light_on.png') }}" alt="Intérieur 1 allumé. Cliquer pour éteindre." />
         </a>
+        <h3>Allumée</h3>
     {% else %}
-        <h2>Intérieure 1 éteinte</h2>
         <a href="{{ url_for('lights.activate', n=1, on=1) }}" title="Intérieur 1 éteint. Cliquer pour allumer." >
             <img src="{{ url_for('static', filename='img/light_off.png') }}" alt="Intérieur 1 éteint. Cliquer pour allumer." />
         </a>
+        <h3>Éteinte</h3>
     {% endif %}
     </div>
     <div>
+        <h2>Intérieure 2</h2>
     {% if lights["2"] %}
-        <h2>Intérieure 2 allumée</h2>
         <a href="{{ url_for('lights.activate', n=2, on=0) }}" title="Intérieur 2 allumé. Cliquer pour éteindre." >
             <img src="{{ url_for('static', filename='img/light_on.png') }}" alt="Intérieur 2 allumé. Cliquer pour éteindre." />
         </a>
+        <h3>Allumée</h3>
     {% else %}
-        <h2>Intérieure 2 éteinte</h2>
         <a href="{{ url_for('lights.activate', n=2, on=1) }}" title="Intérieur 2 éteint. Cliquer pour allumer." >
             <img src="{{ url_for('static', filename='img/light_off.png') }}" alt="Intérieur 2 éteint. Cliquer pour allumer." />
         </a>
+        <h3>Éteinte</h3>
     {% endif %}
     </div>
 </div>
