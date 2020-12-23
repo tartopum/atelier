@@ -14,7 +14,7 @@
   },
   "fence": {
     "state": 0,
-    "activated": 1
+    "activated": 0
   },
   "workshop": {
     "inactivity_delay": 900000,

@@ -5,14 +5,22 @@
 {% block content %}
 {% if state["state"] %}
     <h2>Clôture allumée</h2>
-    <a href="{{ url_for('fence.command', on="0") }}">
-        <img src="{{ url_for('static', filename='img/fence_on.png') }}" alt="Allumée. Cliquer pour éteindre." />
-    </a>
+    {% if state["activated"] %}
+      <a href="{{ url_for('fence.command', on="0") }}">
+          <img src="{{ url_for('static', filename='img/fence_on.png') }}" alt="Allumée. Cliquer pour éteindre." />
+      </a>
+    {% else %}
+      <img style="cursor: not-allowed;" src="{{ url_for('static', filename='img/fence_on.png') }}" alt="Allumée. Cliquer pour éteindre." />
+    {% endif %}
 {% else %}
     <h2>Clôture éteinte</h2>
-    <a href="{{ url_for('fence.command', on="1") }}">
-        <img src="{{ url_for('static', filename='img/fence_off.png') }}" alt="Eteinte. Cliquer pour allumer." />
-    </a>
+    {% if state["activated"] %}
+      <a href="{{ url_for('fence.command', on="1") }}">
+          <img src="{{ url_for('static', filename='img/fence_off.png') }}" alt="Eteinte. Cliquer pour allumer." />
+      </a>
+    {% else %}
+      <img style="cursor: not-allowed;" src="{{ url_for('static', filename='img/fence_off.png') }}" alt="Eteinte. Cliquer pour allumer." />
+    {% endif %}
 {% endif %}
 
 <div class="switch-wrapper">
@@ -32,4 +40,9 @@
     </a>
 {% endif %}
 </div>
+{% if not state["activated"] %}
+<div style="font-size: 0.7rem; margin: auto; margin-top: 20px;">
+  La clôture est désactivée, son état ne peut être modifié.
+</div>
+{% endif %}
 {% endblock %}
