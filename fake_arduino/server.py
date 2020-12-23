@@ -21,7 +21,6 @@ def route(page):
         data = json.load(f)
 
     if request.method == "POST":
-        print(request.form)
         for k, v in request.form.items():
             if k not in data[page]:
                 return f"Invalid attribute {k} for {page}", 400

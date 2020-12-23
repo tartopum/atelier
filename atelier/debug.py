@@ -1,12 +1,20 @@
+import os
 import datetime as dt
 import json
-import os
+import re
 
 from . import alarm, arduino, fence, lights, tank, workshop
 
 
 HERE = os.path.dirname(__file__)
-CONTROLLINO_LOG_PATH = os.path.join(HERE, "..", "debug_controllino.txt")
+CONTROLLINO_LOG_PATH = os.path.join(HERE, "..", "controllino.log")
+ATELIER_LOG_PATH = os.path.join(HERE, "..", "atelier.log")
+LOGGING_COLORS = {
+    "INFO": "black",
+    "WARNING": "orange",
+    "ERROR": "red",
+    "CRITICAL": "red",
+}
 
 
 def read_controllino_state():
@@ -17,6 +25,23 @@ def read_controllino_state():
     for component, conf in states.items():
         states[component] = dict(sorted(conf.items()))
     return states
+
+
+def get_log_color(header):
+    for level, color in LOGGING_COLORS.items():
+        if level in header:
+            return color
+    return "black"
+
+
+def parse_logs(path):
+    PATTERN = r"(?:\[.*?\]\s*){3,}"
+    with open(path) as f:
+        content = f.read()
+        headers = re.findall(PATTERN, content)
+        messages = re.split(PATTERN, content)
+        colors = [get_log_color(h) for h in headers]
+        return zip(headers, messages[1:], colors)
 
 
 def get_controllino_log():

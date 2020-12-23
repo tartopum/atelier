@@ -6,7 +6,7 @@ import os
 
 from gevent.pywsgi import WSGIServer
 
-from atelier.debug import CONTROLLINO_LOG_PATH
+from atelier.debug import CONTROLLINO_LOG_PATH, ATELIER_LOG_PATH
 
 try:
     locale.setlocale(locale.LC_ALL, ("fr_FR", "UTF-8"))
@@ -33,7 +33,7 @@ logging.config.dictConfig(dict(
         },
         "file": {
             "class": "logging.handlers.RotatingFileHandler",
-            "filename": os.path.join(HERE, "logs.txt"),
+            "filename": ATELIER_LOG_PATH,
             "formatter": "date",
             "level": logging.WARNING,
             "maxBytes": 1000000,

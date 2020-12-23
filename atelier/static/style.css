@@ -314,9 +314,9 @@ header .help {
 }
 
 #content.debug #debug_mode_wrapper {
-    margin-bottom: -40px;
-    text-align: left;
+    text-align: center;
     padding-left: 20px;
+    margin-bottom: 20px;
 }
 
 

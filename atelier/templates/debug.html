@@ -4,31 +4,6 @@
 
 {% block content %}
 
-<div id="debug_mode_wrapper">
-    <div class="switch-wrapper debug-switch">
-    <span class="switch-label">Mode Debug :</span>
-    {% if debug %}
-        <a href="{{ url_for('set_debug_route', on=0) }}" class="">
-            <div class="switch on">
-                <span class="btn"></span>
-                <span class="text">oui</span>
-            </div>
-        </a>
-    {% else %}
-        <a href="{{ url_for('set_debug_route', on=1) }}" class="">
-            <div class="switch off">
-                <span class="text">non</span>
-                <span class="btn"></span>
-            </div>
-        </a>
-    {% endif %}
-    </div>
-
-    <a class="download" title="Exporter les logs" href="{{ url_for('download_controllino_debug') }}">
-        <img src="{{ url_for('static', filename='img/download.png') }}" alt="Exporter les logs" />
-    </a>
-</div>
-
 <h2>État de la Controllino</h2>
 
 <div id="controllino">
@@ -52,6 +27,63 @@
         <div id="rpi_cpu_temp"></div>
     </div>
     <div id="rpi_memory"></div>
+</div>
+
+<hr class="sep" />
+
+<h2>Logs</h2>
+
+<div id="logs" style="text-align: center;">
+  <h3>{{ fname }}</h3>
+
+  {% if logs %}
+  <div style="min-height: 10px; max-height: 400px; overflow: auto; margin-bottom: 30px; padding-right: 10px; font-size: 0.8rem;">
+    {% for header, message, color in logs %}
+      <div style="border: 1px solid {{ color }}; border-radius: 5px; margin: 10px 0; padding: 5px; overflow-wrap: anywhere;">
+        <span style="color: {{ color }};">{{ header }}</span>
+        <span style="color: grey;">{{ message }}</span>
+      </div>
+    {% endfor %}
+  </div>
+  {% else %}
+    <div style="font-size: 0.8rem;">Il n'y a pas de logs.</div>
+  {% endif %}
+</div>
+
+<hr class="sep" />
+
+<h2>Debug</h2>
+
+<div id="debug_mode_wrapper">
+    <div class="switch-wrapper debug-switch">
+    <span class="switch-label">Mode Debug :</span>
+    {% if debug %}
+        <a href="{{ url_for('set_debug_route', on=0) }}" class="">
+            <div class="switch on">
+                <span class="btn"></span>
+                <span class="text">oui</span>
+            </div>
+        </a>
+    {% else %}
+        <a href="{{ url_for('set_debug_route', on=1) }}" class="">
+            <div class="switch off">
+                <span class="text">non</span>
+                <span class="btn"></span>
+            </div>
+        </a>
+    {% endif %}
+    </div>
+    <div style="margin-top: 10px; font-size: 0.7rem;">
+      Activer ce mode pour enregistrer l'état de la Controllino toutes les
+      {{ debug_period }} secondes.
+    </div>
+</div>
+
+
+<div id="debug">
+  <a class="download" title="Exporter les logs" href="{{ url_for('download_controllino_debug') }}">
+      <img src="{{ url_for('static', filename='img/download.png') }}" alt="Exporter les logs" />
+  </a>
 </div>
 {% endblock %}
 
