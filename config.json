@@ -27,8 +27,8 @@
   "alarm": {
     "lunch": "13:00",
     "night": "21:30",
-    "delay_before_listening": 20,
-    "delay_before_alert": 3
+    "delay_before_listening": 60,
+    "delay_before_alert": 4
   },
   "lights": {
     "press_delay": 0.5,
@@ -38,11 +38,11 @@
     "stats_collection_period": 300,
     "flow_check_period": 30,
     "volume_before_pump_out": 500,
-    "filter_cleaning_period": 30,
+    "filter_cleaning_period": 15,
     "filter_cleaning_duration": 3,
     "filter_cleaning_consecutive_delay": 5,
     "pump_in_start_duration": 10,
-    "min_flow_in": 17,
+    "min_flow_in": 14,
     "max_pump_out_running_time": 10,
     "max_duration_without_flow_out": 60,
     "time_to_fill_up": 30,
