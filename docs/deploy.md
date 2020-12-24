@@ -35,7 +35,7 @@
         * Check: `ping <rpi-ip>`
     4. Send setup files to the RPi: `scp -r deploy pi@<ip>:/home/pi`
     5. Setup network: `ssh pi@<ip> 'cd /home/pi/deploy; ./setup.sh'`
-    6. Set [WiFi password](https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md) in `/etc/wpa_supplicant/wpa_supplicant.conf` with `wpa_passphrase`
+    6. Set [WiFi password](https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md) in `/etc/wpa_supplicant/wpa_supplicant.conf` with `wpa_passphrase <ssid> >> /etc/wpa_supplicant/wpa_supplicant.conf`. The SSIDs are already setup but others can be found with `sudo iwlist wlan0 scan`.
     7. Reboot the RPi
     8. Set your IP to communicate with the RPi: `make config_ip`
     9. `make check_network`
