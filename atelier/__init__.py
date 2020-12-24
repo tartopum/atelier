@@ -10,8 +10,7 @@ import requests
 
 from .config import config
 from .helpers import auth, raise_alert
-from . import arduino, db, forms, scheduler, alarm, lights, fence, tank, workshop
-from .debug import read_controllino_state, controllino_logs_to_csv, parse_logs, ATELIER_LOG_PATH, CONTROLLINO_LOG_PATH
+from . import arduino, db, debug, forms, scheduler, alarm, lights, fence, tank, workshop
 
 app = Flask(__name__)
 
@@ -20,8 +19,6 @@ app.register_blueprint(fence.blueprint, url_prefix="/cloture")
 app.register_blueprint(lights.blueprint, url_prefix="/lumieres")
 app.register_blueprint(workshop.blueprint, url_prefix="/atelier")
 app.register_blueprint(tank.blueprint, url_prefix="/cuve")
-
-debug = False
 
 
 @app.after_request
@@ -62,15 +59,7 @@ def home():
     alerts = db.list_alerts(n_days_ago=7)
     grouped_alerts = groupby(alerts, lambda x: x[0].strftime("%A %d %B"))
 
-    states = read_controllino_state()
-    warnings = [
-        *fence.get_warnings(states["fence"]),
-        *workshop.get_warnings(states["workshop"]),
-        *alarm.get_warnings(states["alarm"]),
-    ]
-    if debug:
-        warnings.append("Vous êtes en mode debug.")
-
+    states = debug.read_controllino_state()
     return render_template(
         "home.html",
         no_alerts=(len(alerts) < 1),
@@ -79,8 +68,14 @@ def home():
             *fence.get_errors(states["fence"]),
             *workshop.get_errors(states["workshop"]),
             *alarm.get_errors(states["alarm"]),
+            *debug.get_errors(),
         ],
-        warnings=warnings,
+        warnings=[
+            *fence.get_warnings(states["fence"]),
+            *workshop.get_warnings(states["workshop"]),
+            *alarm.get_warnings(states["alarm"]),
+            *debug.get_warnings(),
+        ],
     )
 
 
@@ -164,30 +159,23 @@ def tank_stats_route():
 @app.route("/debug")
 @arduino.get_route
 def debug_route():
-    states = read_controllino_state()
+    states = debug.read_controllino_state()
     states["api"] = arduino.get("config_api")
     for component, conf in states.items():
         states[component] = json.dumps(conf, indent=2)
 
-    cpu_temp = None
-    try:
-        with open("/sys/class/thermal/thermal_zone0/temp") as f:
-            cpu_temp = int(f.read()) / 1000
-    except (FileNotFoundError, ValueError):
-        cpu_temp = None
-
     return render_template(
         "debug.html",
         states=states,
-        debug=debug,
+        debug=debug.is_debug_mode,
         debug_period=config["server"]["debug_period"],
-        logs=list(parse_logs(ATELIER_LOG_PATH)),
+        logs=list(debug.parse_logs(debug.ATELIER_LOG_PATH)),
         rpi=dict(
-            disk_usage=psutil.disk_usage(__file__),
-            cpu_percent=psutil.cpu_percent(),
-            cpu_temp=cpu_temp,
-            cpu_freq=psutil.cpu_freq(),
-            virtual_memory=psutil.virtual_memory(),
+            disk_usage=debug.get_disk_usage(),
+            cpu_percent=debug.get_cpu_percent(),
+            cpu_temp=debug.get_cpu_temperature(),
+            cpu_freq=debug.get_cpu_freq(),
+            virtual_memory=debug.get_virtual_memory(),
         )
     )
 
@@ -195,18 +183,17 @@ def debug_route():
 @app.route("/debug/<int:on>")
 @arduino.get_route
 def set_debug_route(on):
-    global debug
-    debug = on
+    debug.is_debug_mode = on
     scheduler.debug_job.every = config["server"]["debug_period"] if debug else None
-    if debug:
+    if debug.is_debug_mode:
         # Empty the log file first
-        open(CONTROLLINO_LOG_PATH, "w").close()
+        open(debug.CONTROLLINO_LOG_PATH, "w").close()
     return redirect(url_for("debug_route", _anchor="debug"))
 
 
 @app.route("/debug/download/controllino")
 def download_controllino_debug():
-    rows = controllino_logs_to_csv()
+    rows = debug.controllino_logs_to_csv()
     csv = "\n".join([",".join(map(str, row)) for row in rows])
     return Response(
         csv,

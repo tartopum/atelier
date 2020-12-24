@@ -3,6 +3,9 @@ import datetime as dt
 import json
 import re
 
+from flask import url_for
+import psutil
+
 from . import alarm, arduino, fence, lights, tank, workshop
 
 
@@ -15,6 +18,8 @@ LOGGING_COLORS = {
     "ERROR": "red",
     "CRITICAL": "red",
 }
+
+is_debug_mode = False
 
 
 def read_controllino_state():
@@ -66,3 +71,109 @@ def controllino_logs_to_csv():
                     row.append(v)
             rows.append(row)
     return [header, *rows]
+
+
+def get_disk_usage():
+    return psutil.disk_usage(__file__)
+
+
+def get_disk_usage_percent():
+    du = get_disk_usage()
+    return du.used / du.total * 100
+
+
+def get_cpu_temperature():
+    try:
+        with open("/sys/class/thermal/thermal_zone0/temp") as f:
+            return int(f.read()) / 1000
+    except (FileNotFoundError, ValueError):
+        return
+
+
+def get_cpu_temperature_level():
+    t = get_cpu_temperature()
+    if t < 60:
+        return 0
+    if t < 75:
+        return 1
+    return 2
+
+
+def get_cpu_freq():
+    return psutil.cpu_freq()
+
+
+def get_cpu_percent():
+    return psutil.cpu_percent()
+
+
+def get_virtual_memory():
+    return psutil.virtual_memory()
+
+
+def get_virtual_memory_percent():
+    mu = get_virtual_memory()
+    return mu.used / mu.total * 100
+
+
+def _add_disk_usage_message(messages, thresh):
+    u = get_disk_usage_percent()
+    if u > thresh:
+        messages.append((
+            f"Le disque est rempli à {u:.0f}%.",
+            url_for("debug_route", _anchor="rpi")
+        ))
+
+
+def _add_cpu_usage_message(messages, thresh):
+    u = get_cpu_percent()
+    if u > thresh:
+        messages.append((
+            f"Le CPU est utilisé à {u:.0f}%.",
+            url_for("debug_route", _anchor="rpi")
+        ))
+
+
+def _add_mem_usage_message(messages, thresh):
+    u = get_virtual_memory_percent()
+    if u > thresh:
+        messages.append((
+            f"La mémoire vive est utilisée à {u:.0f}%.",
+            url_for("debug_route", _anchor="rpi")
+        ))
+
+
+def get_errors():
+    m = []
+    _add_disk_usage_message(m, 90)
+    _add_cpu_usage_message(m, 90)
+    _add_mem_usage_message(m, 90)
+
+    if get_cpu_temperature_level() > 1:
+        m.append((
+            f"Le CPU est en surchauffe : {get_cpu_temperature()}°C !",
+            url_for("debug_route", _anchor="rpi")
+        ))
+
+    return m
+
+
+def get_warnings():
+    m = []
+    _add_disk_usage_message(m, 70)
+    _add_cpu_usage_message(m, 70)
+    _add_mem_usage_message(m, 70)
+
+    if is_debug_mode:
+        m.append((
+            "Vous êtes en mode debug.",
+            url_for("debug_route", _anchor="debug")
+        ))
+
+    if get_cpu_temperature_level() == 1:
+        m.append((
+            f"Le CPU est en légère surchauffe : {get_cpu_temperature()}°C",
+            url_for("debug_route", _anchor="rpi")
+        ))
+
+    return m
