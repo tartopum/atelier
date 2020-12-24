@@ -8,18 +8,19 @@
 2. Initialize the RPi
     1. Plug the SD card, a screen and a keyboard to the RPi
     2. Start the RPi (make sure to have enough power)
-    3. Write down the IP address that is printed on the screen
+    3. Login with the default user: `pi` / `raspberry`
     4. `sudo raspi-config`
     5. In `raspi-config`, configure these parameters:
-        * Network Options
-            * Hostname: "rpi_atelier"
-            * Network interface names: disable predictable names
         * Localisation Options
-            * Change Timezone
-            * Change [Keyboard Layout](http://www.soft-alternative.com/raspberry-pi-configurer-clavier-francais-raspbian.php)
+            * Change leyboard layout
+            * Change timezone
             * Change Wi-fi country
+        * System Options
+            * Hostname: `rpi-atelier`
+        * Advanced Options
+            * Network interface names: `disable predictable names`
         * Interfacing Options
-            * SSH: enable
+            * SSH: `enable`
     6. Install French locale
         * Uncomment `fr_FR.UTF-8` in `/etc/locale.gen`
         * `sudo locale-gen`
@@ -27,13 +28,17 @@
     7. Reboot the RPi: `sudo reboot`
 3. Configure the network
     1. Connect the RPi to the computer through Ethernet
-    2. Make sure you are on the same network as displayed in 2.3
-    3. Send setup files to the RPi: `scp -r deploy pi@<ip>:/home/pi`
-    4. Setup network: `ssh pi@<ip> 'cd /home/pi/deploy; ./setup.sh'`
-    5. Set [WiFi password](https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md) in `/etc/wpa_supplicant/wpa_supplicant.conf` with `wpa_passphrase`
-    6. Reboot the RPi
-    7. Set your IP to communicate with the RPi: `make config_ip`
-    8. `make check_network`
+    2. Find its IP: `ifconfig` then look at `eth0` interface
+    3. Make sure your computer is on the same network as this IP's
+        * Set it's IPv4 address
+        * Use the same mask as the RPi does
+        * Check: `ping <rpi-ip>`
+    4. Send setup files to the RPi: `scp -r deploy pi@<ip>:/home/pi`
+    5. Setup network: `ssh pi@<ip> 'cd /home/pi/deploy; ./setup.sh'`
+    6. Set [WiFi password](https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md) in `/etc/wpa_supplicant/wpa_supplicant.conf` with `wpa_passphrase`
+    7. Reboot the RPi
+    8. Set your IP to communicate with the RPi: `make config_ip`
+    9. `make check_network`
 4. [Mount a disk](https://www.raspberrypi-spy.co.uk/2014/05/how-to-mount-a-usb-flash-disk-on-the-raspberry-pi/) for database backup
 5. Install the project (Internet access needed):
     * On your machine (not on the RPi): `make download`

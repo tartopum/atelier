@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 
 _HERE = os.path.dirname(__file__)
 _CONFIG_PATH = os.path.join(_HERE, "..", "config.json")
@@ -30,6 +31,13 @@ def store_credentials(section, key, required=True):
     store_config(section, key, [user, pwd])
 
 
-store_credentials("server", "http_credentials")
-store_credentials("server", "sms_credentials", required=False)
-store_config("server", "db_backup", read_input("Database backup path:"))
+if __name__ == "__main__":
+    try:
+        _CONFIG_PATH = sys.argv[1]
+    except IndexError:
+        print("Usage: python3 config.py <config.json-path>")
+        sys.exit(1)
+
+    store_credentials("server", "http_credentials")
+    store_credentials("server", "sms_credentials", required=False)
+    store_config("server", "db_backup", read_input("Database backup path:"))
