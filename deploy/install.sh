@@ -35,7 +35,7 @@ pipenv install
 git config --global user.email "you@example.com"
 git config --global user.name "Vincent Lefoulon"
 
-python3 config.py
+python3 config.py ../atelier/config.json
 
 # Run web server at startup
 crontab -r
