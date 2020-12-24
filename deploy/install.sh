@@ -2,7 +2,7 @@
 
 sudo apt-get update
 sudo apt-get -y upgrade
-sudo apt-get install -y sqlite3 build-essential libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev zlib1g libsqlite3-dev
+sudo apt-get install -y sqlite3 build-essential libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev zlib1g libsqlite3-dev vim
 
 # Install Python 3.7
 python3.7 -V
