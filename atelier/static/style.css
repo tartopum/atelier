@@ -138,6 +138,7 @@ header .help {
   margin: 5px;
   display: flex;
   align-items: center;
+  text-decoration: none;
 }
 
 #content.home .messages .message img {

@@ -21,7 +21,10 @@ arduino.register_post_route(activate, blueprint, "/activer/<int:on>")
 arduino.register_post_route(command, blueprint, "/commander/<int:on>")
 
 
-get_errors = make_message_getter([])
-get_warnings = make_message_getter([
-    ("state", 0, "La clôture est éteinte.")
-])
+get_errors = make_message_getter([], base_url_name="fence_route")
+get_warnings = make_message_getter(
+    [
+        ("state", 0, "La clôture est éteinte.")
+    ],
+    base_url_name="fence_route",
+)

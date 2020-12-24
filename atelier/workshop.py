@@ -32,7 +32,10 @@ arduino.register_post_route(power_supply, blueprint, "/alimentation/<int:on>")
 arduino.register_post_route(power_manual_mode, blueprint, "/alimentation/manuel/<int:on>")
 
 
-get_errors = make_message_getter([])
-get_warnings = make_message_getter([
-    ("power_supply", 0, "L'alimentation de l'atelier est coupée.")
-])
+get_errors = make_message_getter([], base_url_name="workshop_route")
+get_warnings = make_message_getter(
+    [
+        ("power_supply", 0, "L'alimentation de l'atelier est coupée.")
+    ],
+    base_url_name="workshop_route",
+)

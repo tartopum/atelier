@@ -27,7 +27,10 @@ def listen(on):
 arduino.register_post_route(listen, blueprint, "/activer/<int:on>")
 
 
-get_errors = make_message_getter([
-    ("breach", 1, "Une intrusion est détectée !")
-])
-get_warnings = make_message_getter([])
+get_errors = make_message_getter(
+    [
+        ("breach", 1, "Une intrusion est détectée !")
+    ],
+    base_url_name="workshop_route",
+)
+get_warnings = make_message_getter([], base_url_name="workshop_route")

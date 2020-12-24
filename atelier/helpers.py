@@ -52,16 +52,22 @@ def raise_alert(name, msg, level):
 
 def get_messages(conditions):
     m = []
-    for val, cond_val, msg in conditions:
+    for val, cond_val, msg, url_name in conditions:
         if val == cond_val:
-            m.append(msg)
+            m.append((msg, url_for(url_name)))
     return m
 
 
-def make_message_getter(conditions):
+def make_message_getter(conditions, base_url_name=None):
+    def get_cond_url_name(cond):
+        try:
+            return cond[3] or base_url_name
+        except IndexError:
+            return base_url_name
+
     def f(state):
         return get_messages([
-            (state[k], cond_val, m)
-            for k, cond_val, m in conditions
+            (state[cond[0]], cond[1], cond[2], get_cond_url_name(cond))
+            for cond in conditions
         ])
     return f
