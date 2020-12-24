@@ -42,7 +42,7 @@
 4. [Mount a disk](https://www.raspberrypi-spy.co.uk/2014/05/how-to-mount-a-usb-flash-disk-on-the-raspberry-pi/) for database backup
 5. Install the project (Internet access needed):
     * On your machine (not on the RPi): `make download`
-    * On your machine (not on the RPi): `make install`
+    * On your machine (not on the RPi): `make install` (/!\ interactive)
 6. Reboot the RPi to start the web server: `make reboot`
 7. Open `http://<rpi-ip>:5000/debug` and observe the CPU usage. If it's low, you can [reduce the frequency](http://with-raspberrypi.blogspot.com/2014/03/cpu-frequency.html).
 
