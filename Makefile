@@ -10,21 +10,21 @@ SSH_HOST=-p ${RPI_SSH_PORT} ${RPI_USER}@${RPI_IP_WIFI}
 
 .PHONY: dev_fake
 dev_fake:
-	pipenv run python server.py --aip 127.0.0.1 --aport 5001 --debug
+	poetry run python server.py --aip 127.0.0.1 --aport 5001 --debug
 
 .PHONY: dev
 dev:
-	pipenv run python server.py --debug
+	poetry run python server.py --debug
 
 .PHONY: fake_arduino
 fake_arduino:
-	pipenv run python fake_arduino/server.py
+	poetry run python fake_arduino/server.py
 
 .PHONY: prod
 prod:
 	-cat pid | xargs kill
 	rm -f server.log server.err
-	pipenv run python server.py > server.log 2> server.err & echo "$$!" > pid
+	poetry run python server.py > server.log 2> server.err & echo "$$!" > pid
 
 .PHONY: edit_ino
 edit_ino:

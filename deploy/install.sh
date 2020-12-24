@@ -1,8 +1,10 @@
 #!/bin/bash
 
+set -eu
+
 sudo apt-get update
 sudo apt-get -y upgrade
-sudo apt-get install -y sqlite3 build-essential libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev zlib1g libsqlite3-dev python3 python3-pip vim
+sudo apt-get install -y sqlite3 build-essential libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev zlib1g libsqlite3-dev python3 vim
 
 echo
 echo "Installing pyenv..."
@@ -11,7 +13,7 @@ echo >> ~/.bashrc
 echo 'export PATH="$HOME/.pyenv/bin:$PATH"' >> ~/.bashrc
 echo 'eval "$(pyenv init -)"' >> ~/.bashrc
 echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
-source ~/.bashrc
+. ~/.bashrc
 
 echo
 echo "Setting local Python version..."
@@ -25,19 +27,15 @@ echo "Installing poetry..."
 curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3 -
 echo >> ~/.bashrc
 echo 'export PATH="$HOME/.poetry/bin:$PATH"' >> ~/.bashrc
-source ~/.bashrc
+. ~/.bashrc
 
-exit
-
-# Install Pipenv
-sudo pip3 install --upgrade pip
-sudo pip3 install pipenv
-pipenv install
-
-git config --global user.email "you@example.com"
+git config --global user.email "vincent.lefoulon@free.fr"
 git config --global user.name "Vincent Lefoulon"
 
 python3 config.py ../atelier/config.json
+
+cd ../atelier
+poetry install
 
 # Run web server at startup
 crontab -r

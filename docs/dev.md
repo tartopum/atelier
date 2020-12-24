@@ -2,12 +2,12 @@
 
 ## Install
 
-First, make sure [`pipenv`](https://pipenv.readthedocs.io/en/latest/) is installed and in your PATH. Then:
+First, make sure [poetry](https://python-poetry.org/docs/) is installed and in your PATH. Then:
 
 ```
 git clone https://github.com/tartopum/atelier
 cd atelier
-pipenv install
+poetry install
 ```
 
 ## Usage

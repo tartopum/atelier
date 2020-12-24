@@ -124,6 +124,7 @@ ENV/
 # Vim
 .swp
 
+.python-version
 logs*.txt*
 debug_controllino*.txt*
 pid
