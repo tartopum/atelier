@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # IP config
 sudo cp /etc/dhcpcd.conf /etc/dhcpcd.conf.bak

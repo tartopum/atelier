@@ -1,16 +1,15 @@
-#!/bin/sh
+#!/bin/bash
 
 set -eu
 
 sudo apt-get update
 sudo apt-get -y upgrade
-sudo pip3.7 install --upgrade pip pipenv
 
 git stash
 git pull
 git stash apply
 STASH_RET=$?
-pipenv install
+poetry update
 
 echo "------------"
 if [ "$STASH_RET" -eq "0" ]; then
