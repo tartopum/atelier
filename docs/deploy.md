@@ -65,5 +65,15 @@ On your machine:
 
 On your machine:
 
+First, update the Python package versions in the `poetry.lock`:
+
+```
+poetry update
+```
+
+Commit and push.
+
+Then:
+
 * `make update`
 * If everything went well (e.g. no merge conflicts): `make reboot`

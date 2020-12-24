@@ -9,7 +9,7 @@ git stash
 git pull
 git stash apply
 STASH_RET=$?
-poetry update
+poetry install
 
 echo "------------"
 if [ "$STASH_RET" -eq "0" ]; then
