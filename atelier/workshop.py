@@ -3,7 +3,7 @@ import requests
 
 from . import arduino
 from .config import config, schema
-from .helpers import auth, redirect_prev
+from .helpers import auth, make_message_getter, redirect_prev
 
 
 arduino_endpoint = "workshop"
@@ -30,3 +30,9 @@ def power_manual_mode(on):
 
 arduino.register_post_route(power_supply, blueprint, "/alimentation/<int:on>")
 arduino.register_post_route(power_manual_mode, blueprint, "/alimentation/manuel/<int:on>")
+
+
+get_errors = make_message_getter([])
+get_warnings = make_message_getter([
+    ("power_supply", 0, "L'alimentation de l'atelier est coupée.")
+])

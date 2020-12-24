@@ -3,6 +3,21 @@
 {% block title %}Accueil{% endblock %}
 
 {% block content %}
+<div class="messages">
+{% for m in errors %}
+  <div class="message error">
+    <img src="{{ url_for('static', filename='img/error.png') }}" alt="Erreur : " />
+    {{ m }}
+  </div>
+{% endfor %}
+{% for m in warnings %}
+  <div class="message warning">
+    <img src="{{ url_for('static', filename='img/warning.png') }}" alt="Attention : " />
+    {{ m }}
+  </div>
+{% endfor %}
+</div>
+
 <div class="alerts">
     <h2>
         <img src="{{ url_for('static', filename='img/alert.png') }}" alt="Alerte" />

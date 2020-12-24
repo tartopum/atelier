@@ -3,6 +3,8 @@ import requests
 
 from . import arduino, forms
 from .config import config
+from .helpers import make_message_getter
+
 
 arduino_endpoint = "alarm"
 blueprint = Blueprint("alarm", __name__, template_folder="templates")
@@ -23,3 +25,9 @@ def listen(on):
 
 
 arduino.register_post_route(listen, blueprint, "/activer/<int:on>")
+
+
+get_errors = make_message_getter([
+    ("breach", 1, "Une intrusion est détectée !")
+])
+get_warnings = make_message_getter([])

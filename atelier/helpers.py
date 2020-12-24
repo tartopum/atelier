@@ -47,3 +47,21 @@ def raise_alert(name, msg, level):
     )
     if resp.status_code != 200:
         logger.error(f"Cannot send alert SMS: {resp.status_code} {resp.text}")
+
+
+
+def get_messages(conditions):
+    m = []
+    for val, cond_val, msg in conditions:
+        if val == cond_val:
+            m.append(msg)
+    return m
+
+
+def make_message_getter(conditions):
+    def f(state):
+        return get_messages([
+            (state[k], cond_val, m)
+            for k, cond_val, m in conditions
+        ])
+    return f

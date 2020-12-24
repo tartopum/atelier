@@ -7,7 +7,7 @@ import requests
 
 from . import arduino, db
 from .config import config
-from .helpers import auth
+from .helpers import auth, make_message_getter
 
 
 arduino_endpoint = "tank"
@@ -236,3 +236,13 @@ def power_consumption_data():
         "pump_out": [sum(period) / 60 for period in pump_out],
         "city": [sum(period) / 60 for period in city],
     })
+
+
+get_errors = make_message_getter([
+    ("is_filter_in_blocked", 1, "Le filtre de la cuve est encrassé."),
+    ("is_motor_in_blocked", 1, "Le moteur de la pompe du puits est en panne."),
+    ("is_motor_out_blocked", 1, "Le moteur de la pompe du surpresseur est en panne."),
+    ("is_overpressured", 1, "Le système est en surpression."),
+    ("manual_mode", 1, "La cuve est en mode manuel."),
+])
+get_warnings = make_message_getter([])

@@ -3,8 +3,8 @@
     "listen": 0,
     "movement": 0,
     "breach": 0,
-    "delay_before_listening": 20000,
-    "delay_before_alert": 3000
+    "delay_before_listening": 60000,
+    "delay_before_alert": 4000
   },
   "lights": {
     "0": 0,
@@ -13,8 +13,8 @@
     "press_delay": 500
   },
   "fence": {
-    "state": 1,
-    "activated": 0
+    "state": 0,
+    "activated": 1
   },
   "workshop": {
     "inactivity_delay": 900000,
@@ -49,11 +49,11 @@
     "time_to_fill_up": 1800000,
     "volume_before_pump_out": 500,
     "flow_check_period": 30000,
-    "filter_cleaning_period": 1800000,
+    "filter_cleaning_period": 900000,
     "filter_cleaning_duration": 3000,
     "filter_cleaning_consecutive_delay": 5000,
     "pump_in_start_duration": 10000,
-    "min_flow_in": 17,
+    "min_flow_in": 14,
     "max_pump_out_running_time": 600000,
     "max_duration_without_flow_out": 3600000,
     "flow_in": 10,

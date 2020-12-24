@@ -122,6 +122,41 @@ header .help {
     text-align: center;
 }
 
+#content.home .messages {
+  margin: auto;
+  margin-bottom: 40px;
+  max-width: 450px;
+  font-size: 0.9rem;
+}
+
+#content.home .messages .message {
+  border-radius: 5px;
+  border: 1px solid;
+  color: #FFF;
+  padding: 10px;
+  text-align: left;
+  margin: 5px;
+  display: flex;
+  align-items: center;
+}
+
+#content.home .messages .message img {
+  margin-right: 15px;
+  max-width: 24px;
+}
+
+#content.home .messages .error {
+  background: #f8d7da;
+  color: #842029;
+  border-color: #f5c2c7;
+}
+
+#content.home .messages .warning {
+  background: #fff3cd;
+  color: #664d03;
+  border-color: #ffecb5;
+}
+
 #content.home .alerts h2 img {
     vertical-align: middle;
 }

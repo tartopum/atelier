@@ -61,11 +61,26 @@ def config_arduino():
 def home():
     alerts = db.list_alerts(n_days_ago=7)
     grouped_alerts = groupby(alerts, lambda x: x[0].strftime("%A %d %B"))
-    
+
+    states = read_controllino_state()
+    warnings = [
+        *fence.get_warnings(states["fence"]),
+        *workshop.get_warnings(states["workshop"]),
+        *alarm.get_warnings(states["alarm"]),
+    ]
+    if debug:
+        warnings.append("Vous êtes en mode debug.")
+
     return render_template(
         "home.html",
         no_alerts=(len(alerts) < 1),
         alerts=grouped_alerts,
+        errors=[
+            *fence.get_errors(states["fence"]),
+            *workshop.get_errors(states["workshop"]),
+            *alarm.get_errors(states["alarm"]),
+        ],
+        warnings=warnings,
     )
 
 

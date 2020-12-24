@@ -2,6 +2,7 @@ from flask import Blueprint, redirect, request
 import requests
 
 from . import arduino
+from .helpers import make_message_getter
 
 
 arduino_endpoint = "fence"
@@ -18,3 +19,9 @@ def activate(on):
 
 arduino.register_post_route(activate, blueprint, "/activer/<int:on>")
 arduino.register_post_route(command, blueprint, "/commander/<int:on>")
+
+
+get_errors = make_message_getter([])
+get_warnings = make_message_getter([
+    ("state", 0, "La clôture est éteinte.")
+])
