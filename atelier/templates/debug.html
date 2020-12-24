@@ -4,9 +4,9 @@
 
 {% block content %}
 
-<h2>État de la Controllino</h2>
+<h2 id="controllino">État de la Controllino</h2>
 
-<div id="controllino">
+<div id="controllino-content">
 {% for component, state in states.items() %}
     <div>
         <h3>{{ component }}</h3>
@@ -17,10 +17,10 @@
 {% endfor %}
 </div>
 
-<hr class="sep" />
+<hr id="rpi" class="sep" />
 
 <h2>État de la Raspberry</h2>
-<div id="rpi">
+<div id="rpi-content">
     <div id="rpi_disk_usage"></div>
     <div>
         <div id="rpi_cpu_usage"></div>
@@ -29,7 +29,7 @@
     <div id="rpi_memory"></div>
 </div>
 
-<hr class="sep" />
+<hr id="logs" class="sep" />
 
 <h2>Logs</h2>
 
@@ -48,7 +48,7 @@
   <div style="font-size: 0.8rem;">Il n'y a pas de logs.</div>
 {% endif %}
 
-<hr class="sep" />
+<hr id="debug" class="sep" />
 
 <h2>Debug</h2>
 
@@ -78,7 +78,7 @@
 </div>
 
 
-<div id="debug">
+<div>
   <a class="download" title="Exporter les logs" href="{{ url_for('download_controllino_debug') }}">
       <img src="{{ url_for('static', filename='img/download.png') }}" alt="Exporter les logs" />
   </a>

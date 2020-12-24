@@ -392,20 +392,20 @@ header .help {
     background: #e7edf2;
 }
 
-#content.debug #controllino > div {
+#content.debug #controllino-content > div {
     display: inline-block;
     vertical-align: top;
     width: 400px;
     margin: 0 10px;
 }
 
-#content.debug #controllino > div pre {
+#content.debug #controllino-content > div pre {
     text-align: left;
     overflow: auto;
     max-height: 200px;
 }
 
-#content.debug #rpi > div {
+#content.debug #rpi-content > div {
     display: inline-block;
     vertical-align: top;
     margin: 20px;
