@@ -4,20 +4,27 @@ sudo apt-get update
 sudo apt-get -y upgrade
 sudo apt-get install -y sqlite3 build-essential libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev zlib1g libsqlite3-dev python3 python3-pip vim
 
+echo "Installing pyenv..."
 curl https://pyenv.run | bash
 echo >> ~/.bashrc
-echo 'export PATH="/home/pi/.pyenv/bin:$PATH"' >> ~/.bashrc
+echo 'export PATH="$HOME/.pyenv/bin:$PATH"' >> ~/.bashrc
 echo 'eval "$(pyenv init -)"' >> ~/.bashrc
 echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
-exec $SHELL
+source ~/.bashrc
 
+echo "Setting local Python version..."
 pyenv install 3.9.1
 cd ../atelier
 pyenv local 3.9.1
 cd ../deploy
 
+echo "Installing poetry..."
 curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3 -
-exec $SHELL
+echo >> ~/.bashrc
+echo 'export PATH="$HOME/.poetry/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+
+exit
 
 # Install Pipenv
 sudo pip3 install --upgrade pip
