@@ -135,6 +135,16 @@ void flowOutInterrupt()
 /*
  * HTTP
  */
+ void checkRPi()
+{
+    EthernetClient client;
+    if (client.connect(apiIp, apiPort) != 1) {
+        redLight.setLevel(LOW_ALERT);
+        return;
+    }
+    client.stop();
+}
+
 void askForConfig()
 {
     EthernetClient client;
@@ -223,8 +233,6 @@ void handleHTTP()
 
 void setup()
 {
-    Serial.begin(9600); // TODO
-
     sei(); // Enable interrupts
 
     tank.flowInInterrupt = &flowInInterrupt;
@@ -240,12 +248,14 @@ void setup()
     webserver.addCommand("tank", &tankRoute);
     webserver.addCommand("tank_stats", &tankStatsRoute);
 
+    checkRPi();
     askForConfig();
 }
 
 void loop()
 {
     handleHTTP();
+    checkRPi();
     fence.loop();
     atelier.loop();
     tank.loop();
