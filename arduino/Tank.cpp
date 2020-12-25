@@ -21,7 +21,7 @@ Tank::Tank(
     byte pinFilterCleaning,
     AlertLight *lightWarning,
     AlertLight *lightFatal,
-    void (*sendAlert)(const char *, const char *, byte)
+    bool (*sendAlert)(const char *, const char *, byte)
 ) :
     _motorInBlockedAlert(
         "tank",

@@ -14,7 +14,7 @@ class Atelier
             unsigned long inactivityDelay_,
             Alarm *alarm,
             Lights *lights,
-            void (*sendAlert)(const char *, const char *, byte)
+            bool (*sendAlert)(const char *, const char *, byte)
         );
         unsigned long inactivityDelay;
         unsigned long powerManualModeReminderDelay = 86400000;

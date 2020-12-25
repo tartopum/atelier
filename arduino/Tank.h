@@ -26,7 +26,7 @@ class Tank
             byte pinFilterCleaning,
             AlertLight *lightWarning,
             AlertLight *lightFatal,
-            void (*sendAlert)(const char *, const char *, byte)
+            bool (*sendAlert)(const char *, const char *, byte)
         );
         byte minFlowIn = 10; // L/min
         unsigned long timeToFillUp = 1800000; // ms

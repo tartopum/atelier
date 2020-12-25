@@ -12,7 +12,7 @@ Alarm::Alarm(
     int pinNotListening,
     int pinListenSwitch,
     AlertLight *alertLight,
-    void (*sendAlert)(const char *, const char *, byte)
+    bool (*sendAlert)(const char *, const char *, byte)
 ) :
     _alert("alarm", "Une intrusion a été détectée.", sendAlert, alertLight, HIGH_ALERT)
 {
