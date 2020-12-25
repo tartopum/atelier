@@ -4,30 +4,9 @@ set -eu
 
 sudo apt-get update
 sudo apt-get -y upgrade
-sudo apt-get install -y sqlite3 build-essential libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev zlib1g libsqlite3-dev python3 vim
+sudo apt-get install -y sqlite3 build-essential libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev zlib1g libsqlite3-dev python3 python3-pip vim
 
-echo
-echo "Installing pyenv..."
-curl https://pyenv.run | bash
-echo >> ~/.bashrc
-echo 'export PATH="$HOME/.pyenv/bin:$PATH"' >> ~/.bashrc
-echo 'eval "$(pyenv init -)"' >> ~/.bashrc
-echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
-
-# We need to run the commands since bashrc is for interactive envs and cannot
-# be sourced
-export PATH="$HOME/.pyenv/bin:$PATH"
-pyenv init -
-pyenv virtualenv-init -
-
-pyenv versions
-
-echo
-echo "Setting local Python version..."
-pyenv install 3.9.1
-cd ../atelier
-pyenv local 3.9.1
-cd ../deploy
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 10
 
 echo
 echo "Installing poetry..."
