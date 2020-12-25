@@ -40,4 +40,4 @@ if __name__ == "__main__":
 
     store_credentials("Basic auth", "server", "http_credentials")
     store_credentials("SMS API Free mobile", "server", "sms_credentials", required=False)
-    store_config("server", "db_backup_paths", read_input("Database backup path:"))
+    store_config("server", "db_backup_paths", [read_input("Database backup path:")])
