@@ -1,6 +1,9 @@
-body {
+html, body {
     margin: 0;
     padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 h1, h2, h3 {
@@ -62,18 +65,22 @@ ul.errors li {
     display: inline-block;
 }
 
-header {
+header, footer {
     display: flex;
+    flex-wrap: wrap;
     padding: 10px 50px;
-    margin-bottom: 30px;
     font-family: Slabo, Helvetica, Arial, sans-serif;
     text-transform: uppercase;
     font-size: 16px;
     font-weight: bold;
     letter-spacing: 1.2px;
     color: rgb(34, 34, 34);
+}
+
+header {
     border-bottom: 1px solid #e7edf2;
     box-shadow: 0px -15px 30px 15px rgba(0, 0, 0, 0.08);
+    margin-bottom: 30px;
 }
 
 header .home,
@@ -82,7 +89,12 @@ header .nav {
     padding-top: 10px;
 }
 
-header a {
+header .home {
+    margin-right: 20px;
+}
+
+header a,
+footer a {
     color: #000;
     text-decoration: none;
 }
@@ -92,34 +104,66 @@ header .logo {
 }
 
 header .nav {
-    flex-grow: 1;
     text-align: right;
+    flex-grow: 1;
 }
 
-header .nav  ul {
+.nav ul {
     margin: 0;
     padding: 0;
 }
 
-header .nav  ul li {
+.nav ul li {
     display: inline-block;
     list-style-type: none;
     padding: 0;
     margin: 0;
+}
+
+.nav ul li:not(:last-child) {
     margin-right: 30px;
 }
 
-header .nav  ul li.active {
-    border-bottom: 1px solid #000;
+header .active,
+footer .active {
+    text-decoration: underline;
 }
 
-header .help {
+footer {
+    margin-top: 30px;
+    border-top: 1px solid #e7edf2;
+    justify-content: end;
+    align-items: center;
+}
+
+footer .help {
     padding-top: 5px;
+    margin-left: 30px;
+}
+
+@media (max-width: 260px) {
+    header .logo {
+        display: none;
+    }
+}
+
+@media (max-width: 500px) {
+    header, footer {
+        padding: 10px 20px;
+    }
+    header .nav li {
+        display: block;
+    }
+    header .nav li:not(:last-child) {
+        margin: 0;
+        margin-bottom: 20px;
+    }
 }
 
 #content {
-    margin-bottom: 20px;
     text-align: center;
+    padding: 10px;
+    flex-grow: 1;
 }
 
 #content.home .messages {
@@ -131,7 +175,6 @@ header .help {
 
 #content.home .messages .message {
   border-radius: 5px;
-  border: 1px solid;
   color: #FFF;
   padding: 10px;
   text-align: left;
@@ -168,7 +211,7 @@ header .help {
 }
 
 #content.home .alert-list {
-    width: 500px;
+    max-width: 500px;
     text-align: left;
     margin: auto;
 }
@@ -217,14 +260,18 @@ header .help {
 
 #content.workshop .sep {
     border-bottom: 1px solid #e7edf2;
-    width: 300px;
+    max-width: 400px;
     margin: 15px auto;
 }
 
+#content.workshop .row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
 #content.workshop .row > div {
-    display: inline-block;
-    vertical-align: top;
-    margin: 20px 30px;
+    padding: 20px 30px;
     min-width: 220px;
 }
 
@@ -366,7 +413,6 @@ header .help {
 
 #content.debug #debug_mode_wrapper {
     text-align: center;
-    padding-left: 20px;
     margin-bottom: 20px;
 }
 
@@ -393,23 +439,31 @@ header .help {
 
 #content.debug .sep {
     margin: 20px auto;
-    width: 500px;
+    max-width: 500px;
     border: 0;
     height: 1px;
     background: #e7edf2;
 }
 
+#content.debug #controllino-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
 #content.debug #controllino-content > div {
-    display: inline-block;
-    vertical-align: top;
-    width: 400px;
-    margin: 0 10px;
+    max-width: 400px;
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
 }
 
 #content.debug #controllino-content > div pre {
     text-align: left;
     overflow: auto;
-    max-height: 200px;
+    height: 200px;
+    background: #eee;
+    padding: 10px;
 }
 
 #content.debug #rpi-content > div {
