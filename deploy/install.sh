@@ -33,4 +33,4 @@ poetry install
 echo
 echo "Creating a cron to start server at boot..."
 crontab -r
-(crontab -l 2>/dev/null; echo "@reboot cd /home/pi/atelier && PATH="'"$HOME/.poetry/bin:$HOME/.pyenv/bin:$PATH:/usr/local/bin"'" && make prod") | crontab -
+(crontab -l 2>/dev/null; echo "@reboot cd /home/pi/atelier && PATH="'"$HOME/.poetry/bin:$PATH:/usr/local/bin"'" && make prod") | crontab -
