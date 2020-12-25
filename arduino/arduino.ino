@@ -142,6 +142,7 @@ void flowOutInterrupt()
         redLight.setLevel(LOW_ALERT);
         return;
     }
+    redLight.unsetLevel(LOW_ALERT);
     client.stop();
 }
 
