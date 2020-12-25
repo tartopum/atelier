@@ -6,29 +6,33 @@
 <h2>Consommation d'eau</h2>
 
 <div class="config">
-    Pendant
-    <div class="styled-select period">
-        <select id="period-water-consumption">
-            <option value="1">1 jour</option>
-            <option value="7">1 semaine</option>
-            <option value="30">1 mois</option>
-            <option value="90">3 mois</option>
-            <option value="180">6 mois</option>
-            <option value="365">1 an</option>
-            <option value="730">2 ans</option>
-        </select>
+    <div>
+      Pendant
+      <div class="styled-select period">
+          <select id="period-water-consumption">
+              <option value="1">1 jour</option>
+              <option value="7">1 semaine</option>
+              <option value="30">1 mois</option>
+              <option value="90">3 mois</option>
+              <option value="180">6 mois</option>
+              <option value="365">1 an</option>
+              <option value="730">2 ans</option>
+          </select>
+      </div>
     </div>
-    par
-    <div class="styled-select timestep">
-        <select id="timestep-water-consumption">
-            <option value="60">heure</option>
-            <option value="240">4 heures</option>
-            <option value="720">demi-journée</option>
-            <option value="1440">jour</option>
-            <option value="10080">semaine</option>
-            <option value="20160">14 jours</option>
-            <option value="43200">mois</option>
-        </select>
+    <div>
+      par
+      <div class="styled-select timestep">
+          <select id="timestep-water-consumption">
+              <option value="60">heure</option>
+              <option value="240">4 heures</option>
+              <option value="720">demi-journée</option>
+              <option value="1440">jour</option>
+              <option value="10080">semaine</option>
+              <option value="20160">14 jours</option>
+              <option value="43200">mois</option>
+          </select>
+      </div>
     </div>
 
     <img id="loader-water-consumption" class="loader" src="{{ url_for('static', filename='img/loader.gif') }}" alt="Chargement..." />
@@ -52,35 +56,41 @@
 <h2>Consommation électrique</h2>
 
 <div class="config">
-    Pendant
-    <div class="styled-select period">
-        <select id="period-power-consumption">
-            <option value="7">1 semaine</option>
-            <option value="30">1 mois</option>
-            <option value="90">3 mois</option>
-            <option value="180">6 mois</option>
-            <option value="365">1 an</option>
-            <option value="730">2 ans</option>
-        </select>
+    <div>
+      Pendant
+      <div class="styled-select period">
+          <select id="period-power-consumption">
+              <option value="7">1 semaine</option>
+              <option value="30">1 mois</option>
+              <option value="90">3 mois</option>
+              <option value="180">6 mois</option>
+              <option value="365">1 an</option>
+              <option value="730">2 ans</option>
+          </select>
+      </div>
     </div>
-    par
-    <div class="styled-select timestep">
-        <select id="timestep-power-consumption">
-            <option value="60">heure</option>
-            <option value="240">4 heures</option>
-            <option value="720">demi-journée</option>
-            <option value="1440">jour</option>
-            <option value="10080">semaine</option>
-            <option value="20160">14 jours</option>
-            <option value="43200">mois</option>
-        </select>
+    <div>
+      par
+      <div class="styled-select timestep">
+          <select id="timestep-power-consumption">
+              <option value="60">heure</option>
+              <option value="240">4 heures</option>
+              <option value="720">demi-journée</option>
+              <option value="1440">jour</option>
+              <option value="10080">semaine</option>
+              <option value="20160">14 jours</option>
+              <option value="43200">mois</option>
+          </select>
+      </div>
     </div>
-    en
-    <div class="styled-select unit">
-        <select id="unit-power-consumption">
-            <option value="kWh">kWh</option>
-            <option value="h">h</option>
-        </select>
+    <div>
+      en
+      <div class="styled-select unit">
+          <select id="unit-power-consumption">
+              <option value="kWh">kWh</option>
+              <option value="h">h</option>
+          </select>
+      </div>
     </div>
 
     <img id="loader-power-consumption" class="loader" src="{{ url_for('static', filename='img/loader.gif') }}" alt="Chargement..." />
@@ -97,28 +107,32 @@
 <h2>Rendement de la pompe de puits</h2>
 
 <div class="config">
-    Pendant
-    <div class="styled-select period">
-        <select id="period-well-pump-efficiency">
-            <option value="7">1 semaine</option>
-            <option value="30">1 mois</option>
-            <option value="90">3 mois</option>
-            <option value="180">6 mois</option>
-            <option value="365">1 an</option>
-            <option value="730">2 ans</option>
-        </select>
+    <div>
+      Pendant
+      <div class="styled-select period">
+          <select id="period-well-pump-efficiency">
+              <option value="7">1 semaine</option>
+              <option value="30">1 mois</option>
+              <option value="90">3 mois</option>
+              <option value="180">6 mois</option>
+              <option value="365">1 an</option>
+              <option value="730">2 ans</option>
+          </select>
+      </div>
     </div>
-    par
-    <div class="styled-select timestep">
-        <select id="timestep-well-pump-efficiency">
-            <option value="60">heure</option>
-            <option value="240">4 heures</option>
-            <option value="720">demi-journée</option>
-            <option value="1440">jour</option>
-            <option value="10080">semaine</option>
-            <option value="20160">14 jours</option>
-            <option value="43200">mois</option>
-        </select>
+    <div>
+      par
+      <div class="styled-select timestep">
+          <select id="timestep-well-pump-efficiency">
+              <option value="60">heure</option>
+              <option value="240">4 heures</option>
+              <option value="720">demi-journée</option>
+              <option value="1440">jour</option>
+              <option value="10080">semaine</option>
+              <option value="20160">14 jours</option>
+              <option value="43200">mois</option>
+          </select>
+      </div>
     </div>
 
     <img id="loader-well-pump-efficiency" class="loader" src="{{ url_for('static', filename='img/loader.gif') }}" alt="Chargement..." />

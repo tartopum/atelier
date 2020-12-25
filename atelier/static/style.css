@@ -292,6 +292,7 @@ footer .help {
 #content.tank .stats {
     text-align: right;
     padding-right: 20px;
+    margin-bottom: 40px;
     font-family: Slabo, Helvetica, Arial, sans-serif;
     font-size: 20px;
 }
@@ -326,11 +327,42 @@ footer .help {
 
 #content.tank_stats .config {
     margin-bottom: 20px;    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+#content.tank_stats .config  > div {
+    display: flex;
+    align-items: center;
+}
+
+#content.tank_stats .config  > div > * {
+    margin: 0 10px;
+}
+
+@media (max-width: 600px) {
+    #content.tank_stats .config {
+        display: block;
+    }
+
+    #content.tank_stats .config > div {
+        max-width: 200px;
+        margin: auto;
+    }
+
+    #content.tank_stats .config > div:not(:first-child) {
+        margin-top: 10px;
+    }
+
+    #content.tank_stats .config > .loader,
+    #content.tank_stats .config > .download {
+        margin-top: 20px;
+    }
 }
 
 #content.tank_stats .config .styled-select {
-    display: inline-block;
-    vertical-align: middle;
     overflow: hidden;
     border: 1px solid rgb(233, 233, 233);
     cursor: pointer;
@@ -358,12 +390,12 @@ footer .help {
 }
 
 #content.tank_stats .loader {
-    margin-left: 25px;
+    margin-left: 15px;
     vertical-align: middle;
 }
 
 #content.tank_stats .download {
-    margin-left: 25px;
+    margin-left: 15px;
     vertical-align: bottom;
 }
 
@@ -373,20 +405,34 @@ footer .help {
 
 #content.tank_stats .wrapper {
     padding: 0 30px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    overflow: auto;
 }
 
 #content.tank_stats .wrapper > div {
-    display: inline-block;
-    vertical-align: top;
+    flex-grow: 1;
+    margin: auto;
 }
 
 #content.tank_stats .wrapper div:nth-child(1) {
     margin-right: 50px;
-    width: 65%;
+    width: 800px;
 }
 
 #content.tank_stats .wrapper div:nth-child(2) {
-    width: 30%;
+    width: 400px;
+}
+
+@media (max-width: 1200px) {
+    #content.tank_stats .wrapper {
+        display: block;
+    }
+
+    #content.tank_stats .wrapper div:nth-child(1) {
+        margin-right: 0;
+    }
 }
 
 #content.arduino_error h1 img {
@@ -469,7 +515,7 @@ footer .help {
 #content.debug #rpi-content > div {
     display: inline-block;
     vertical-align: top;
-    margin: 20px;
+    padding: 20px;
 }
 
 #content.debug .modebar {

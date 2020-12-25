@@ -1,3 +1,5 @@
+var piePlotSize = Math.min(300, window.innerWidth - 40)
+
 function plotRPiDisk(total, used) {
     total = Math.round(total / 10000000) / 100.0
     used = Math.round(used / 10000000) / 100.0
@@ -13,9 +15,9 @@ function plotRPiDisk(total, used) {
         }],
         {
             showlegend: true,
-            width: 300,
-            height: 300,
-            margin: {t: 50, l: 50, r: 50, b: 10},
+            width: piePlotSize,
+            height: piePlotSize,
+            margin: {t: 110, l: 50, r: 50, b: 10},
             title: {
                 text: "Espace disque",
                 font: {
@@ -24,11 +26,11 @@ function plotRPiDisk(total, used) {
                 },
             },
             legend: {
-                x: 0.5,
+                x: 0,
                 y: 1,
-                orientation: "h",
+                orientation: "v",
                 xanchor: "center",
-                yanchor: "middle",
+                yanchor: "bottom",
             },
             annotations: [{
                 font: {
@@ -82,9 +84,9 @@ function plotRPiCPU(percent, temp, freq) {
         }],
         {
             showlegend: true,
-            width: 300,
-            height: 300,
-            margin: {t: 50, l: 50, r: 50, b: 10},
+            width: piePlotSize,
+            height: piePlotSize,
+            margin: {t: 110, l: 50, r: 50, b: 10},
             title: {
                 text: "Processeur",
                 font: {
@@ -93,11 +95,11 @@ function plotRPiCPU(percent, temp, freq) {
                 },
             },
             legend: {
-                x: 0.5,
+                x: 0,
                 y: 1,
-                orientation: "h",
+                orientation: "v",
                 xanchor: "center",
-                yanchor: "middle",
+                yanchor: "bottom",
             },
             annotations: [{
                 font: {
@@ -143,7 +145,7 @@ function plotRPiCPU(percent, temp, freq) {
         }],
         {
             showlegend: false,
-            width: 350,
+            width: piePlotSize,
             height: 100,
             margin: {t: 30, l: 50, r: 50, b: 30},
             title: {
@@ -199,9 +201,9 @@ function plotRPiMemory(total, used) {
         }],
         {
             showlegend: true,
-            width: 300,
-            height: 300,
-            margin: {t: 50, l: 50, r: 50, b: 10},
+            width: piePlotSize,
+            height: piePlotSize,
+            margin: {t: 110, l: 50, r: 50, b: 10},
             title: {
                 text: "Mémoire vive",
                 font: {
@@ -210,11 +212,11 @@ function plotRPiMemory(total, used) {
                 },
             },
             legend: {
-                x: 0.5,
+                x: 0,
                 y: 1,
-                orientation: "h",
+                orientation: "v",
                 xanchor: "center",
-                yanchor: "middle",
+                yanchor: "bottom",
             },
             annotations: [{
                 font: {

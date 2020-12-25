@@ -99,6 +99,8 @@ def read_and_store_stats():
 
 
 def _bin_time_series(dates, data, binsize, start_date=None):
+    if not dates:
+        return [], []
     if start_date is None:
         start_date = dates[0]
     binned_data = defaultdict(list)

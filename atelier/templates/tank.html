@@ -32,9 +32,11 @@
     <img src="{{ url_for('static', filename='img/loader.gif') }}" alt="Chargement..." />
 </div>
 
-<div id="schema-wrapper" style="position: relative;">
-    <svg id="schema1" style="position: absolute;"></svg>
-    <svg id="schema2" style="position: absolute; visibility: hidden;"></svg>
+<div style="overflow: auto; padding-bottom: 20px;">
+    <div id="schema-wrapper" style="position: relative;">
+        <svg id="schema1" style="position: absolute;"></svg>
+        <svg id="schema2" style="position: absolute; visibility: hidden;"></svg>
+    </div>
 </div>
 {% endblock %}
 
