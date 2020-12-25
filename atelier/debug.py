@@ -40,11 +40,11 @@ def get_log_color(header):
 
 
 def parse_logs(path):
-    PATTERN = r"(?:\[.*?\]\s*){3,}"
+    PATTERN = r"^(?:\[[\w \-:,]+\]){3}"
     with open(path) as f:
         content = f.read()
-        headers = re.findall(PATTERN, content)
-        messages = re.split(PATTERN, content)
+        headers = re.findall(PATTERN, content, flags=re.MULTILINE)
+        messages = re.split(PATTERN, content, flags=re.MULTILINE)
         colors = [get_log_color(h) for h in headers]
         return zip(headers, messages[1:], colors)
 
