@@ -1,5 +1,6 @@
 import os
 import datetime as dt
+import html
 import json
 import re
 
@@ -39,6 +40,13 @@ def get_log_color(header):
     return "black"
 
 
+def format_log_message(m):
+    m = html.escape(m)
+    m = m.replace("\n", "<br/>")
+    m = re.sub("\s", "&nbsp;", m)
+    return m
+
+
 def parse_logs(path):
     PATTERN = r"^(?:\[[\w \-:,]+\]){3}"
     with open(path) as f:
@@ -46,7 +54,7 @@ def parse_logs(path):
         headers = re.findall(PATTERN, content, flags=re.MULTILINE)
         messages = re.split(PATTERN, content, flags=re.MULTILINE)
         colors = [get_log_color(h) for h in headers]
-        return zip(headers, messages[1:], colors)
+        return zip(headers, map(format_log_message, messages[1:]), colors)
 
 
 def get_controllino_log():

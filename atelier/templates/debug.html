@@ -39,7 +39,7 @@
     {% for header, message, color in logs %}
       <div style="border: 1px solid {{ color }}; border-radius: 5px; margin: 10px 0; padding: 5px; overflow-wrap: anywhere;">
         <span style="color: {{ color }};">{{ header }}</span>
-        <span style="color: grey;">{{ message }}</span>
+        <span style="color: grey;">{{ message|safe }}</span>
       </div>
     {% endfor %}
   </div>
