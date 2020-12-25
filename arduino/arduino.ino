@@ -21,12 +21,17 @@ WebServer webserver("", port);
 char apiIp[] = "192.168.167.101";
 char apiAuthHeader[100] = "";
 int apiPort = 5000;
+bool isHttpConfigured = false;
 
-void sendAlert(const char *name, const char *message, byte level)
+bool sendAlert(const char *name, const char *message, byte level)
 {
+    if (!isHttpConfigured) {
+        return false;
+    }
+
     EthernetClient client;
     if (client.connect(apiIp, apiPort) != 1) {
-        return;
+        return false;
     }
 
     const char *start = "{\"name\": \"";
@@ -62,6 +67,7 @@ void sendAlert(const char *name, const char *message, byte level)
 
     delay(20);
     client.stop();
+    return true;
 }
 
 AlertLight redLight(CONTROLLINO_DO4);
@@ -135,22 +141,24 @@ void flowOutInterrupt()
 /*
  * HTTP
  */
- void checkRPi()
+bool checkRPi()
 {
     EthernetClient client;
     if (client.connect(apiIp, apiPort) != 1) {
         redLight.setLevel(LOW_ALERT);
-        return;
+        return false;
     }
+
     redLight.unsetLevel(LOW_ALERT);
     client.stop();
+    return true;
 }
 
-void askForConfig()
+bool askForConfig()
 {
     EthernetClient client;
     if (client.connect(apiIp, apiPort) != 1) {
-        return;
+        return false;
     }
 
     client.println("GET /send_config HTTP/1.1");
@@ -162,6 +170,7 @@ void askForConfig()
     client.println("Content-Length: 0");
     delay(20);
     client.stop();
+    return true;
 }
 
 void alarmRoute(WebServer &server, WebServer::ConnectionType type, char *, bool)
@@ -222,6 +231,7 @@ void configApiRoute(WebServer &server, WebServer::ConnectionType type, char *, b
         }
     }
     server.httpSuccess();
+    isHttpConfigured = true;
 }
 
 void handleHTTP()
@@ -248,15 +258,17 @@ void setup()
     webserver.addCommand("workshop", &atelierRoute);
     webserver.addCommand("tank", &tankRoute);
     webserver.addCommand("tank_stats", &tankStatsRoute);
-
-    checkRPi();
-    askForConfig();
 }
 
 void loop()
 {
     handleHTTP();
     checkRPi();
+    if (!isHttpConfigured) {
+        // Need that in loop() since the RPi may not be connected when the Arduino
+        // starts.
+        askForConfig();
+    }
     fence.loop();
     atelier.loop();
     tank.loop();
