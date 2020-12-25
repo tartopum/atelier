@@ -5,7 +5,8 @@ RPI_SSH_PORT=22
 ETH_INT=enp3s0 # The network interface to connect to the RPi
 RPI_HOME=/home/${RPI_USER}
 SSH_HOST_LOCAL=${RPI_USER}@${RPI_IP_ETH}
-SSH_HOST=-p ${RPI_SSH_PORT} ${RPI_USER}@${RPI_IP_WIFI}
+SSH_HOST=${RPI_USER}@${RPI_IP_WIFI}
+SSH_ARGS=-p ${RPI_SSH_PORT} ${SSH_HOST}
 
 
 .PHONY: dev_fake
@@ -36,7 +37,7 @@ ssh_local:
 
 .PHONY: ssh
 ssh:
-	ssh ${SSH_HOST}
+	ssh ${SSH_ARGS}
 
 .PHONY: check_network
 check_network:
@@ -49,24 +50,34 @@ config_ip:
 
 .PHONY: download
 download:
-	ssh ${SSH_HOST} 'cd ${RPI_HOME}/deploy; ./download.sh'
+	ssh ${SSH_ARGS} 'cd ${RPI_HOME}/deploy; ./download.sh'
 
 .PHONY: install
 install:
-	ssh ${SSH_HOST} 'cd ${RPI_HOME}/atelier/deploy; ./install.sh'
+	ssh ${SSH_ARGS} 'cd ${RPI_HOME}/atelier/deploy; ./install.sh'
 
 .PHONY: credentials
 credentials:
-	ssh ${SSH_HOST} 'cd ${RPI_HOME}/atelier/deploy; python3 credentials.py'
+	ssh ${SSH_ARGS} 'cd ${RPI_HOME}/atelier/deploy; python3 credentials.py'
 	
 .PHONY: update
 update:
-	ssh ${SSH_HOST} 'cd ${RPI_HOME}/atelier/deploy; ./update.sh'
+	ssh ${SSH_ARGS} 'cd ${RPI_HOME}/atelier/deploy; ./update.sh'
 
 .PHONY: shutdown
 shutdown:
-	ssh ${SSH_HOST} 'sudo shutdown -h now'
+	ssh ${SSH_ARGS} 'sudo shutdown -h now'
 
 .PHONY: reboot
 reboot:
-	ssh ${SSH_HOST} 'sudo reboot'
+	ssh ${SSH_ARGS} 'sudo reboot'
+
+.PHONY: download_db
+download_db:
+	scp -P ${RPI_SSH_PORT} ${SSH_HOST}:${RPI_HOME}/atelier/db.sqlite3 rpi_db.sqlite3
+
+.PHONY: upload_db
+upload_db:
+	@echo "Copying rpi_db.sqlite3 to uploaded_db.sqlite3 on the RPi..."
+	@echo
+	scp -P ${RPI_SSH_PORT} rpi_db.sqlite3 ${SSH_HOST}:${RPI_HOME}/atelier/uploaded_db.sqlite3

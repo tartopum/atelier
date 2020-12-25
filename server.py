@@ -1,4 +1,3 @@
-import argparse
 import locale
 import logging
 import logging.config
