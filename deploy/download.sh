@@ -5,3 +5,5 @@ sudo apt-get -y upgrade
 sudo apt-get install -y git
 
 git clone https://github.com/tartopum/atelier ../atelier
+cd ..
+rm -rf deploy
