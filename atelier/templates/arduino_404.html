@@ -4,9 +4,11 @@
 
 {% block content %}
 <img src="{{ url_for('static', filename='img/arduino_404.png') }}" alt="Fil électrique cassé" />
-<h1>
-    <img src="{{ url_for('static', filename='img/controllino.png') }}" alt="Controllino" />
-    ne répond pas...
-</h1>
+<h2>
+    L'Arduino ne répond pas à cette requête :
+</h2>
 <pre class="logs">{{ logs }}</pre>
+<div class="help">
+  L'Arduino est-elle bien connectée à la Raspberry ?
+</div>
 {% endblock %}

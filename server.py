@@ -5,6 +5,7 @@ import logging.config
 import os
 
 from gevent.pywsgi import WSGIServer
+import requests
 
 from atelier.debug import CONTROLLINO_LOG_PATH, ATELIER_LOG_PATH
 
@@ -90,7 +91,13 @@ def run_server():
 
 
 if __name__ == "__main__":
+    logger = logging.getLogger("atelier")
+
     db.create_tables()
-    config_arduino()
+    try:
+        config_arduino()
+    except requests.exceptions.RequestException as e:
+        logger.error(str(e), exc_info=e)
+
     scheduler.run(min(10, config["server"]["debug_period"]))
     run_server()

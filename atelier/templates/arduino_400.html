@@ -5,8 +5,7 @@
 {% block content %}
 <img src="{{ url_for('static', filename='img/arduino_404.png') }}" alt="Fil électrique cassé" />
 <h1>
-    <img src="{{ url_for('static', filename='img/controllino.png') }}" alt="Controllino" />
-    a reçu une requête invalide...
+    L'Arduino a reçu une requête invalide :
 </h1>
 <pre class="logs">{{ req }}</pre>
 {% if resp %}

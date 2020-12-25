@@ -355,6 +355,13 @@ header .help {
     font-weight: bold;
     text-align: left;
     margin-bottom: 5px;
+    overflow: auto;
+    max-height: 500px;
+}
+
+#content.arduino_error .help {
+  font-size: 0.9rem;
+  margin-top: 20px;
 }
 
 #content.debug #debug_mode_wrapper {
