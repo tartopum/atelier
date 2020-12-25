@@ -68,12 +68,14 @@ def home():
             *fence.get_errors(states["fence"]),
             *workshop.get_errors(states["workshop"]),
             *alarm.get_errors(states["alarm"]),
+            *tank.get_errors(states["tank"]),
             *debug.get_errors(),
         ],
         warnings=[
             *fence.get_warnings(states["fence"]),
             *workshop.get_warnings(states["workshop"]),
             *alarm.get_warnings(states["alarm"]),
+            *tank.get_warnings(states["tank"]),
             *debug.get_warnings(),
         ],
     )
