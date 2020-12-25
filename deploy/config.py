@@ -23,8 +23,8 @@ def store_config(section, key, val):
         json.dump(cfg, f, indent=2)
 
 
-def store_credentials(section, key, required=True):
-    print(f"config.{section}.{key}:")
+def store_credentials(label, section, key, required=True):
+    print(f"{label} (config.{section}.{key}):")
     user = read_input("User:", required=required)
     pwd = read_input("Password:", required=required)
     print("")
@@ -38,6 +38,6 @@ if __name__ == "__main__":
         print("Usage: python3 config.py <config.json-path>")
         sys.exit(1)
 
-    store_credentials("server", "http_credentials")
-    store_credentials("server", "sms_credentials", required=False)
+    store_credentials("Basic auth", "server", "http_credentials")
+    store_credentials("SMS API Free mobile", "server", "sms_credentials", required=False)
     store_config("server", "db_backup", read_input("Database backup path:"))

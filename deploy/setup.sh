@@ -15,8 +15,3 @@ sudo cp $action_wpa "$action_wpa.bak"
 echo -e 'exit 0\n' | sudo cat - $action_wpa > temp
 sudo chmod 0755 temp
 sudo mv temp $action_wpa
-
-echo "------------"
-echo "* Add passwords to /etc/wpa_supplicant/wpa_supplicant.conf with wpa_passphrase"
-echo "* Reboot"
-echo "------------"

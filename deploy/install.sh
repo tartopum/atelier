@@ -20,16 +20,17 @@ export PATH="$HOME/.poetry/bin:$PATH"
 git config --global user.email "vincent.lefoulon@free.fr"
 git config --global user.name "Vincent Lefoulon"
 
+echo
+echo "Configuring project..."
 python3 config.py ../atelier/config.json
 
+echo
+echo "Installing Python dependencies..."
 cd ../atelier
 poetry install
 
 # Run web server at startup
+echo
+echo "Creating a cron to start server at boot..."
 crontab -r
 (crontab -l 2>/dev/null; echo "@reboot cd /home/pi/atelier && PATH="'"$HOME/.poetry/bin:$HOME/.pyenv/bin:$PATH:/usr/local/bin"'" && make prod") | crontab -
-
-echo "------------"
-echo "Installation finished."
-echo "Please reboot to start the server."
-echo "------------"
