@@ -31,6 +31,9 @@ Alarm::Alarm(
     pinMode(_pinListening, OUTPUT);
     pinMode(_pinNotListening, OUTPUT);
 
+    digitalWrite(_pinBuzzer, LOW);
+    digitalWrite(_pinBuzzerStart, LOW);
+
     _curSwitchState = digitalRead(_pinListenSwitch);
 }
 
