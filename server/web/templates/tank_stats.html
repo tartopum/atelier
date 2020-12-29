@@ -44,17 +44,17 @@
 
 <div id="water_consumption_wrapper" class="wrapper">
     <div class="data-error"></div> 
-    <div id="water_consumption_plot"></div>
-    <div id="water_consumption_stats_plot"></div>
+    <div id="water_consumption_plot" class="main-plot"></div>
+    <div id="water_consumption_stats_plot" class="secondary-plot"></div>
 </div>
 
 <h2>Niveau de la cuve cette semaine</h2>
 
 <img id="loader-tank-level" src="{{ url_for('static', filename='img/loader.gif') }}" alt="Chargement..." />
 
-<div id="tank_level_wrapper" style="margin: 0 30px;">
+<div id="tank_level_wrapper" class="wrapper">
     <div class="data-error"></div> 
-    <div id="tank_level_plot"></div>
+    <div id="tank_level_plot" class="main-plot"></div>
 </div>
 
 <h2>Consommation électrique</h2>
@@ -105,8 +105,8 @@
 </div>
 <div id="power_consumption_wrapper" class="wrapper">
     <div class="data-error"></div> 
-    <div id="power_consumption_plot"></div>
-    <div id="power_consumption_stats_plot"></div>
+    <div id="power_consumption_plot" class="main-plot"></div>
+    <div id="power_consumption_stats_plot" class="secondary-plot"></div>
 </div>
 
 <h2>Rendement de la pompe de puits</h2>
@@ -143,9 +143,9 @@
     <img id="loader-well-pump-efficiency" class="loader" src="{{ url_for('static', filename='img/loader.gif') }}" alt="Chargement..." />
 </div>
 
-<div id="well_pump_efficiency_wrapper" style="margin: 0 30px;">
+<div id="well_pump_efficiency_wrapper" class="wrapper">
     <div class="data-error"></div> 
-    <div id="well_pump_efficiency_plot"></div>
+    <div id="well_pump_efficiency_plot" class="main-plot"></div>
 </div>
 {% endblock %}
 

@@ -435,18 +435,16 @@ footer .help {
     overflow: auto;
 }
 
-#content.tank_stats .wrapper > div:not(.data-error) {
-    flex-grow: 1;
+#content.tank_stats .wrapper .main-plot {
+    margin-right: 50px;
+    width: 800px;
     margin: auto;
 }
 
-#content.tank_stats .wrapper div:nth-child(1) {
-    margin-right: 50px;
-    width: 800px;
-}
-
-#content.tank_stats .wrapper div:nth-child(2) {
+#content.tank_stats .wrapper .secondary-plot {
     width: 400px;
+    flex-grow: 1;
+    margin: auto;
 }
 
 @media (max-width: 1200px) {
