@@ -103,7 +103,7 @@ header .logo {
     margin-right: 15px;
 }
 
-header .nav {
+.nav {
     text-align: right;
     flex-grow: 1;
 }
@@ -132,7 +132,6 @@ footer .active {
 footer {
     margin-top: 30px;
     border-top: 1px solid #e7edf2;
-    justify-content: end;
     align-items: center;
 }
 
@@ -151,10 +150,12 @@ footer .help {
     header, footer {
         padding: 10px 20px;
     }
-    header .nav li {
+    header .nav li,
+    footer .nav li {
         display: block;
     }
-    header .nav li:not(:last-child) {
+    header .nav li:not(:last-child),
+    footer .nav li:not(:last-child) {
         margin: 0;
         margin-bottom: 20px;
     }

@@ -51,6 +51,9 @@
         {% block content %}{% endblock %}
     </div>
     <footer>
+        <div class="home{% if page == "home" %} active{% endif %}">
+            <a href="/">Accueil</a>
+        </div>
         <div class="nav">
             <ul>
                 <li {% if page == "config" %}class="active"{% endif %}>
