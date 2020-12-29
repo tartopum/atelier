@@ -1,0 +1,577 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+h1, h2, h3 {
+    font-family: Slabo, Helvetica, Arial, sans-serif;
+    text-transform: uppercase;
+}
+
+.switch-wrapper {
+    font-family: Slabo, Helvetica, Arial, sans-serif;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.switch-wrapper a {
+    text-decoration: none;
+}
+
+.switch {
+    color: #FFF;
+    padding: 5px 10px;
+    display: inline-block;
+    vertical-align: middle;
+    border-radius: 20px;
+    margin-left: 5px;
+}
+
+.switch .btn {
+    vertical-align: top;
+    display: inline-block;
+    position: relative;
+    top: 2px;
+    width: 20px;
+    height: 20px;
+    background: #FFF;
+    border-radius: 20px;
+}
+
+.switch.on {
+    background: #77dd77;
+}
+
+.switch.off {
+    background: #ff6961;
+}
+
+ul.errors {
+    margin: 0;
+}
+
+ul.errors li {
+    list-style-type: none;
+}
+
+.errors {
+    padding: 10px;
+    background: rgba(255,105,97, 0.5);
+    border: 1px solid #ff6961;
+    display: inline-block;
+}
+
+header, footer {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 10px 50px;
+    font-family: Slabo, Helvetica, Arial, sans-serif;
+    text-transform: uppercase;
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 1.2px;
+    color: rgb(34, 34, 34);
+}
+
+header {
+    border-bottom: 1px solid #e7edf2;
+    box-shadow: 0px -15px 30px 15px rgba(0, 0, 0, 0.08);
+    margin-bottom: 30px;
+}
+
+header .home,
+header .nav {
+    vertical-align: top;
+    padding-top: 10px;
+}
+
+header .home {
+    margin-right: 20px;
+}
+
+header a,
+footer a {
+    color: #000;
+    text-decoration: none;
+}
+
+header .logo {
+    margin-right: 15px;
+}
+
+header .nav {
+    text-align: right;
+    flex-grow: 1;
+}
+
+.nav ul {
+    margin: 0;
+    padding: 0;
+}
+
+.nav ul li {
+    display: inline-block;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav ul li:not(:last-child) {
+    margin-right: 30px;
+}
+
+header .active,
+footer .active {
+    text-decoration: underline;
+}
+
+footer {
+    margin-top: 30px;
+    border-top: 1px solid #e7edf2;
+    justify-content: end;
+    align-items: center;
+}
+
+footer .help {
+    padding-top: 5px;
+    margin-left: 30px;
+}
+
+@media (max-width: 260px) {
+    header .logo {
+        display: none;
+    }
+}
+
+@media (max-width: 500px) {
+    header, footer {
+        padding: 10px 20px;
+    }
+    header .nav li {
+        display: block;
+    }
+    header .nav li:not(:last-child) {
+        margin: 0;
+        margin-bottom: 20px;
+    }
+}
+
+.flashes {
+  padding: 0;
+  margin-bottom: 50px;
+}
+
+.flashes li {
+  list-style-type: none;
+  margin: 10px 0;
+}
+
+.flashes .success {
+  color: #77dd77;
+}
+
+.flashes .error {
+  color: #ff6961;
+}
+
+#content {
+    text-align: center;
+    padding: 10px;
+    flex-grow: 1;
+}
+
+#content.home .messages {
+  margin: auto;
+  margin-bottom: 40px;
+  max-width: 450px;
+  font-size: 0.9rem;
+}
+
+#content.home .messages .message {
+  border-radius: 5px;
+  color: #FFF;
+  padding: 10px;
+  text-align: left;
+  margin: 5px;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+#content.home .messages .message img {
+  margin-right: 15px;
+  max-width: 24px;
+}
+
+#content.home .messages .error {
+  background: #f8d7da;
+  color: #842029;
+  border-color: #f5c2c7;
+}
+
+#content.home .messages .warning {
+  background: #fff3cd;
+  color: #664d03;
+  border-color: #ffecb5;
+}
+
+#content.home .alerts h2 img {
+    vertical-align: middle;
+}
+
+#content.home .alerts h3 {
+    margin: 0;
+    margin-top: 10px;
+}
+
+#content.home .alert-list {
+    max-width: 500px;
+    text-align: left;
+    margin: auto;
+}
+
+#content.home .alert-list .day {
+    margin-left: 20px;
+}
+
+#content.home .alert-list hr {
+    border: 0;
+    height: 1px;
+    background: #e7edf2;
+    background-image: linear-gradient(to right, #fff, #e7edf2, #fff);
+}
+
+#content.home .alert-list .row {
+    display: flex;
+    align-items: center;
+}
+
+#content.home .alert-list .row > div {
+    padding: 5px;
+}
+
+#content.home .alert-list .row .time {
+    font-family: courier;
+    position: relative;
+    top: 1px;
+}
+
+#content.home .alert-list .row .message {
+    font-size: 14px;
+    position: relative;
+    bottom: 2px;
+}
+
+#content.fence .switch-wrapper {
+    font-size: 18px;
+    margin-top: 15px;
+}
+
+#content.workshop h2 {
+    margin: 0;
+    margin-bottom: 10px;
+}
+
+#content.workshop .sep {
+    border-bottom: 1px solid #e7edf2;
+    max-width: 400px;
+    margin: 15px auto;
+}
+
+#content.workshop .row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+#content.workshop .row > div {
+    padding: 20px 30px;
+    min-width: 220px;
+}
+
+#content.workshop .switch-wrapper {
+    font-size: 18px;
+    margin-top: 15px;
+}
+
+#content.workshop .switch .btn {
+    width: 18px;
+    height: 18px;
+}
+
+#content.workshop .lights h3 {
+  margin-top: 0;
+}
+
+#content.tank .stats {
+    text-align: right;
+    padding-right: 20px;
+    margin-bottom: 40px;
+    font-family: Slabo, Helvetica, Arial, sans-serif;
+    font-size: 20px;
+}
+
+#content.tank .stats span,
+#content.tank .stats img {
+    vertical-align: middle;
+}
+
+#content.tank .stats img {
+    margin-right: 10px;
+}
+
+#content.tank .stats a {
+    color: black;
+    text-decoration: none;
+}
+
+#content.tank #schema-wrapper {
+    position: relative;
+    margin: auto;
+    text-align: left;
+}
+
+#content.tank svg {
+    position: absolute;
+}
+
+#content.tank_stats .modebar {
+    display: none;
+}
+
+#content.tank_stats .config {
+    margin-bottom: 20px;    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+#content.tank_stats .config  > div {
+    display: flex;
+    align-items: center;
+}
+
+#content.tank_stats .config  > div > * {
+    margin: 0 10px;
+}
+
+@media (max-width: 600px) {
+    #content.tank_stats .config {
+        display: block;
+    }
+
+    #content.tank_stats .config > div {
+        max-width: 200px;
+        margin: auto;
+    }
+
+    #content.tank_stats .config > div:not(:first-child) {
+        margin-top: 10px;
+    }
+
+    #content.tank_stats .config > .loader,
+    #content.tank_stats .config > .download {
+        margin-top: 20px;
+    }
+}
+
+#content.tank_stats .config .styled-select {
+    overflow: hidden;
+    border: 1px solid rgb(233, 233, 233);
+    cursor: pointer;
+    background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUBAMAAAB/pwA+AAAAJFBMVEUAAADi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uIR/tmHAAAAC3RSTlMAAQIEBgwax8ji9T+dF2UAAAAySURBVAiZY2CgLmBycXFxhjA5du/evUsAzGSdvXv3MqiKyN27EqBM1tnL4BrDExioDQDiPAr8LEKtTwAAAABJRU5ErkJggg==") no-repeat right;
+}
+
+#content.tank_stats .config .styled-select.period {
+    width: 96px;
+}
+
+#content.tank_stats .config .styled-select.timestep {
+    width: 120px;
+}
+
+#content.tank_stats .config .styled-select.unit {
+    width: 75px;
+}
+
+#content.tank_stats .config .styled-select select {
+    background: transparent;
+    padding: 5px;
+    padding-right: 18px;
+    border: none;
+    cursor: pointer;
+}
+
+#content.tank_stats .loader {
+    margin-left: 15px;
+    vertical-align: middle;
+}
+
+#content.tank_stats .download {
+    margin-left: 15px;
+    vertical-align: bottom;
+}
+
+#content.tank_stats .download img {
+    max-width: 32px;
+}
+
+#content.tank_stats .data-error {
+    color: #ff6961;
+    display: none;
+    margin-bottom: 50px;
+}
+
+#content.tank_stats .wrapper {
+    padding: 0 30px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    overflow: auto;
+}
+
+#content.tank_stats .wrapper > div:not(.data-error) {
+    flex-grow: 1;
+    margin: auto;
+}
+
+#content.tank_stats .wrapper div:nth-child(1) {
+    margin-right: 50px;
+    width: 800px;
+}
+
+#content.tank_stats .wrapper div:nth-child(2) {
+    width: 400px;
+}
+
+@media (max-width: 1200px) {
+    #content.tank_stats .wrapper {
+        display: block;
+    }
+
+    #content.tank_stats .wrapper div:nth-child(1) {
+        margin-right: 0;
+    }
+}
+
+#content.arduino_error h1 img {
+    vertical-align: middle;
+}
+
+#content.arduino_error .logs {
+    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, Courier, monospace;
+    display: inline-block;
+    margin: auto;
+    background: #eee;
+    padding: 15px;
+    font-weight: bold;
+    text-align: left;
+    margin-bottom: 5px;
+    overflow: auto;
+    max-height: 500px;
+}
+
+#content.arduino_error .help {
+  font-size: 0.9rem;
+  margin-top: 20px;
+}
+
+#content.debug #debug_mode_wrapper {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+
+#content.debug .debug-switch {
+    font-size: 15px;
+    display: inline-block;
+    margin-right: 20px;
+}
+
+#content.debug .debug-switch .text {
+    position: relative;
+    top: 2px;
+}
+
+#content.debug .debug-switch .btn {
+    top: 0px;
+}
+
+#content.debug #debug_mode_wrapper .download {
+    position: relative;
+    top: 8px;
+}
+
+#content.debug .sep {
+    margin: 20px auto;
+    max-width: 500px;
+    border: 0;
+    height: 1px;
+    background: #e7edf2;
+}
+
+#content.debug #controllino-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+#content.debug #controllino-content > div {
+    max-width: 400px;
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+#content.debug #controllino-content > div pre {
+    text-align: left;
+    overflow: auto;
+    height: 200px;
+    background: #eee;
+    padding: 10px;
+}
+
+#content.debug #rpi-content > div {
+    display: inline-block;
+    vertical-align: top;
+    padding: 20px;
+}
+
+#content.debug .modebar {
+    display: none;
+}
+
+#content.config .section {
+    margin-bottom: 50px;
+}
+
+#content.config table {
+    margin: auto;
+}
+
+#content.config .field-row td {
+    padding-bottom: 10px;
+}
+
+#content.config .field-label {
+    text-align: right;
+    padding-right: 10px;
+    max-width: 300px;
+}
+
+#content.config .field-input input {
+    width: 50px;
+    text-align: center;
+    padding: 5px;
+}
+
+#content.config input[type="submit"] {
+    padding: 3px;
+    cursor: pointer;
+    margin-top: 5px;
+}

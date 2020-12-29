@@ -26,6 +26,8 @@ echo "Installing Python dependencies..."
 cd ../atelier
 poetry install
 
+cp config.json.template config.json
+
 # Run web server at startup
 echo
 echo "Creating a cron to start server at boot..."

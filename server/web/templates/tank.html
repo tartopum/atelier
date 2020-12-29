@@ -1,0 +1,100 @@
+{% set page = 'tank' %}
+{% extends "layout.html" %}
+{% block title %}Eau{% endblock %}
+
+{% block content %}
+<div class="stats">
+    <a href="{{ url_for('tank.stats_route') }}" title="Consulter les statistiques">
+        <img src="{{ url_for('static', filename='img/stats.png') }}" alt="Statistiques" style="max-width: 32px;" />
+    </a>
+</div>
+
+<div class="switch-wrapper">
+    <span class="switch-label">Mode :</span>
+    {% if state["manual_mode"] %}
+        <a href="{{ url_for('tank.set_manual_mode_route', activated=0) }}" class="">
+            <div class="switch off">
+                <span class="btn"></span>
+                <span class="text">manuel</span>
+            </div>
+        </a>
+    {% else %}
+        <a href="{{ url_for('tank.set_manual_mode_route', activated=1) }}" class="">
+            <div class="switch on">
+                <span class="text">auto</span>
+                <span class="btn"></span>
+            </div>
+        </a>
+    {% endif %}
+</div>
+
+<div id="loader" style="margin: 20px 0;">
+    <img src="{{ url_for('static', filename='img/loader.gif') }}" alt="Chargement..." />
+</div>
+
+<div style="overflow: auto; padding-bottom: 20px;">
+    <div id="schema-wrapper" style="position: relative;">
+        <svg id="schema1" style="position: absolute;"></svg>
+        <svg id="schema2" style="position: absolute; visibility: hidden;"></svg>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/rough.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/tank.js') }}"></script>
+<script>
+    var wrapper = document.getElementById("schema-wrapper")
+    wrapper.style.width = "1000px"
+    wrapper.style.height = "400px"
+
+    var links = {
+        pumpInOn: "{{ url_for('tank.command_pump_in_route', is_on=1) }}",
+        pumpInOff: "{{ url_for('tank.command_pump_in_route', is_on=0) }}",
+        pumpOutOn: "{{ url_for('tank.command_pump_out_route', is_on=1) }}",
+        pumpOutOff: "{{ url_for('tank.command_pump_out_route', is_on=0) }}",
+        urbanNetworkOff: "{{ url_for('tank.command_urban_network_route', is_on=0) }}",
+        urbanNetworkOn: "{{ url_for('tank.command_urban_network_route', is_on=1) }}",
+        filterCleaningOn: "{{ url_for('tank.command_filter_cleaning_route', is_on=1) }}",
+        filterCleaningOff: "{{ url_for('tank.command_filter_cleaning_route', is_on=0) }}",
+        activatePumpIn: "{{ url_for('tank.activate_pump_in_route') }}",
+        activatePumpOut: "{{ url_for('tank.activate_pump_out_route') }}",
+    }
+    var displayedSvg = document.getElementById("schema1");
+    var drawingSvg = document.getElementById("schema2");
+
+    function clearSvg(svg) {
+        while (svg.lastChild) {
+            svg.removeChild(svg.lastChild)
+        }
+    }
+
+    function update() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                let state = JSON.parse(xhttp.responseText)
+                clearSvg(drawingSvg)
+                Tank(drawingSvg, state, links)
+
+                drawingSvg.style.visibility = "visible"
+                displayedSvg.style.visibility = "hidden"
+                let tmp = displayedSvg 
+                displayedSvg = drawingSvg
+                drawingSvg = tmp
+
+                // Since we draw on a second svg and then switch the shown svg,
+                // the update is seemless for the user and we don't need to show
+                // every time. We just need it for the first load. As it is displayed
+                // by default, we just hide it.
+                document.getElementById("loader").style.display = "none"
+            }
+        };
+        xhttp.open("GET", "{{ url_for('tank.tank_state_route') }}", true);
+        xhttp.send();
+        setTimeout(update, 10000);
+    }
+
+    update();
+</script>
+{% endblock %}

@@ -1,0 +1,96 @@
+{% set page = 'debug' %}
+{% extends "layout.html" %}
+{% block title %}Debug{% endblock %}
+
+{% block content %}
+
+<h2 id="controllino">État de la Controllino</h2>
+
+<div id="controllino-content">
+{% for component, state in states.items() %}
+    <div>
+        <h3>{{ component }}</h3>
+    <pre>
+{{ state }}
+    </pre>
+    </div>
+{% endfor %}
+</div>
+
+<hr id="rpi" class="sep" />
+
+<h2>État de la Raspberry</h2>
+<div id="rpi-content">
+    <div id="rpi_disk_usage" class="pie-plot"></div>
+    <div>
+        <div id="rpi_cpu_usage" class="pie-plot"></div>
+        <div id="rpi_cpu_temp" class="pie-plot"></div>
+    </div>
+    <div id="rpi_memory"></div>
+</div>
+
+<hr id="logs" class="sep" />
+
+<h2>Logs</h2>
+
+{% if logs %}
+<div style="max-width: 600px; margin: auto; margin-bottom: 30px; padding: 0 10px;">
+  <div style="text-align: left; max-height: 400px; overflow: auto; font-size: 0.8rem; padding-right: 5px;">
+    {% for header, message, color in logs %}
+      <div style="border: 1px solid {{ color }}; border-radius: 5px; margin: 10px 0; padding: 5px; overflow-wrap: anywhere;">
+        <span style="color: {{ color }};">{{ header }}</span>
+        <span style="color: grey;">{{ message|safe }}</span>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% else %}
+  <div style="font-size: 0.8rem;">Il n'y a pas de logs.</div>
+{% endif %}
+
+<hr id="debug" class="sep" />
+
+<h2>Debug</h2>
+
+<div id="debug_mode_wrapper">
+    <div class="switch-wrapper debug-switch">
+    <span class="switch-label">Mode Debug :</span>
+    {% if debug %}
+        <a href="{{ url_for('monitoring.set_debug_mode_route', activated=0) }}" class="">
+            <div class="switch on">
+                <span class="btn"></span>
+                <span class="text">oui</span>
+            </div>
+        </a>
+    {% else %}
+        <a href="{{ url_for('monitoring.set_debug_mode_route', activated=1) }}" class="">
+            <div class="switch off">
+                <span class="text">non</span>
+                <span class="btn"></span>
+            </div>
+        </a>
+    {% endif %}
+    </div>
+    <div style="margin-top: 10px; padding: 10px; font-size: 0.7rem;">
+      Activer ce mode pour enregistrer l'état de la Controllino toutes les
+      {{ debug_period }} secondes.
+    </div>
+</div>
+
+
+<div>
+  <a class="download" title="Exporter les logs" href="{{ url_for('monitoring.download_controllino_debug_route') }}">
+      <img src="{{ url_for('static', filename='img/download.png') }}" alt="Exporter les logs" />
+  </a>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/plotly-latest.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/debug.js') }}"></script>
+<script>
+plotRPiDisk({{ rpi["disk_usage"].total }}, {{ rpi["disk_usage"].used }})
+plotRPiCPU({{ rpi["cpu_percent"] }}, {{ rpi["cpu_temp"] }}, {{ rpi["cpu_freq"].current }})
+plotRPiMemory({{ rpi["virtual_memory"].total }}, {{ rpi["virtual_memory"].used }})
+</script>
+{% endblock %}

@@ -9,13 +9,9 @@ SSH_HOST=${RPI_USER}@${RPI_IP_WIFI}
 SSH_ARGS=-p ${RPI_SSH_PORT} ${SSH_HOST}
 
 
-.PHONY: dev_fake
-dev_fake:
-	poetry run python server.py --aip 127.0.0.1 --aport 5001 --debug
-
 .PHONY: dev
 dev:
-	poetry run python server.py --debug
+	poetry run python run_server.py --debug
 
 .PHONY: fake_arduino
 fake_arduino:
@@ -25,7 +21,7 @@ fake_arduino:
 prod:
 	-cat pid | xargs kill
 	rm -f server.log server.err
-	poetry run python server.py > server.log 2> server.err & echo "$$!" > pid
+	poetry run python run_server.py > server.log 2> server.err & echo "$$!" > pid
 
 .PHONY: edit_ino
 edit_ino:

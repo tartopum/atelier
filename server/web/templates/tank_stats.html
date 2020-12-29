@@ -1,0 +1,167 @@
+{% set page = 'tank_stats' %}
+{% extends "layout.html" %}
+{% block title %}Statistiques - Eau{% endblock %}
+
+{% block content %}
+<h2>Consommation d'eau</h2>
+
+<div class="config">
+    <div>
+      Pendant
+      <div class="styled-select period">
+          <select id="period-water-consumption">
+              <option value="1">1 jour</option>
+              <option value="7">1 semaine</option>
+              <option value="30">1 mois</option>
+              <option value="90">3 mois</option>
+              <option value="180">6 mois</option>
+              <option value="365">1 an</option>
+              <option value="730">2 ans</option>
+          </select>
+      </div>
+    </div>
+    <div>
+      par
+      <div class="styled-select timestep">
+          <select id="timestep-water-consumption">
+              <option value="60">heure</option>
+              <option value="240">4 heures</option>
+              <option value="720">demi-journée</option>
+              <option value="1440">jour</option>
+              <option value="10080">semaine</option>
+              <option value="20160">14 jours</option>
+              <option value="43200">mois</option>
+          </select>
+      </div>
+    </div>
+
+    <img id="loader-water-consumption" class="loader" src="{{ url_for('static', filename='img/loader.gif') }}" alt="Chargement..." />
+
+    <a id="download-water-consumption" class="download" title="Exporter" href="" download="consommation_eau.csv" style="visibility: hidden;">
+        <img src="{{ url_for('static', filename='img/download.png') }}" alt="Exporter" />
+    </a>
+</div>
+
+<div id="water_consumption_wrapper" class="wrapper">
+    <div class="data-error"></div> 
+    <div id="water_consumption_plot"></div>
+    <div id="water_consumption_stats_plot"></div>
+</div>
+
+<h2>Niveau de la cuve cette semaine</h2>
+
+<img id="loader-tank-level" src="{{ url_for('static', filename='img/loader.gif') }}" alt="Chargement..." />
+
+<div id="tank_level_wrapper" style="margin: 0 30px;">
+    <div class="data-error"></div> 
+    <div id="tank_level_plot"></div>
+</div>
+
+<h2>Consommation électrique</h2>
+
+<div class="config">
+    <div>
+      Pendant
+      <div class="styled-select period">
+          <select id="period-power-consumption">
+              <option value="7">1 semaine</option>
+              <option value="30">1 mois</option>
+              <option value="90">3 mois</option>
+              <option value="180">6 mois</option>
+              <option value="365">1 an</option>
+              <option value="730">2 ans</option>
+          </select>
+      </div>
+    </div>
+    <div>
+      par
+      <div class="styled-select timestep">
+          <select id="timestep-power-consumption">
+              <option value="60">heure</option>
+              <option value="240">4 heures</option>
+              <option value="720">demi-journée</option>
+              <option value="1440">jour</option>
+              <option value="10080">semaine</option>
+              <option value="20160">14 jours</option>
+              <option value="43200">mois</option>
+          </select>
+      </div>
+    </div>
+    <div>
+      en
+      <div class="styled-select unit">
+          <select id="unit-power-consumption">
+              <option value="kWh">kWh</option>
+              <option value="h">h</option>
+          </select>
+      </div>
+    </div>
+
+    <img id="loader-power-consumption" class="loader" src="{{ url_for('static', filename='img/loader.gif') }}" alt="Chargement..." />
+
+    <a id="download-power-consumption" class="download" title="Exporter" href="" download="consommation_electrique.csv" style="visibility: hidden;">
+        <img src="{{ url_for('static', filename='img/download.png') }}" alt="Exporter" />
+    </a>
+</div>
+<div id="power_consumption_wrapper" class="wrapper">
+    <div class="data-error"></div> 
+    <div id="power_consumption_plot"></div>
+    <div id="power_consumption_stats_plot"></div>
+</div>
+
+<h2>Rendement de la pompe de puits</h2>
+
+<div class="config">
+    <div>
+      Pendant
+      <div class="styled-select period">
+          <select id="period-well-pump-efficiency">
+              <option value="7">1 semaine</option>
+              <option value="30">1 mois</option>
+              <option value="90">3 mois</option>
+              <option value="180">6 mois</option>
+              <option value="365">1 an</option>
+              <option value="730">2 ans</option>
+          </select>
+      </div>
+    </div>
+    <div>
+      par
+      <div class="styled-select timestep">
+          <select id="timestep-well-pump-efficiency">
+              <option value="60">heure</option>
+              <option value="240">4 heures</option>
+              <option value="720">demi-journée</option>
+              <option value="1440">jour</option>
+              <option value="10080">semaine</option>
+              <option value="20160">14 jours</option>
+              <option value="43200">mois</option>
+          </select>
+      </div>
+    </div>
+
+    <img id="loader-well-pump-efficiency" class="loader" src="{{ url_for('static', filename='img/loader.gif') }}" alt="Chargement..." />
+</div>
+
+<div id="well_pump_efficiency_wrapper" style="margin: 0 30px;">
+    <div class="data-error"></div> 
+    <div id="well_pump_efficiency_plot"></div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+var WATER_CONSUMPTION_URL = "{{ url_for('tank.water_consumption_data_route') }}";
+var TANK_LEVEL_URL = "{{ url_for('tank.water_level_history_route') }}";
+var POWER_CONSUMPTION_URL = "{{ url_for('tank.power_consumption_data_route') }}";
+var VOLUME_BETWEEN_SENSORS = {{ volume_between_sensors }};
+var VOLUME_BELOW_LOW_SENSOR = {{ volume_below_low_sensor }};
+var PUMP_IN_POWER = {{ pump_in_power }};
+var PUMP_OUT_POWER = {{ pump_out_power }};
+var URBAN_NETWORK_POWER = {{ urban_network_power }};
+</script>
+
+<script src="{{ url_for('static', filename='js/plotly-latest.min.js') }}"></script>
+
+<script src="{{ url_for('static', filename='js/tank-stats.js') }}"></script>
+{% endblock %}

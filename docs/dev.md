@@ -18,10 +18,11 @@ The application can be tested without an Arduino. To do so:
 make fake_arduino
 ```
 
-In another terminal:
+In another terminal, edit the `config.json` with Arduino IP set to `127.0.0.1`
+and Arduino port set to `5001`. Then:
 
 ```
-make # Or: make dev_fake
+make
 ```
 
 Find the server at `localhost:5000`.
