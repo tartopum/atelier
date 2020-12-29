@@ -89,7 +89,7 @@ var Tank = function(svg, state, links) {
     function drawTank(x, waterVolumeRatio, empty, full) {
         let w = _w(150),
             y = _y(50),
-            h = _h(340)
+            h = _h(310)
         let yWater
 
         if (empty) {
@@ -593,9 +593,22 @@ var Tank = function(svg, state, links) {
         drawFallingWater(tank);
     }
     let pipeH1 = drawHPipe(
-        _x(50),
+        _x(30),
         tank.xLeft - _w(310),
         tank.yBottom - pipeWidth - _h(4),
+        state.pump_in
+    )
+    let pipeVWell = drawVPipe(
+        pipeH1.xLeft - pipeWidth,
+        pipeH1.yBottom,
+        _h(30),
+        state.pump_in
+    )
+    elbow(
+        pipeH1.xLeft,
+        pipeH1.yBottom,
+        Math.PI,
+        3/2 * Math.PI,
         state.pump_in
     )
     let pipeH2 = drawHPipe(
@@ -605,7 +618,7 @@ var Tank = function(svg, state, links) {
         state.flow_in > 0
     )
     let filter = drawFilter(
-        pipeH1.xRight,
+        pipeH1.xRight + _w(20),
         pipeH1.yMiddle,
         state.pump_in,
         state.is_filter_in_blocked,
@@ -712,8 +725,7 @@ var Tank = function(svg, state, links) {
         state.urban_network
     )
     drawUrbanConnection(pipeUrbanV.xRight, pipeOutH3.yTop, state.urban_network)
-    drawLabel(_x(0), pipeH1.yMiddle, "Puits")
-    drawLabel(pipeOutH3.xRight + _w(10), pipeOutH1.yMiddle, "Ferme")
+    drawLabel(pipeVWell.xLeft - _w(8), pipeVWell.yBottom + _h(15), "Puits")
 
     let urbanNetworkLink = null
     if (state.manual_mode) {
