@@ -58,7 +58,7 @@ logging.config.dictConfig(
     )
 )
 
-from server import arduino, db, scheduler, web
+from server import alerts, arduino, db, scheduler, web
 from server.config import config
 
 
@@ -98,6 +98,12 @@ if __name__ == "__main__":
         logger.error(str(e), exc_info=e)
 
     scheduler.run(min(10, config["server"]["debug_period"]))
+
+    alerts.raise_alert(
+        "startup",
+        "La Raspberry a redémarré, il semble y avoir eu une coupure de courant.",
+        0,
+    )
 
     if args.debug:
         run_dev_server()
