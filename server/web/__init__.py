@@ -15,6 +15,7 @@ logger = logging.getLogger("atelier")
 app = Flask(__name__)
 
 app.secret_key = config["server"]["secret_key"].encode("utf-8")
+app.logger = logger
 
 app.register_blueprint(routes.config.blueprint, url_prefix="/config")
 app.register_blueprint(routes.fence.blueprint, url_prefix="/cloture")

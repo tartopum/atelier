@@ -30,15 +30,15 @@ logging.config.dictConfig(
             "console": {
                 "class": "logging.StreamHandler",
                 "formatter": "message",
-                "level": logging.INFO,
+                "level": logging.DEBUG,
             },
             "file": {
                 "class": "logging.handlers.RotatingFileHandler",
                 "filename": ATELIER_LOG_PATH,
                 "formatter": "date",
-                "level": logging.WARNING,
+                "level": logging.INFO,
                 "maxBytes": 1000000,
-                "backupCount": 1,  # If zero, rollover never occurs
+                "backupCount": 3,
             },
             "file_debug": {
                 "class": "logging.handlers.RotatingFileHandler",
@@ -53,7 +53,7 @@ logging.config.dictConfig(
         loggers={
             "scheduler": {"handlers": ["file", "console"], "level": logging.WARNING},
             "debug": {"handlers": ["file_debug"], "level": logging.DEBUG},
-            "atelier": {"handlers": ["file", "console"], "level": logging.WARNING},
+            "atelier": {"handlers": ["file", "console"], "level": logging.DEBUG},
         },
     )
 )
@@ -62,33 +62,37 @@ from server import alerts, arduino, db, scheduler, web
 from server.config import config
 
 
-def remove_console_logging(logger):
+logger = logging.getLogger("atelier")
+
+
+def remove_logging_handler(logger, handler_name):
     for handler in logger.handlers:
-        if handler.name == "console":
+        if handler.name == handler_name:
             logger.handlers.remove(handler)
             return
 
 
 def run_dev_server():
-    web.app.logger.setLevel(logging.INFO)
+    web.app.logger.setLevel(logging.DEBUG)
     env = {**os.environ, "FLASK_APP": "server.web", "FLASK_ENV": "development"}
     sp.run(["poetry", "run", "flask", "run"], check=True, env=env)
 
 
 def run_prod_server():
     web.app.debug = False
-    remove_console_logging(scheduler.logger)
-    remove_console_logging(web.app.logger)
+    web.app.logger.setLevel(logging.INFO)
     http_server = WSGIServer(("", config["server"]["port"]), web.app)
     http_server.serve_forever()
 
 
-if __name__ == "__main__":
-    logger = logging.getLogger("atelier")
-
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--debug", action="store_true")
     args = parser.parse_args()
+
+    if not args.debug:
+        remove_logging_handler(web.app.logger, "console")
+        remove_logging_handler(scheduler.logger, "console")
 
     db.create_tables()
 
@@ -109,3 +113,11 @@ if __name__ == "__main__":
         run_dev_server()
     else:
         run_prod_server()
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except Exception as e:
+        logger.error(str(e), exc_info=e)
+        raise e

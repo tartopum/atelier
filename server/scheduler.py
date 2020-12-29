@@ -26,7 +26,7 @@ class ScheduleThread(threading.Thread):
             try:
                 schedule.run_pending()
             except Exception as e:
-                logger.error(e)
+                logger.error(str(e), exc_info=e)
             time.sleep(self.interval)
 
 
@@ -116,8 +116,13 @@ class SafeJob(ArduinoConnectionJob, metaclass=abc.ABCMeta):
         super().__init__()
         self.unsafe_job = unsafe_job
 
-    def job(self):
-        self._run_job_safely(self.unsafe_job)
+        # We use a function instead of a method to specify the __name__ attribute
+        def job():
+            self._run_job_safely(self.unsafe_job)
+
+        job.__name__ = unsafe_job.__name__
+
+        self.job = job
 
 
 class EveryJob(SafeJob, metaclass=abc.ABCMeta):

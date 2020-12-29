@@ -11,6 +11,7 @@ SSH_ARGS=-p ${RPI_SSH_PORT} ${SSH_HOST}
 
 .PHONY: dev
 dev:
+	-cat pid | xargs kill
 	poetry run python run_server.py --debug
 
 .PHONY: fake_arduino
@@ -20,8 +21,7 @@ fake_arduino:
 .PHONY: prod
 prod:
 	-cat pid | xargs kill
-	rm -f server.log server.err
-	poetry run python run_server.py > server.log 2> server.err & echo "$$!" > pid
+	poetry run python run_server.py & echo "$$!" > pid
 
 .PHONY: edit_ino
 edit_ino:
