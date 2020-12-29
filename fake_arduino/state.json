@@ -13,14 +13,14 @@
     "press_delay": 500
   },
   "fence": {
-    "state": 1,
+    "state": 0,
     "activated": 1
   },
   "workshop": {
     "inactivity_delay": 900000,
     "power_reminder_delay": 86400000,
     "power_manual_mode": 0,
-    "power_supply": 1
+    "power_supply": 0
   },
   "tank": {
     "manual_mode": 0,
