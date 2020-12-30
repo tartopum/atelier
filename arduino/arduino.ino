@@ -6,7 +6,10 @@
 #include "Fence.h"
 #include "Lights.h"
 #include "Alarm.h"
+#include "Alert.h"
 #include "AlertLight.h"
+
+#define RPI_MAX_STARTUP_TIME 5 * 60 * 1000
 
 template<class T>
 inline Print &operator <<(Print &obj, T arg)
@@ -73,6 +76,15 @@ bool sendAlert(const char *name, const char *message, byte level)
 AlertLight redLight(CONTROLLINO_DO4);
 AlertLight greenLight(CONTROLLINO_DO3);
 AlertLight blueLight(CONTROLLINO_DO2);
+
+Alert startupAlert(
+    "startup",
+    "La Controllino vient de démarrer, une coupure de courant semble avoir eu lieu.",
+    &sendAlert,
+    NULL,
+    MID_ALERT,
+    NO_ALERT_REMINDER
+);
 
 Fence fence(CONTROLLINO_RELAY_04, &greenLight);
 
@@ -269,6 +281,9 @@ void loop()
         // starts.
         askForConfig();
     }
+    // We give time to the RPi to reboot after a power cut before deactinvating
+    // the alert, otherwise it won't receive the HTTP msg
+    startupAlert.raise(millis() < RPI_MAX_STARTUP_TIME);
     fence.loop();
     atelier.loop();
     tank.loop();

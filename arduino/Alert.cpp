@@ -30,6 +30,7 @@ void Alert::raise(bool problemDetected)
     if (_light) _light->setLevel(_level);
 
     if (strlen(_name) == 0 || strlen(_msg) == 0) return;
+    if (_sent && _reminderDelay == NO_ALERT_REMINDER) return;
     if (_sent && (millis() - _lastTimeSent) < _reminderDelay) return;
     _sent = _send(_name, _msg, (byte)_level);
     _lastTimeSent = millis();

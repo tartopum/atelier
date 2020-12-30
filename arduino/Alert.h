@@ -4,6 +4,8 @@
 #include <Arduino.h>
 #include "AlertLight.h"
 
+#define NO_ALERT_REMINDER 0
+
 class Alert
 {
     public:

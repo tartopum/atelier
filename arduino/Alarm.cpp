@@ -14,7 +14,14 @@ Alarm::Alarm(
     AlertLight *alertLight,
     bool (*sendAlert)(const char *, const char *, byte)
 ) :
-    _alert("alarm", "Une intrusion a été détectée.", sendAlert, alertLight, HIGH_ALERT)
+    _alert(
+        "alarm",
+        "Une intrusion a été détectée.",
+        sendAlert,
+        alertLight,
+        HIGH_ALERT,
+        60
+    )
 {
     _pinDetector = pinDetector;
     _pinBuzzer = pinBuzzer;

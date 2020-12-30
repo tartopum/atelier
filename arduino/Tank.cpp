@@ -84,28 +84,32 @@ Tank::Tank(
         "La pompe du puits n'a pas remonté d'eau durant le cycle de remplissage.",
         sendAlert,
         lightFatal,
-        MID_ALERT
+        MID_ALERT,
+        NO_ALERT_REMINDER
     ),
     _noFlowOutAlert(
         "tank",
         "Il n'y a pas eu de consommation détectée depuis trop longtemps.",
         sendAlert,
         lightFatal,
-        MID_ALERT
+        MID_ALERT,
+        NO_ALERT_REMINDER
     ),
     _pumpInDisabledAlert(
         "",
         "",
         sendAlert,
         lightFatal,
-        HIGH_ALERT
+        HIGH_ALERT,
+        NO_ALERT_REMINDER
     ),
     _pumpOutDisabledAlert(
         "",
         "",
         sendAlert,
         lightFatal,
-        HIGH_ALERT
+        HIGH_ALERT,
+        NO_ALERT_REMINDER
     )
 {
     _pinPumpIn = pinPumpIn;

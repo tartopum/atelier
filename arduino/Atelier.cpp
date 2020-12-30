@@ -20,7 +20,8 @@ Atelier::Atelier(
         "L'alimentation est en manuel depuis longtemps.",
         sendAlert,
         NULL,
-        MID_ALERT // Need mid alert to send SMS
+        MID_ALERT,
+        NO_ALERT_REMINDER
     )
 {
     _alarm = alarm;
