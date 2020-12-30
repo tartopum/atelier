@@ -9,7 +9,7 @@
 #include "Alert.h"
 #include "AlertLight.h"
 
-#define RPI_MAX_STARTUP_TIME 5 * 60 * 1000
+#define RPI_MAX_STARTUP_TIME 300000
 
 template<class T>
 inline Print &operator <<(Print &obj, T arg)
