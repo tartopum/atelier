@@ -111,6 +111,12 @@ void Alarm::loop()
     digitalWrite(_pinListening, HIGH);
     digitalWrite(_pinNotListening, LOW);
 
+    // At power startup, the movement detector is turned on. We wait a bit to let it
+    // turn off. Otherwise, the alarm would automatically be raised at startup.
+    if (millis() < delayBeforeListening) {
+        return;
+    }
+
     if (!movementDetected()) {
         _breachTime = 0;
         return;
