@@ -24,7 +24,7 @@ git config --global user.name "Vincent Lefoulon"
 echo
 echo "Installing Python dependencies..."
 cd ../atelier
-poetry install
+poetry install --no-dev
 
 cp config.json.template config.json
 

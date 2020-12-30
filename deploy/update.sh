@@ -17,7 +17,7 @@ STASH_RET=$?
 echo
 echo "Updating Python dependencies..."
 export PATH="$HOME/.poetry/bin:$PATH"
-poetry install
+poetry install --no-dev
 
 echo
 echo
