@@ -7,11 +7,10 @@ import re
 import psutil
 
 from . import arduino
+from .config import config
 
 
 HERE = os.path.dirname(__file__)
-CONTROLLINO_LOG_PATH = os.path.join(HERE, "..", "controllino.log")
-ATELIER_LOG_PATH = os.path.join(HERE, "..", "atelier.log")
 LOGGING_COLORS = {
     "INFO": "black",
     "WARNING": "orange",
@@ -55,7 +54,7 @@ def get_controllino_log():
 def controllino_logs_to_csv():
     rows = []
     header = ["date"]
-    with open(CONTROLLINO_LOG_PATH) as f:
+    with open(config.CONTROLLINO_LOG_PATH) as f:
         for i, line in enumerate(f):
             data = json.loads(line)
             row = [data["date"]]

@@ -30,7 +30,7 @@ class ScheduleThread(threading.Thread):
             time.sleep(self.interval)
 
 
-def run(interval):
+def _run(interval):
     # https://schedule.readthedocs.io/en/stable/faq.html#how-to-continuously-run-the-scheduler-without-blocking-the-main-thread
     cease_continuous_run = threading.Event()
     continuous_thread = ScheduleThread(interval, cease_continuous_run)
@@ -166,18 +166,23 @@ def start_alarm():
     arduino.alarm.listen(1)
 
 
-tank_job = EveryJob(
-    "seconds", config["tank"]["stats_collection_period"], tank.read_and_store_stats
-)
-lunch_job = DayJob(config["alarm"]["lunch"], start_alarm)
-night_job = DayJob(config["alarm"]["night"], start_alarm)
-
-schedule.every().day.at("00:00").do(alerts.delete_old)
-schedule.every().day.at("00:05").do(db.backup)
-
-
 def debug():
     debug_logger.debug(get_controllino_log())
 
 
-debug_job = EveryJob("seconds", None, debug)
+# We cannot read the config immediatly, it first needs to be validated
+tank_job = lunch_job = night_job = debug_job = None
+
+
+def run(interval):
+    global tank_job, lunch_job, night_job, debug_job
+    schedule.every().day.at("00:00").do(alerts.delete_old)
+    schedule.every().day.at("00:05").do(db.backup)
+    tank_job = EveryJob(
+        "seconds", config["tank"]["stats_collection_period"], tank.read_and_store_stats
+    )
+    lunch_job = DayJob(config["alarm"]["lunch"], start_alarm)
+    night_job = DayJob(config["alarm"]["night"], start_alarm)
+    debug_job = EveryJob("seconds", None, debug)
+
+    _run(interval)

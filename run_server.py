@@ -8,7 +8,7 @@ import subprocess as sp
 from gevent.pywsgi import WSGIServer
 import requests
 
-from server.monitoring import CONTROLLINO_LOG_PATH, ATELIER_LOG_PATH
+from server.config import config
 
 try:
     locale.setlocale(locale.LC_ALL, ("fr_FR", "UTF-8"))
@@ -34,15 +34,23 @@ logging.config.dictConfig(
             },
             "file": {
                 "class": "logging.handlers.RotatingFileHandler",
-                "filename": ATELIER_LOG_PATH,
+                "filename": config.ATELIER_LOG_PATH,
                 "formatter": "date",
                 "level": logging.INFO,
                 "maxBytes": 1000000,
                 "backupCount": 3,
             },
+            "server_file": {
+                "class": "logging.handlers.RotatingFileHandler",
+                "filename": os.path.join(HERE, "server.log"),
+                "formatter": "date",
+                "level": logging.INFO,
+                "maxBytes": 500000,
+                "backupCount": 1,
+            },
             "file_debug": {
                 "class": "logging.handlers.RotatingFileHandler",
-                "filename": CONTROLLINO_LOG_PATH,
+                "filename": config.CONTROLLINO_LOG_PATH,
                 "formatter": "message",
                 "level": logging.DEBUG,
                 "maxBytes": 5000000,
@@ -54,15 +62,23 @@ logging.config.dictConfig(
             "scheduler": {"handlers": ["file", "console"], "level": logging.WARNING},
             "debug": {"handlers": ["file_debug"], "level": logging.DEBUG},
             "atelier": {"handlers": ["file", "console"], "level": logging.DEBUG},
+            "server": {"handlers": ["server_file"], "level": logging.INFO},
         },
     )
 )
 
-from server import alerts, arduino, db, scheduler, web
-from server.config import config
-
 
 logger = logging.getLogger("atelier")
+server_logger = logging.getLogger("server")
+
+try:
+    config.validate()
+except Exception as e:
+    server_logger.error("Configuration invalide.", exc_info=e)
+    raise e
+
+
+from server import alerts, arduino, db, scheduler, web
 
 
 def remove_logging_handler(logger, handler_name):
@@ -78,10 +94,15 @@ def run_dev_server():
     sp.run(["poetry", "run", "flask", "run"], check=True, env=env)
 
 
-def run_prod_server():
+def run_prod_server(ip, port):
     web.app.debug = False
     web.app.logger.setLevel(logging.INFO)
-    http_server = WSGIServer(("", config["server"]["port"]), web.app)
+    http_server = WSGIServer(
+        listener=(ip, port),
+        application=web.app,
+        log=server_logger,
+        error_log=server_logger,
+    )
     http_server.serve_forever()
 
 
@@ -112,7 +133,7 @@ def main():
     if args.debug:
         run_dev_server()
     else:
-        run_prod_server()
+        run_prod_server("", config["server"]["port"])
 
 
 if __name__ == "__main__":

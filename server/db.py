@@ -9,7 +9,6 @@ from .config import config
 
 
 _HERE = os.path.dirname(__file__)
-_PATH = os.path.join(_HERE, "..", config["server"]["db_path"])
 _ALERT_TABLE = "alerts"
 
 TANK_DATE_COL = 0
@@ -25,9 +24,13 @@ TANK_CITY_COL = 8
 lock = Lock()
 
 
+def db_path():
+    return os.path.join(_HERE, "..", config["server"]["db_path"])
+
+
 def backup():
     bk_path = os.path.join(_HERE, "..", "backup_db.sqlite3")
-    sp.call(["sqlite3", _PATH, f".backup {bk_path}"])
+    sp.call(["sqlite3", db_path(), f".backup {bk_path}"])
     for path in config["server"]["db_backup_paths"]:
         sp.call(["cp", bk_path, path])
 
@@ -36,7 +39,7 @@ def backup():
 def _connect(commit=True):
     with lock:
         try:
-            conn = sqlite3.connect(_PATH, detect_types=sqlite3.PARSE_DECLTYPES)
+            conn = sqlite3.connect(db_path(), detect_types=sqlite3.PARSE_DECLTYPES)
             yield conn
             if commit:
                 conn.commit()

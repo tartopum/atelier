@@ -1,10 +1,14 @@
-import json
 import os
+import json
 
 import jsonschema
 
 _HERE = os.path.dirname(__file__)
 _PATH = os.path.join(_HERE, "..", "config.json")
+
+
+class NotValidatedError(ValueError):
+    pass
 
 
 class Schema(dict):
@@ -65,12 +69,25 @@ class Schema(dict):
 
 class Config(dict):
     READONLY_KEYS = ["server", "arduino"]
+    CONTROLLINO_LOG_PATH = os.path.join(_HERE, "..", "controllino.log")
+    ATELIER_LOG_PATH = os.path.join(_HERE, "..", "atelier.log")
 
     def __init__(self, schema, path):
         self.schema = schema
         self.path = path
         self._persistent = {}
+        self._validated = False
+        self._loading = False
+        self._validating = False
+
         self.load(path)
+
+    def __getitem__(self, key):
+        if not self._validating and not self._loading and not self._validated:
+            raise NotValidatedError(
+                "config.validate() must be called before querying the config."
+            )
+        return super().__getitem__(key)
 
     @property
     def editable(self):
@@ -81,17 +98,30 @@ class Config(dict):
             del self[k]
 
     def load(self, path):
-        self.path = path
-        with open(self.path) as f:
-            self._persistent = json.load(f)
-        for k, v in self._persistent.items():
-            self[k] = dict(v)  # Copy dict
-        self.validate()
+        self._loading = True
+        self._validated = False
+        try:
+            self.path = path
+            with open(self.path) as f:
+                self._persistent = json.load(f)
+            for k, v in self._persistent.items():
+                self[k] = dict(v)  # Copy dict
+        except Exception as e:
+            raise e
+        finally:
+            self._loading = False
 
     def validate(self):
-        jsonschema.validate(
-            self, self.schema, format_checker=jsonschema.FormatChecker()
-        )
+        self._validating = True
+        try:
+            jsonschema.validate(
+                self, self.schema, format_checker=jsonschema.FormatChecker()
+            )
+        except Exception as e:
+            raise e
+        finally:
+            self._validating = False
+        self._validated = True
 
     def save(self):
         self.validate()
