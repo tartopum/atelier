@@ -28,7 +28,7 @@ def monitoring_route():
         states=states,
         debug=monitoring.is_debug_mode,
         debug_period=config["server"]["debug_period"],
-        logs=list(monitoring.parse_logs(monitoring.ATELIER_LOG_PATH)),
+        logs=list(monitoring.parse_logs(config.ATELIER_LOG_PATH)),
         rpi=dict(
             disk_usage=monitoring.get_disk_usage(),
             cpu_percent=monitoring.get_cpu_percent(),
@@ -50,7 +50,7 @@ def set_debug_mode_route(activated):
     )
     if monitoring.is_debug_mode:
         # Empty the log file first
-        open(monitoring.CONTROLLINO_LOG_PATH, "w").close()
+        open(config.CONTROLLINO_LOG_PATH, "w").close()
     return redirect(url_for("monitoring.monitoring_route", _anchor="debug"))
 
 
