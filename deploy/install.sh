@@ -17,10 +17,6 @@ echo 'export PATH="$HOME/.poetry/bin:$PATH"' >> ~/.bashrc
 # be sourced
 export PATH="$HOME/.poetry/bin:$PATH"
 
-# To do an automatic update with a "git stash"
-git config --global user.email "vincent.lefoulon@free.fr"
-git config --global user.name "Vincent Lefoulon"
-
 echo
 echo "Installing Python dependencies..."
 cd ../atelier
