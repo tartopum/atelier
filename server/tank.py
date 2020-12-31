@@ -97,6 +97,8 @@ def get_consumption_data(timestep, duration, end):
     date_format = date_format_from_step(timestep)
 
     return {
+        "x_min": start.strftime(date_format),
+        "x_max": end.strftime(date_format),
         "x_tank": [d.strftime(date_format) for d in dates_tank],
         "x_city": [d.strftime(date_format) for d in dates_city],
         "x_well": [d.strftime(date_format) for d in dates_well],

@@ -129,7 +129,12 @@ def water_level_history_route():
         else:
             rel_volumes[i] = rel_volumes[i - 1] + delta
     return jsonify(
-        {"dates": [d.strftime("%Y-%m-%d %H") for d in dates], "volumes": rel_volumes}
+        {
+            "dates": [d.strftime("%Y-%m-%d %H") for d in dates],
+            "volumes": rel_volumes,
+            "x_min": start.strftime("%Y-%m-%d %H"),
+            "x_max": end.strftime("%Y-%m-%d %H"),
+        }
     )
 
 
@@ -156,6 +161,8 @@ def power_consumption_data_route():
 
     return jsonify(
         {
+            "x_min": start.strftime(date_format),
+            "x_max": end.strftime(date_format),
             "dates": [d.strftime(date_format) for d in binned_dates],
             "pump_in": [sum(period) / 60 for period in pump_in],
             "pump_out": [sum(period) / 60 for period in pump_out],

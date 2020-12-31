@@ -36,7 +36,7 @@ function hideError(parentId) {
   }
 }
 
-function plotWaterConsumptionHistory(xTank, xCity, xWell, yTank, yCity, yWell) {
+function plotWaterConsumptionHistory(xTank, xCity, xWell, yTank, yCity, yWell, xMin, xMax) {
     yCity = yCity.map(x => -1 * x)
     yTank = yTank.map(x => -1 * x)
     
@@ -79,6 +79,7 @@ function plotWaterConsumptionHistory(xTank, xCity, xWell, yTank, yCity, yWell) {
             xaxis: {
                 title: "Heure de début",
                 showline: false,
+                range: [xMin, xMax],
             },
             yaxis: {
                 title: "Volume (L)",
@@ -317,7 +318,7 @@ function plotPowerConsumptionStats(pumpIn, pumpOut, city, unit, period) {
     )
 }
 
-function plotPowerConsumptionHistory(x, pumpIn, pumpOut, city, unit) {
+function plotPowerConsumptionHistory(x, pumpIn, pumpOut, city, unit, xMin, xMax) {
     pumpIn = pumpIn.map(x => x.toPrecision(2))
     pumpOut = pumpOut.map(x => x.toPrecision(2))
     city = city.map(x => x.toPrecision(2))
@@ -356,6 +357,7 @@ function plotPowerConsumptionHistory(x, pumpIn, pumpOut, city, unit) {
                 showline: true,
                 zeroline: false,
                 title: "Heure de début",
+                range: [xMin, xMax],
             },
             yaxis: {
                 title: "Consommation (" + unit + ")",
@@ -397,14 +399,16 @@ function updateWaterConsumptionPlot() {
                     data.x_well,
                     data.y_tank,
                     data.y_city,
-                    data.y_well
+                    data.y_well,
+                    data.x_min,
+                    data.x_max,
                 )
                 plotWaterConsumptionStats(
                     data.y_tank,
                     data.y_city,
                     data.y_well,
                     timestepSelect.options[timestepSelect.selectedIndex].text,
-                    periodSelect.options[periodSelect.selectedIndex].text
+                    periodSelect.options[periodSelect.selectedIndex].text,
                 )
                 let csv = "date,puits (L),cuve (L),ville (L)\r\n"
                 for (let i = 0; i < data.x_tank.length; i++) {
@@ -460,7 +464,9 @@ function updatePowerConsumptionPlot() {
                     data.pump_in,
                     data.pump_out,
                     data.city,
-                    unit
+                    unit,
+                    data.x_min,
+                    data.x_max,
                 )
                 plotPowerConsumptionStats(
                     data.pump_in,
@@ -504,7 +510,7 @@ function buildDownloadLink(link, prefix, period, timestep, csv) {
     link.style.visibility = "visible"
 }
 
-function plotTankLevelPlot(x, y) {
+function plotTankLevelPlot(x, y, xMin, xMax) {
     y = y.map(x => x + VOLUME_BELOW_LOW_SENSOR)
     Plotly.newPlot(
         document.getElementById("tank_level_plot"),
@@ -521,6 +527,7 @@ function plotTankLevelPlot(x, y) {
                 fixedrange: true,
                 showline: true,
                 zeroline: false,
+                range: [xMin, xMax],
             },
             yaxis: {
                 title: "Volume (L)",
@@ -533,7 +540,7 @@ function plotTankLevelPlot(x, y) {
     )
 }
 
-function plotWellPumpEfficiency(dates, eff) {
+function plotWellPumpEfficiency(dates, eff, xMin, xMax) {
     Plotly.newPlot(
         document.getElementById("well_pump_efficiency_plot"),
         [{
@@ -552,6 +559,7 @@ function plotWellPumpEfficiency(dates, eff) {
                 showline: true,
                 zeroline: false,
                 title: "Heure de début",
+                range: [xMin, xMax],
             },
             yaxis: {
                 title: "Rendement (L/kWh)",
@@ -575,7 +583,7 @@ function updateTankLevelPlot() {
                 displayError("tank_level_wrapper");
             } else {
                 let data = JSON.parse(xhttp.responseText)
-                plotTankLevelPlot(data.dates, data.volumes)
+                plotTankLevelPlot(data.dates, data.volumes, data.x_min, data.x_max)
             }
         }
     }
@@ -587,7 +595,7 @@ function updateWellPumpEfficiencyPlot() {
     loaderWellPumpEfficiency.style.visibility = "visible"
     hideError("well_pump_efficiency_wrapper");
 
-    var dates, volumeData, powerData
+    var dates, volumeData, powerData, xMin, xMax
     var period = document.getElementById("period-well-pump-efficiency").value
     var timestep = document.getElementById("timestep-well-pump-efficiency").value
 
@@ -601,7 +609,7 @@ function updateWellPumpEfficiencyPlot() {
                 eff.push(volumeData[i] / powerData[i])
             }
         }
-        plotWellPumpEfficiency(dates, eff)
+        plotWellPumpEfficiency(dates, eff, xMin, xMax)
     }
 
     var xhttpVolume = new XMLHttpRequest();
@@ -628,6 +636,8 @@ function updateWellPumpEfficiencyPlot() {
         if (this.readyState == 4 && this.status == 200) {
             let data = JSON.parse(xhttpPower.responseText)
             dates = data.dates
+            xMin = data.x_min
+            xMax = data.x_max
             powerData = data.pump_in.map(x => x / 60.0 * PUMP_IN_POWER / 1000.0)
             update()
         }
