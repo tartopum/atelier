@@ -163,7 +163,7 @@ class DayJob(SafeJob, metaclass=abc.ABCMeta):
 
 
 def start_alarm():
-    arduino.alarm.listen(1)
+    arduino.workshop.activate_alarm(1)
 
 
 def debug():
