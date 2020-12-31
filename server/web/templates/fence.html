@@ -40,9 +40,13 @@
     </a>
 {% endif %}
 </div>
-{% if not state["activated"] %}
+
 <div style="font-size: 0.7rem; margin: auto; padding: 20px;">
+{% if state["activated"] %}
+  Désactiver la clôture permet de l'éteindre sans avoir d'alerte, ce qu'on
+  souhaite notamment l'hiver.
+{% else %}
   La clôture est désactivée, son état ne peut être modifié.
-</div>
 {% endif %}
+</div>
 {% endblock %}

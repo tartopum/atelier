@@ -37,7 +37,7 @@ logging.config.dictConfig(
                 "filename": config.ATELIER_LOG_PATH,
                 "formatter": "date",
                 "level": logging.INFO,
-                "maxBytes": 1000000,
+                "maxBytes": 50000,
                 "backupCount": 3,
             },
             "file_server": {
@@ -45,7 +45,7 @@ logging.config.dictConfig(
                 "filename": os.path.join(HERE, "server.log"),
                 "formatter": "date",
                 "level": logging.INFO,
-                "maxBytes": 500000,
+                "maxBytes": 50000,
                 "backupCount": 1,
             },
             "file_scheduler": {
@@ -53,7 +53,7 @@ logging.config.dictConfig(
                 "filename": config.SCHEDULER_LOG_PATH,
                 "formatter": "date",
                 "level": logging.INFO,
-                "maxBytes": 500000,
+                "maxBytes": 50000,
                 "backupCount": 1,
             },
             "file_debug": {

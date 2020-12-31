@@ -12,6 +12,8 @@ from ..config import config
 
 logger = logging.getLogger("atelier")
 
+config.validate()
+
 app = Flask(__name__)
 
 app.secret_key = config["server"]["secret_key"].encode("utf-8")
