@@ -7,8 +7,7 @@ import subprocess as sp
 
 from gevent.pywsgi import WSGIServer
 import requests
-
-from server.config import config
+import server.config as config
 
 try:
     locale.setlocale(locale.LC_ALL, ("fr_FR", "UTF-8"))
@@ -133,7 +132,7 @@ def main():
     except requests.exceptions.RequestException as e:
         logger.error(str(e), exc_info=e)
 
-    scheduler.run(min(10, config["server"]["debug_period"]))
+    scheduler.run(min(10, config.get("server", "debug_period")))
 
     alerts.raise_alert(
         "startup",
@@ -144,7 +143,7 @@ def main():
     if args.debug:
         run_dev_server()
     else:
-        run_prod_server("", config["server"]["port"])
+        run_prod_server("", config.get("server", "port"))
 
 
 if __name__ == "__main__":

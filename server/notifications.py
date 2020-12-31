@@ -2,14 +2,14 @@ import logging
 
 import requests
 
-from .config import config
+from . import config
 
 
 logger = logging.getLogger("atelier")
 
 
 def send_sms(msg):
-    user, password = config["server"]["sms_credentials"]
+    user, password = config.get("server", "sms_credentials")
     if not user or not password:
         return
     resp = requests.get(

@@ -8,7 +8,7 @@ from . import routes
 from .auth import auth
 from .routes.base import arduino_get_route
 from .. import alerts, arduino, db
-from ..config import config
+from .. import config
 
 logger = logging.getLogger("atelier")
 
@@ -16,7 +16,7 @@ config.validate()
 
 app = Flask(__name__)
 
-app.secret_key = config["server"]["secret_key"].encode("utf-8")
+app.secret_key = config.get("server", "secret_key").encode("utf-8")
 app.logger = logger
 
 app.register_blueprint(routes.config.blueprint, url_prefix="/config")

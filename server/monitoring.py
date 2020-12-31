@@ -7,7 +7,7 @@ import re
 import psutil
 
 from . import arduino
-from .config import config
+from . import config
 
 
 HERE = os.path.dirname(__file__)

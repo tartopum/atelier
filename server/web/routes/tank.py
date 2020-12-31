@@ -4,8 +4,7 @@ from flask import Blueprint, jsonify, render_template, request
 
 from .base import arduino_get_route, arduino_post_route, redirect_prev
 from ..auth import auth
-from ...config import config
-from ... import arduino, tank
+from ... import arduino, config, tank
 
 
 blueprint = Blueprint("tank", __name__)
@@ -83,9 +82,9 @@ def stats_route():
         "tank_stats.html",
         volume_between_sensors=tank.volume_between_sensors(),
         volume_below_low_sensor=tank.volume_below_low_sensor(),
-        pump_in_power=config["tank"]["pump_in_power"],
-        pump_out_power=config["tank"]["pump_out_power"],
-        urban_network_power=config["tank"]["urban_network_power"],
+        pump_in_power=config.get("tank", "pump_in_power"),
+        pump_out_power=config.get("tank", "pump_out_power"),
+        urban_network_power=config.get("tank", "urban_network_power"),
     )
 
 

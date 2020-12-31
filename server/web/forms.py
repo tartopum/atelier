@@ -2,7 +2,7 @@ import jsonschema
 from wtforms import Form, FloatField, IntegerField, StringField
 from wtforms.validators import InputRequired, ValidationError
 
-from ..config import config, schema
+from .. import config
 
 
 def _make_parameter_validator(parameter):
@@ -34,23 +34,23 @@ def _from_schema_section(section):
     class SectionForm(Form):
         pass
 
-    for name, parameter in schema["properties"][section]["properties"].items():
+    for name, parameter in config.schema["properties"][section]["properties"].items():
         setattr(SectionForm, name, _parameter_to_field(name, parameter))
     return SectionForm
 
 
 _config_form_cls = {
-    section: _from_schema_section(section) for section in config.editable
+    section: _from_schema_section(section) for section in config.editable_sections
 }
 
 
 class ConfigForms(dict):
     def __init__(self, data=None):
         for section, form in _config_form_cls.items():
-            title = schema["properties"][section]["title"]
+            title = config.schema["properties"][section]["title"]
             self[section] = (
                 title or section,
-                form(data, **config[section], prefix=section),
+                form(data, **config.get(section), prefix=section),
             )
 
     def validate(self):
@@ -61,5 +61,5 @@ class ConfigForms(dict):
             raise ValueError("The forms must be validated.")
         for section, (_, form) in self.items():
             for field in form:
-                config[section][field.short_name] = field.data
+                config.set(section, field.short_name, field.data)
         config.validate()

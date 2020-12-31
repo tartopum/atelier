@@ -125,11 +125,8 @@ ENV/
 .swp
 
 .python-version
-logs*.txt*
-debug_controllino*.txt*
 pid
-server.log
-server.err
+*.log*
 *.sqlite3
 db.sqlite3-journal
 config.json

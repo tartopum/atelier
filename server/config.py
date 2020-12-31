@@ -3,9 +3,6 @@ import json
 
 import jsonschema
 
-_HERE = os.path.dirname(__file__)
-_PATH = os.path.join(_HERE, "..", "config.json")
-
 
 class NotValidatedError(ValueError):
     pass
@@ -65,73 +62,6 @@ class Schema(dict):
     def add_period(self, section, **kwargs):
         self.add_time(section, "beginning", title="Début")
         self.add_time(section, "end", title="Fin")
-
-
-class Config(dict):
-    READONLY_KEYS = ["server", "arduino"]
-    CONTROLLINO_LOG_PATH = os.path.join(_HERE, "..", "controllino.log")
-    ATELIER_LOG_PATH = os.path.join(_HERE, "..", "atelier.log")
-    SCHEDULER_LOG_PATH = os.path.join(_HERE, "..", "scheduler.log")
-
-    def __init__(self, schema, path):
-        self.schema = schema
-        self.path = path
-        self._persistent = {}
-        self._validated = False
-        self._loading = False
-        self._validating = False
-
-        self.load(path)
-
-    def __getitem__(self, key):
-        if not self._validating and not self._loading and not self._validated:
-            raise NotValidatedError(
-                "config.validate() must be called before querying the config."
-            )
-        return super().__getitem__(key)
-
-    @property
-    def editable(self):
-        return {k: v for k, v in self.items() if k not in self.READONLY_KEYS}
-
-    def clear(self):
-        for k in list(self):
-            del self[k]
-
-    def load(self, path):
-        self._loading = True
-        self._validated = False
-        try:
-            self.path = path
-            with open(self.path) as f:
-                self._persistent = json.load(f)
-            for k, v in self._persistent.items():
-                self[k] = dict(v)  # Copy dict
-        except Exception as e:
-            raise e
-        finally:
-            self._loading = False
-
-    def validate(self):
-        self._validating = True
-        try:
-            jsonschema.validate(
-                self, self.schema, format_checker=jsonschema.FormatChecker()
-            )
-        except Exception as e:
-            raise e
-        finally:
-            self._validating = False
-        self._validated = True
-
-    def save(self):
-        self.validate()
-        for k, v in self.items():
-            if k in self.READONLY_KEYS:
-                continue
-            self._persistent[k] = dict(v)
-        with open(self.path, "w") as f:
-            json.dump(self._persistent, f, indent=2)
 
 
 schema = Schema()
@@ -305,4 +235,53 @@ schema.add_int(
     title="Puissance de l'électrovanne de ville (W)",
 )
 
-config = Config(schema, _PATH)
+
+_config = {}
+_validated = False
+_READONLY_SECTIONS = ["server", "arduino"]
+
+BASE_DIR = os.path.join(os.path.dirname(__file__), "..")
+CONFIG_PATH = os.path.join(BASE_DIR, "config.json")
+CONTROLLINO_LOG_PATH = os.path.join(BASE_DIR, "controllino.log")
+ATELIER_LOG_PATH = os.path.join(BASE_DIR, "atelier.log")
+SCHEDULER_LOG_PATH = os.path.join(BASE_DIR, "scheduler.log")
+
+
+editable_sections = [k for k in schema["properties"] if k not in _READONLY_SECTIONS]
+
+
+def load(path=CONFIG_PATH):
+    global _config, _validated
+    with open(path) as f:
+        _config = json.load(f)
+    _validated = False
+
+
+def validate():
+    global _validated
+    jsonschema.validate(_config, schema, format_checker=jsonschema.FormatChecker())
+    _validated = True
+
+
+def get(section, field=None):
+    global _validated
+    if not _validated:
+        raise NotValidatedError()
+    val = _config[section]
+    if field is None:
+        return val
+    return val[field]
+
+
+def set(section, field, val):
+    if section in _READONLY_SECTIONS:
+        raise ValueError(f"Section '{section}' is readonly.")
+    _config[section][field] = val
+
+
+def save(path=CONFIG_PATH):
+    with open(path, "w") as f:
+        json.dump(_config, f, indent=2)
+
+
+load()

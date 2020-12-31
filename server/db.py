@@ -5,7 +5,7 @@ import sqlite3
 import subprocess as sp
 from threading import Lock
 
-from .config import config
+from . import config
 
 
 _HERE = os.path.dirname(__file__)
@@ -25,13 +25,13 @@ lock = Lock()
 
 
 def db_path():
-    return os.path.join(_HERE, "..", config["server"]["db_path"])
+    return os.path.join(_HERE, "..", config.get("server", "db_path"))
 
 
 def backup():
     bk_path = os.path.join(_HERE, "..", "backup_db.sqlite3")
     sp.call(["sqlite3", db_path(), f".backup {bk_path}"])
-    for path in config["server"]["db_backup_paths"]:
+    for path in config.get("server", "db_backup_paths"):
         sp.call(["cp", bk_path, path])
 
 
@@ -102,7 +102,7 @@ def list_alerts(n_days_ago=None):
 def delete_old_alerts():
     with _connect() as conn:
         cursor = conn.cursor()
-        delta = datetime.timedelta(-config["server"]["max_alert_day_old"])
+        delta = datetime.timedelta(-config.get("server", "max_alert_day_old"))
         time_limit = datetime.datetime.now() + delta
         cursor.execute("DELETE FROM alerts WHERE timestamp < ?", (time_limit,))
 

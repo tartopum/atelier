@@ -1,5 +1,5 @@
 from .base import http_get, http_post
-from ..config import config
+from .. import config
 
 
 def read_state():
@@ -10,26 +10,27 @@ def configure():
     return http_post(
         "tank",
         {
-            "time_to_fill_up": config["tank"]["time_to_fill_up"] * 60 * 1000,
-            "min_flow_in": config["tank"]["min_flow_in"],
-            "flow_check_period": config["tank"]["flow_check_period"] * 1000,
-            "volume_before_pump_out": config["tank"]["volume_before_pump_out"],
-            "filter_cleaning_period": config["tank"]["filter_cleaning_period"]
+            "time_to_fill_up": config.get("tank", "time_to_fill_up") * 60 * 1000,
+            "min_flow_in": config.get("tank", "min_flow_in"),
+            "flow_check_period": config.get("tank", "flow_check_period") * 1000,
+            "volume_before_pump_out": config.get("tank", "volume_before_pump_out"),
+            "filter_cleaning_period": config.get("tank", "filter_cleaning_period")
             * 60
             * 1000,
-            "filter_cleaning_duration": config["tank"]["filter_cleaning_duration"]
+            "filter_cleaning_duration": config.get("tank", "filter_cleaning_duration")
             * 1000,
-            "filter_cleaning_consecutive_delay": config["tank"][
-                "filter_cleaning_consecutive_delay"
-            ]
+            "filter_cleaning_consecutive_delay": config.get(
+                "tank", "filter_cleaning_consecutive_delay"
+            )
             * 1000,
-            "pump_in_start_duration": config["tank"]["pump_in_start_duration"] * 1000,
-            "max_pump_out_running_time": config["tank"]["max_pump_out_running_time"]
+            "pump_in_start_duration": config.get("tank", "pump_in_start_duration")
+            * 1000,
+            "max_pump_out_running_time": config.get("tank", "max_pump_out_running_time")
             * 1000
             * 60,
-            "max_duration_without_flow_out": config["tank"][
-                "max_duration_without_flow_out"
-            ]
+            "max_duration_without_flow_out": config.get(
+                "tank", "max_duration_without_flow_out"
+            )
             * 1000
             * 60,
         },

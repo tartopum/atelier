@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, request
 from .base import arduino_post_route, flash_success, redirect_prev
 from .. import forms
 from ... import arduino, scheduler
-from ...config import config
+from ... import config
 
 
 blueprint = Blueprint("config", __name__)
@@ -18,9 +18,9 @@ def config_route():
         arduino.configure()
         config.save()
 
-        scheduler.lunch_job.at = config["alarm"]["lunch"]
-        scheduler.night_job.at = config["alarm"]["night"]
-        scheduler.tank_job.every = config["tank"]["stats_collection_period"]
+        scheduler.lunch_job.at = config.get("alarm", "lunch")
+        scheduler.night_job.at = config.get("alarm", "night")
+        scheduler.tank_job.every = config.get("tank", "stats_collection_period")
 
         flash_success("La configuration a été mise à jour.")
         return redirect_prev()

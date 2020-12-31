@@ -7,8 +7,7 @@ from uuid import uuid4
 import requests
 import schedule
 
-from .config import config
-from . import alerts, arduino, db, tank
+from . import alerts, arduino, config, db, tank
 from .monitoring import get_controllino_log
 
 logger = logging.getLogger("scheduler")
@@ -190,10 +189,12 @@ def run(interval):
     schedule.every().day.at("00:00").do(delete_old_alerts)
     schedule.every().day.at("00:05").do(backup_db)
     tank_job = EveryJob(
-        "seconds", config["tank"]["stats_collection_period"], tank.read_and_store_stats
+        "seconds",
+        config.get("tank", "stats_collection_period"),
+        tank.read_and_store_stats,
     )
-    lunch_job = DayJob(config["alarm"]["lunch"], start_alarm)
-    night_job = DayJob(config["alarm"]["night"], start_alarm)
+    lunch_job = DayJob(config.get("alarm", "lunch"), start_alarm)
+    night_job = DayJob(config.get("alarm", "night"), start_alarm)
     debug_job = EveryJob("seconds", None, debug)
 
     _run(interval)

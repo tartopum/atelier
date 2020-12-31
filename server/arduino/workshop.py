@@ -1,5 +1,5 @@
 from .base import http_get, http_post
-from ..config import config
+from .. import config
 
 
 def read_state():
@@ -14,16 +14,19 @@ def configure():
     http_post(
         "alarm",
         {
-            "delay_before_alert": config["alarm"]["delay_before_alert"] * 1000,
-            "delay_before_listening": config["alarm"]["delay_before_listening"] * 1000,
+            "delay_before_alert": config.get("alarm", "delay_before_alert") * 1000,
+            "delay_before_listening": config.get("alarm", "delay_before_listening")
+            * 1000,
         },
     )
-    http_post("lights", {"press_delay": int(config["lights"]["press_delay"] * 1000)})
+    http_post(
+        "lights", {"press_delay": int(config.get("lights", "press_delay") * 1000)}
+    )
     http_post(
         "workshop",
         {
-            "inactivity_delay": config["lights"]["inactivity_delay"] * 60 * 1000,
-            "power_reminder_delay": config["power"]["delay_before_reminder"]
+            "inactivity_delay": config.get("lights", "inactivity_delay") * 60 * 1000,
+            "power_reminder_delay": config.get("power", "delay_before_reminder")
             * 3600
             * 1000,
         },

@@ -3,8 +3,7 @@ import json
 from flask import Blueprint, redirect, render_template, Response, url_for
 
 from .base import arduino_get_route
-from ... import arduino, monitoring, scheduler
-from ...config import config
+from ... import arduino, config, monitoring, scheduler
 
 
 blueprint = Blueprint("monitoring", __name__)
@@ -27,7 +26,7 @@ def monitoring_route():
         "monitoring.html",
         states=states,
         debug=monitoring.is_debug_mode,
-        debug_period=config["server"]["debug_period"],
+        debug_period=config.get("server", "debug_period"),
         logs=list(monitoring.parse_logs(config.ATELIER_LOG_PATH)),
         scheduler_logs=list(monitoring.parse_logs(config.SCHEDULER_LOG_PATH)),
         rpi=dict(
@@ -47,7 +46,7 @@ def set_debug_mode_route(activated):
     # Does not work in debug mode as the Flask dev server instanciates multiple
     # schedules and the one updated here may not be the one called in scheduler.run().
     scheduler.debug_job.every = (
-        config["server"]["debug_period"] if monitoring.is_debug_mode else None
+        config.get("server", "debug_period") if monitoring.is_debug_mode else None
     )
     if monitoring.is_debug_mode:
         # Empty the log file first

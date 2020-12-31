@@ -52,6 +52,8 @@ h1, h2, h3 {
 
 ul.errors {
     margin: 0;
+    max-width: 500px;
+    margin: auto;
 }
 
 ul.errors li {
@@ -60,8 +62,7 @@ ul.errors li {
 
 .errors {
     padding: 10px;
-    background: rgba(255,105,97, 0.5);
-    border: 1px solid #ff6961;
+    color: #ff6961;
     display: inline-block;
 }
 

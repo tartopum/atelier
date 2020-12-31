@@ -2,20 +2,19 @@ from collections import defaultdict
 import datetime as dt
 import math
 
-from . import arduino, db
-from .config import config
+from . import arduino, config, db
 
 
 def _volume(height):
-    return height * math.pi * config["tank"]["radius"] ** 2 / 1000
+    return height * math.pi * config.get("tank", "radius") ** 2 / 1000
 
 
 def volume_below_low_sensor():
-    return _volume(config["tank"]["low_sensor_height"])
+    return _volume(config.get("tank", "low_sensor_height"))
 
 
 def volume_between_sensors():
-    return _volume(config["tank"]["height_between_sensors"])
+    return _volume(config.get("tank", "height_between_sensors"))
 
 
 def water_level():
