@@ -71,6 +71,7 @@ class Config(dict):
     READONLY_KEYS = ["server", "arduino"]
     CONTROLLINO_LOG_PATH = os.path.join(_HERE, "..", "controllino.log")
     ATELIER_LOG_PATH = os.path.join(_HERE, "..", "atelier.log")
+    SCHEDULER_LOG_PATH = os.path.join(_HERE, "..", "scheduler.log")
 
     def __init__(self, schema, path):
         self.schema = schema

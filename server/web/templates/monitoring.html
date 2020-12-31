@@ -33,10 +33,27 @@
 
 <h2>Logs</h2>
 
+<h3>atelier.log</h3>
 {% if logs %}
 <div style="max-width: 600px; margin: auto; margin-bottom: 30px; padding: 0 10px;">
   <div style="text-align: left; max-height: 400px; overflow: auto; font-size: 0.8rem; padding-right: 5px;">
     {% for header, message, color in logs %}
+      <div style="border: 1px solid {{ color }}; border-radius: 5px; margin: 10px 0; padding: 5px; overflow-wrap: anywhere;">
+        <span style="color: {{ color }};">{{ header }}</span>
+        <span style="color: grey;">{{ message|safe }}</span>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% else %}
+  <div style="font-size: 0.8rem;">Il n'y a pas de logs.</div>
+{% endif %}
+
+<h3>scheduler.log</h3>
+{% if scheduler_logs %}
+<div style="max-width: 600px; margin: auto; margin-bottom: 30px; padding: 0 10px;">
+  <div style="text-align: left; max-height: 400px; overflow: auto; font-size: 0.8rem; padding-right: 5px;">
+    {% for header, message, color in scheduler_logs %}
       <div style="border: 1px solid {{ color }}; border-radius: 5px; margin: 10px 0; padding: 5px; overflow-wrap: anywhere;">
         <span style="color: {{ color }};">{{ header }}</span>
         <span style="color: grey;">{{ message|safe }}</span>

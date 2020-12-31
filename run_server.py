@@ -40,9 +40,17 @@ logging.config.dictConfig(
                 "maxBytes": 1000000,
                 "backupCount": 3,
             },
-            "server_file": {
+            "file_server": {
                 "class": "logging.handlers.RotatingFileHandler",
                 "filename": os.path.join(HERE, "server.log"),
+                "formatter": "date",
+                "level": logging.INFO,
+                "maxBytes": 500000,
+                "backupCount": 1,
+            },
+            "file_scheduler": {
+                "class": "logging.handlers.RotatingFileHandler",
+                "filename": config.SCHEDULER_LOG_PATH,
                 "formatter": "date",
                 "level": logging.INFO,
                 "maxBytes": 500000,
@@ -59,10 +67,13 @@ logging.config.dictConfig(
         },
         root={"handlers": ["file", "console"], "level": logging.DEBUG},
         loggers={
-            "scheduler": {"handlers": ["file", "console"], "level": logging.WARNING},
+            "scheduler": {
+                "handlers": ["file_scheduler", "console"],
+                "level": logging.INFO,
+            },
             "debug": {"handlers": ["file_debug"], "level": logging.DEBUG},
             "atelier": {"handlers": ["file", "console"], "level": logging.DEBUG},
-            "server": {"handlers": ["server_file"], "level": logging.INFO},
+            "server": {"handlers": ["file_server"], "level": logging.INFO},
         },
     )
 )

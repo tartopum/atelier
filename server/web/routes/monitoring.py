@@ -29,6 +29,7 @@ def monitoring_route():
         debug=monitoring.is_debug_mode,
         debug_period=config["server"]["debug_period"],
         logs=list(monitoring.parse_logs(config.ATELIER_LOG_PATH)),
+        scheduler_logs=list(monitoring.parse_logs(config.SCHEDULER_LOG_PATH)),
         rpi=dict(
             disk_usage=monitoring.get_disk_usage(),
             cpu_percent=monitoring.get_cpu_percent(),

@@ -11,7 +11,7 @@ from .config import config
 from . import alerts, arduino, db, tank
 from .monitoring import get_controllino_log
 
-logger = logging.getLogger("atelier")
+logger = logging.getLogger("scheduler")
 debug_logger = logging.getLogger("debug")
 
 
@@ -61,6 +61,7 @@ class ArduinoConnectionJob(Job):
         )
 
     def _run_job_safely(self, f):
+        logger.info("Running job %s()", f.__name__)
         try:
             f()
         except requests.exceptions.RequestException as e:
@@ -170,14 +171,24 @@ def debug():
     debug_logger.debug(get_controllino_log())
 
 
+def delete_old_alerts():
+    logger.info("Running job delete_old_alerts()")
+    alerts.delete_old()
+
+
+def backup_db():
+    logger.info("Running job backup_db()")
+    db.backup()
+
+
 # We cannot read the config immediatly, it first needs to be validated
 tank_job = lunch_job = night_job = debug_job = None
 
 
 def run(interval):
     global tank_job, lunch_job, night_job, debug_job
-    schedule.every().day.at("00:00").do(alerts.delete_old)
-    schedule.every().day.at("00:05").do(db.backup)
+    schedule.every().day.at("00:00").do(delete_old_alerts)
+    schedule.every().day.at("00:05").do(backup_db)
     tank_job = EveryJob(
         "seconds", config["tank"]["stats_collection_period"], tank.read_and_store_stats
     )
