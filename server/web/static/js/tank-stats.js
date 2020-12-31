@@ -177,7 +177,14 @@ function plotWaterConsumptionStats(yTank, yCity, yWell, timestep, period) {
             grid: {rows: 2, columns: 2, pattern: "independent"},
             barmode: "grouped",
             showlegend: false,
-            margin: {t: 50, r: 10, l: 40},
+            margin: {t: 80, r: 10, l: 40},
+            title: {
+                text: "Pendant " + period,
+                font: {
+                    family: "Slabo, Helvetica, Arial, sans-serif",
+                    size: 24,
+                },
+            },
             xaxis: {
                 showline: true,
                 fixedrange: true,
@@ -224,11 +231,11 @@ function plotWaterConsumptionStats(yTank, yCity, yWell, timestep, period) {
                 yref: "paper",
                 xanchor: "center",
                 yanchor: "bottom",
-                text: "Total sur " + period,
+                text: "Total",
                 showarrow: false,
                 font: {
                     family: "Slabo, Helvetica, Arial, sans-serif",
-                    size: 20,
+                    size: 18,
                 },
             }, {
                 x: 0.75,
@@ -241,7 +248,7 @@ function plotWaterConsumptionStats(yTank, yCity, yWell, timestep, period) {
                 showarrow: false,
                 font: {
                     family: "Slabo, Helvetica, Arial, sans-serif",
-                    size: 20,
+                    size: 18,
                 },
             }, {
                 x: 0.25,
@@ -254,7 +261,7 @@ function plotWaterConsumptionStats(yTank, yCity, yWell, timestep, period) {
                 showarrow: false,
                 font: {
                     family: "Slabo, Helvetica, Arial, sans-serif",
-                    size: 20,
+                    size: 18,
                 },
             }, {
                 x: 0.75,
@@ -267,7 +274,7 @@ function plotWaterConsumptionStats(yTank, yCity, yWell, timestep, period) {
                 showarrow: false,
                 font: {
                     family: "Slabo, Helvetica, Arial, sans-serif",
-                    size: 20,
+                    size: 18,
                 },
             }]
         }
