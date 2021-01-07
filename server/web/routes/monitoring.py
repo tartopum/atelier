@@ -1,9 +1,10 @@
 import json
 
-from flask import Blueprint, redirect, render_template, Response, url_for
+from flask import Blueprint, redirect, render_template, Response, send_file, url_for
 
 from .base import arduino_get_route
-from ... import arduino, config, monitoring, scheduler
+from ..auth import auth
+from ... import arduino, config, db, monitoring, scheduler
 
 
 blueprint = Blueprint("monitoring", __name__)
@@ -55,6 +56,7 @@ def set_debug_mode_route(activated):
 
 
 @blueprint.route("/download/controllino")
+@auth.login_required
 def download_controllino_debug_route():
     rows = monitoring.controllino_logs_to_csv()
     csv = "\n".join([",".join(map(str, row)) for row in rows])
@@ -64,4 +66,15 @@ def download_controllino_debug_route():
         headers={
             "Content-disposition": "attachment; filename=monitoring_controllino.csv"
         },
+    )
+
+
+@blueprint.route("/download/db")
+@auth.login_required
+def download_db_route():
+    return send_file(
+        db.db_path(),
+        mimetype="application/octet-stream",
+        as_attachment=True,
+        attachment_filename="atelier.sqlite3",
     )

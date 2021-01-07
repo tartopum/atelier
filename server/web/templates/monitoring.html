@@ -106,6 +106,16 @@
       <img src="{{ url_for('static', filename='img/download.png') }}" alt="Exporter les logs" />
   </a>
 </div>
+
+<hr id="db" class="sep" />
+
+<h2>Base de données</h2>
+
+<div>
+  <a class="download" title="Télécharger la base de données" href="{{ url_for('monitoring.download_db_route') }}">
+      <img src="{{ url_for('static', filename='img/download.png') }}" alt="Télécharger la base de données" />
+  </a>
+</div>
 {% endblock %}
 
 {% block js %}
