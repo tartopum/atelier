@@ -48,7 +48,6 @@ STATE_ERRORS = (
 
 STATE_WARNINGS = (
     _StateAlert("fence", "fence", "state", 0, "La clôture est éteinte."),
-    _StateAlert("fence", "fence", "activated", 0, "La clôture est éteinte."),
     _StateAlert(
         "power_supply",
         "workshop",
