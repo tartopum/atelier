@@ -1,4 +1,5 @@
 import datetime as dt
+from statistics import mean
 
 from flask import Blueprint, jsonify, render_template, request
 
@@ -13,8 +14,18 @@ blueprint = Blueprint("tank", __name__)
 @blueprint.route("/")
 @arduino_get_route
 def tank_route():
+    stats = tank.get_consumption_data(
+        timestep=dt.timedelta(minutes=60),
+        duration=dt.timedelta(days=1),
+        end=dt.datetime.now(),
+    )
     return render_template(
-        "tank.html", state=arduino.tank.read_state(), water_level=tank.water_level()
+        "tank.html",
+        average_well_production=mean(stats["y_well"]),
+        average_tank_consumption=mean(stats["y_tank"]),
+        average_city_consumption=mean(stats["y_city"]),
+        state=arduino.tank.read_state(),
+        water_level=tank.water_level(),
     )
 
 
