@@ -64,7 +64,6 @@ logging.config.dictConfig(
                 "backupCount": 1,  # If zero, rollover never occurs
             },
         },
-        root={"handlers": ["file", "console"], "level": logging.DEBUG},
         loggers={
             "scheduler": {
                 "handlers": ["file_scheduler", "console"],
