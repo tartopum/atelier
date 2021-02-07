@@ -60,7 +60,7 @@ logging.config.dictConfig(
                 "filename": config.CONTROLLINO_LOG_PATH,
                 "formatter": "message",
                 "level": logging.DEBUG,
-                "maxBytes": 5000000,
+                "maxBytes": 50000000,
                 "backupCount": 1,  # If zero, rollover never occurs
             },
         },
