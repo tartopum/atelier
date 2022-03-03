@@ -53,10 +53,10 @@ void Alarm::enable(bool enabled)
 {
     if (!enabled) {
         _state = DISABLED;
-        return;
+    } else if (_state == DISABLED) { // When we are listening, we don't go back to the STARTING state
+      _state = STARTING;
+      _enabledTime = millis();
     }
-    _state = STARTING;
-    _enabledTime = millis();
 }
 
 bool Alarm::listening()
