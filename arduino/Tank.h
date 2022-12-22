@@ -10,6 +10,7 @@
 class Tank
 {
     public:
+        // Voir le detail des pins dans le constructeur Tank() dans Tank.cpp
         Tank(
             byte pinPumpIn,
             byte pinPumpOut,
@@ -28,14 +29,17 @@ class Tank
             AlertLight *lightFatal,
             bool (*sendAlert)(const char *, const char *, byte)
         );
+
+        // Ces variables sont configurables depuis l'interface web
         byte minFlowIn = 10; // L/min
-        unsigned long timeToFillUp = 1800000; // ms
-        unsigned long flowCheckPeriod = 30000; // ms
-        unsigned long filterCleaningPeriod = 3600000; // ms
-        unsigned long filterCleaningDuration = 30000; // ms
-        unsigned long filterCleaningConsecutiveDelay = 5000; // ms
-        unsigned long maxPumpOutRunningDuration = 300000; // ms
-        unsigned long maxDurationWithoutFlowOut = 3600000; // ms
+        unsigned long timeToFillUp = 30 * 60 * 1000; // ms
+        unsigned long flowCheckPeriod = 30 * 1000; // ms
+        unsigned long filterCleaningPeriod = 60 * 60 * 1000; // ms
+        unsigned long filterCleaningDuration = 30 * 1000; // ms
+        unsigned long filterCleaningConsecutiveDelay = 5 * 1000; // ms
+        unsigned long maxPumpOutRunningDuration = 5 * 60 * 1000; // ms
+        unsigned long minPumpOutStopDuration = 60 * 1000; // ms
+        unsigned long maxDurationWithoutFlowOut = 60 * 60 * 1000; // ms
 
         void attachFlowInterrupts();
         void (*flowInInterrupt)();

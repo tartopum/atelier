@@ -127,6 +127,8 @@ Tank::Tank(
     _pinFilterCleaning = pinFilterCleaning;
 
     pinMode(_pinFlowIn, INPUT);
+    // Mesure du debit d'eau consommee (inclut reseau de ville et
+    // eau du surpresseur)
     pinMode(_pinFlowOut, INPUT);
     pinMode(_pinWaterLimitLow, INPUT);
     pinMode(_pinWaterLimitHigh, INPUT);
@@ -134,6 +136,8 @@ Tank::Tank(
     pinMode(_pinMotorInBlocked, INPUT);
     pinMode(_pinMotorOutBlocked, INPUT);
     pinMode(_pinOverpressure, INPUT);
+    // Capteur de pression du surpresseur : en-dessous d'un certain
+    // seuil, il faut allumer la pompe du surpresseur pour le re-remplir
     pinMode(_pinPumpOutCanRun, INPUT);
 
     pinMode(_pinPumpIn, OUTPUT);
@@ -212,6 +216,15 @@ bool Tank::canCleanFilter()
         (!_filterFirstCleaningDone && millis() - _lastFilterCleaningTime > filterCleaningPeriod) ||
         (_filterFirstCleaningDone && millis() - _lastFilterCleaningTime > filterCleaningConsecutiveDelay)
     );
+}
+
+bool Tank::pumpOutRestartingTooQuickly()
+{
+    // Quand la membrane du surpresseur est detendue, le capteur de pression
+    // commandant la pompe du surpresseur n'est pas fiable et peut mener
+    // a des demarrages/arrets a frequence rapide de la pompe
+    // Quand cela arrive, il faut une action manuelle pour regonfler la membrane
+    return isOn(_pinPumpOut) && (millis() - _lastTimePumpOutOff < minPumpOutStopDuration);
 }
 
 bool Tank::pumpOutRunningForTooLong()
@@ -327,7 +340,7 @@ void Tank::loop()
         _cmdPumpIn(false);
         _pumpInActivated = false;
     }
-    if (isMotorOutBlocked() || isOverpressured() || pumpOutRunningForTooLong()) {
+    if (isMotorOutBlocked() || isOverpressured() || pumpOutRunningForTooLong() || pumpOutRestartingTooQuickly()) {
         _cmdPumpOut(false);
         _cmdUrbanNetwork(true);
         _pumpOutActivated = false;
@@ -510,6 +523,7 @@ void Tank::_httpRouteGet(WebServer &server)
     server << "\"filter_cleaning_consecutive_delay\": " << filterCleaningConsecutiveDelay << ", ";
     server << "\"time_to_fill_up\": " << timeToFillUp << ", ";
     server << "\"max_pump_out_running_time\": " << maxPumpOutRunningDuration << ", ";
+    server << "\"min_pump_out_stop_time\": " << minPumpOutStopDuration << ", ";
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
         server << "\"last_time_flow_out\": " << _lastTimeFlowOut << ", ";
     }
@@ -535,6 +549,9 @@ void Tank::_httpRouteSet(WebServer &server)
         }
         if (strcmp(key, "max_pump_out_running_time") == 0) {
             maxPumpOutRunningDuration = atol(value);
+        }
+        if (strcmp(key, "min_pump_out_stop_time") == 0) {
+            minPumpOutStopDuration = atol(value);
         }
         if (strcmp(key, "max_duration_without_flow_out") == 0) {
             maxDurationWithoutFlowOut = atol(value);
