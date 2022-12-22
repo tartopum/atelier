@@ -99,7 +99,7 @@ def remove_logging_handler(logger, handler_name):
 
 def run_dev_server():
     web.app.logger.setLevel(logging.DEBUG)
-    env = {**os.environ, "FLASK_APP": "server.web", "FLASK_ENV": "development"}
+    env = {**os.environ, "FLASK_APP": "server.web", "FLASK_DEBUG": "1"}
     sp.run(["poetry", "run", "flask", "run"], check=True, env=env)
 
 

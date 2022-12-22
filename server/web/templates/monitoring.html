@@ -24,7 +24,7 @@
     <div id="rpi_disk_usage" class="pie-plot"></div>
     <div>
         <div id="rpi_cpu_usage" class="pie-plot"></div>
-        <div id="rpi_cpu_temp" class="pie-plot"></div>
+        <div id="rpi_cpu_temp" class="pie-plot" style="margin-top: 30px;"></div>
     </div>
     <div id="rpi_memory"></div>
 </div>
@@ -123,7 +123,7 @@
 <script src="{{ url_for('static', filename='js/debug.js') }}"></script>
 <script>
 plotRPiDisk({{ rpi["disk_usage"].total }}, {{ rpi["disk_usage"].used }})
-plotRPiCPU({{ rpi["cpu_percent"] }}, {{ rpi["cpu_temp"] }}, {{ rpi["cpu_freq"].current }})
+plotRPiCPU({{ rpi["cpu_percent"]|tojson }}, {{ rpi["cpu_temp"]|tojson }}, {{ rpi["cpu_freq"].current|tojson }})
 plotRPiMemory({{ rpi["virtual_memory"].total }}, {{ rpi["virtual_memory"].used }})
 </script>
 {% endblock %}

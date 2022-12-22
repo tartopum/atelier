@@ -113,7 +113,8 @@ def get_errors(states):
     _add_cpu_usage_alert(alerts, 90, ERROR_ALERT_LEVEL)
     _add_mem_usage_alert(alerts, 90, ERROR_ALERT_LEVEL)
 
-    if monitoring.get_cpu_temperature_level() > 1:
+    cpu_temp = monitoring.get_cpu_temperature_level()
+    if cpu_temp is not None and cpu_temp > 1:
         alerts.append(
             Alert(
                 "monitoring_rpi",

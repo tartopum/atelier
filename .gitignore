@@ -130,3 +130,4 @@ pid
 *.sqlite3
 db.sqlite3-journal
 config.json
+./fake_arduino/state.json

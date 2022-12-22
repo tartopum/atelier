@@ -88,6 +88,8 @@ def get_cpu_temperature():
 
 def get_cpu_temperature_level():
     t = get_cpu_temperature()
+    if t is None:
+        return
     if t < 60:
         return 0
     if t < 75:

@@ -118,72 +118,74 @@ function plotRPiCPU(percent, temp, freq) {
         }
     )
 
-    temp = Math.round(temp)
-    let MIN_TEMP = 20
-    let MID_TEMP = 60
-    let HIGH_TEMP = 75 
-    let MAX_TEMP = 90
-    let tempBarColor = "#e9e9e9"
-    let tempTitleSuffix = "normale"
-    if (temp >= MID_TEMP) {
-        tempBarColor = "#ffb347"
-        tempTitleSuffix = "légère chauffe"
-    }
-    if (temp >= HIGH_TEMP) {
-        tempBarColor = "#ff6961"
-        tempTitleSuffix = "surchauffe !"
-    }
-    Plotly.newPlot(
-        document.getElementById("rpi_cpu_temp"),
-        [{
-            type: "bar",
-            y: [""],
-            x: [temp],
-            orientation: "h",
-            marker: { color: [tempBarColor] },
-            hoverinfo: "skip",
-        }],
-        {
-            showlegend: false,
-            width: piePlotSize,
-            height: 100,
-            margin: {t: 30, l: 50, r: 50, b: 30},
-            title: {
-                text: "Température (°C)",
-                font: {
-                    family: "Slabo, Helvetica, Arial, sans-serif",
-                    size: 20,
-                },
-            },
-            xaxis: {
-                showgrid: false,
-                fixedrange: true,
-                showline: false,
-                zeroline: false,
-                range: [20, MAX_TEMP],
-                ticks: "outside",
-                dtick: 10,
-            },
-            yaxis: {
-                fixedrange: true,
-                showline: false,
-                zeroline: false,
-            },
-            annotations: [{
-                font: {
-                    family: "Slabo, Helvetica, Arial, sans-serif",
-                    size: 14,
-                },
-                showarrow: false,
-                text: tempTitleSuffix,
-                x: (temp - MIN_TEMP) / 2.0 + MIN_TEMP,
-                y: 0.5,
-                xanchor: "center",
-                yanchor: "middle",
-                yref: "paper",
-            }]
+    if (temp !== null) {
+        temp = Math.round(temp)
+        let MIN_TEMP = 20
+        let MID_TEMP = 60
+        let HIGH_TEMP = 75 
+        let MAX_TEMP = 90
+        let tempBarColor = "#e9e9e9"
+        let tempTitleSuffix = "normale"
+        if (temp >= MID_TEMP) {
+            tempBarColor = "#ffb347"
+            tempTitleSuffix = "légère chauffe"
         }
-    )
+        if (temp >= HIGH_TEMP) {
+            tempBarColor = "#ff6961"
+            tempTitleSuffix = "surchauffe !"
+        }
+        Plotly.newPlot(
+            document.getElementById("rpi_cpu_temp"),
+            [{
+                type: "bar",
+                y: [""],
+                x: [temp],
+                orientation: "h",
+                marker: { color: [tempBarColor] },
+                hoverinfo: "skip",
+            }],
+            {
+                showlegend: false,
+                width: piePlotSize,
+                height: 100,
+                margin: {t: 30, l: 50, r: 50, b: 30},
+                title: {
+                    text: "Température (°C)",
+                    font: {
+                        family: "Slabo, Helvetica, Arial, sans-serif",
+                        size: 20,
+                    },
+                },
+                xaxis: {
+                    showgrid: false,
+                    fixedrange: true,
+                    showline: false,
+                    zeroline: false,
+                    range: [20, MAX_TEMP],
+                    ticks: "outside",
+                    dtick: 10,
+                },
+                yaxis: {
+                    fixedrange: true,
+                    showline: false,
+                    zeroline: false,
+                },
+                annotations: [{
+                    font: {
+                        family: "Slabo, Helvetica, Arial, sans-serif",
+                        size: 14,
+                    },
+                    showarrow: false,
+                    text: tempTitleSuffix,
+                    x: (temp - MIN_TEMP) / 2.0 + MIN_TEMP,
+                    y: 0.5,
+                    xanchor: "center",
+                    yanchor: "middle",
+                    yref: "paper",
+                }]
+            }
+        )
+    }
 }
 
 function plotRPiMemory(total, used) {

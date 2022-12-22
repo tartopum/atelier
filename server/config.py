@@ -197,6 +197,13 @@ schema.add_int(
 )
 schema.add_int(
     "tank",
+    "min_pump_out_stop_time",
+    min=1,
+    max=60,
+    title="Durée minimale de pause de la pompe du surpresseur (min)",
+)
+schema.add_int(
+    "tank",
     "max_duration_without_flow_out",
     min=1,
     max=120,
