@@ -46,7 +46,7 @@ def set_debug_mode_route(activated):
     monitoring.is_debug_mode = bool(activated)
     # Does not work in debug mode as the Flask dev server instanciates multiple
     # schedules and the one updated here may not be the one called in scheduler.run().
-    scheduler.debug_job.every = (
+    scheduler.jobs["debug"].every = (
         config.get("server", "debug_period") if monitoring.is_debug_mode else None
     )
     if monitoring.is_debug_mode:

@@ -28,6 +28,9 @@ def configure():
             "max_pump_out_running_time": config.get("tank", "max_pump_out_running_time")
             * 1000
             * 60,
+            "min_pump_out_stop_time": config.get("tank", "min_pump_out_stop_time")
+            * 1000
+            * 60,
             "max_duration_without_flow_out": config.get(
                 "tank", "max_duration_without_flow_out"
             )

@@ -180,21 +180,29 @@ def backup_db():
     db.backup()
 
 
-# We cannot read the config immediatly, it first needs to be validated
-tank_job = lunch_job = night_job = debug_job = None
+# We cannot read the config immediatly, it first needs to be validated, so
+# we can't instantiate jobs for now
+# In dev mode, this global variable is duplicated and the affectations in
+# run() are not applied to the one loaded in the other modules
+# (ex: web/routes/config.py)
+jobs = {
+    "tank": None,
+    "lunch": None,
+    "night": None,
+    "debug": None,
+}
 
 
 def run(interval):
-    global tank_job, lunch_job, night_job, debug_job
     schedule.every().day.at("00:00").do(delete_old_alerts)
     schedule.every().day.at("00:05").do(backup_db)
-    tank_job = EveryJob(
+    jobs["tank"] = EveryJob(
         "seconds",
         config.get("tank", "stats_collection_period"),
         tank.read_and_store_stats,
     )
-    lunch_job = DayJob(config.get("alarm", "lunch"), start_alarm)
-    night_job = DayJob(config.get("alarm", "night"), start_alarm)
-    debug_job = EveryJob("seconds", None, debug)
+    jobs["lunch"] = DayJob(config.get("alarm", "lunch"), start_alarm)
+    jobs["night"] = DayJob(config.get("alarm", "night"), start_alarm)
+    jobs["debug"] = EveryJob("seconds", None, debug)
 
     _run(interval)
