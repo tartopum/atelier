@@ -45,4 +45,4 @@ cp config.json.template config.json
 # Run web server at startup
 echo
 echo "Creating a cron to start server at boot..."
-(crontab -l 2>/dev/null; echo "@reboot cd /home/pi/atelier && PATH="'"$HOME/.poetry/bin:$PATH:/usr/local/bin"'" && make prod") | crontab -
+(crontab -l 2>/dev/null; echo "@reboot export PATH="$HOME/.pyenv/bin:$HOME/.pyenv/shims:$HOME/.local/bin:$PATH" && cd /home/pi/atelier && make prod > last.log") | crontab -
