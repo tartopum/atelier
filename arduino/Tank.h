@@ -102,6 +102,7 @@ class Tank
         volatile unsigned int _volumeCollectedSinceEmpty = 0; // L
         bool _tankFullEnough = true;
         unsigned long _lastTimePumpOutOff = 0; // ms
+        unsigned long _lastTimePumpOutTurnedOff = 0; // ms
         unsigned long _pumpOutRunningDurationStart = 0; // ms
         unsigned int _pumpOutRunningDuration = 0; // s
         volatile unsigned long _lastTimeFlowOut = 0; // ms

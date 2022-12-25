@@ -232,8 +232,8 @@ bool Tank::pumpOutRestartingTooQuickly()
     // commandant la pompe du surpresseur n'est pas fiable et peut mener
     // a des demarrages/arrets a frequence rapide de la pompe
     // Quand cela arrive, il faut une action manuelle pour regonfler la membrane
-    // On verifie _lastTimePumpOutOff > 0 sinon l'alerte est levee au demarrage de la controllino
-    return isOn(_pinPumpOut) && _lastTimePumpOutOff > 0 && (millis() - _lastTimePumpOutOff < minPumpOutStopDuration);
+    // On verifie _lastTimePumpOutTurnedOff > 0 sinon l'alerte est levee au demarrage de la controllino
+    return isOn(_pinPumpOut) && _lastTimePumpOutTurnedOff > 0 && (millis() - _lastTimePumpOutTurnedOff < minPumpOutStopDuration);
 }
 
 bool Tank::pumpOutRunningForTooLong()
@@ -307,6 +307,7 @@ void Tank::_cmdPumpOut(bool on)
     if (on && !isOn(_pinPumpOut)) _pumpOutRunningDurationStart = millis();
     if (!on && isOn(_pinPumpOut)) {
         _pumpOutRunningDuration += (millis() - _pumpOutRunningDurationStart) / 1000;
+        _lastTimePumpOutTurnedOff = millis();
     }
 
     digitalWrite(_pinPumpOut, on ? HIGH : LOW); 
@@ -513,6 +514,8 @@ void Tank::_httpRouteGet(WebServer &server)
     server << "\"last_time_pump_in_started\": " << _timePumpInStarted << ", ";
     server << "\"pump_in_start_duration\": " << _pumpInStartDuration << ", ";
     server << "\"pump_out\": " << isOn(_pinPumpOut) << ", ";
+    server << "\"last_time_pump_out_off\": " << _lastTimePumpOutOff << ", ";
+    server << "\"last_time_pump_out_turned_off\": " << _lastTimePumpOutTurnedOff << ", ";
     server << "\"urban_network\": " << isOn(_pinUrbanNetwork) << ", ";
     server << "\"is_tank_full\": " << isTankFull() << ", ";
     server << "\"is_tank_empty\": " << isTankEmpty() << ", ";
