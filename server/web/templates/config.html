@@ -22,7 +22,14 @@
         {% endif %}
         <tr class="field-row">
             <td class="field-label">{{ field.label }}&nbsp;:</td>
-            <td class="field-input">{{ field() }}</td>
+            <td class="field-input">
+              {{ field() }}
+              {% if field.description %}
+                <div class="field-description" title="{{ field.description }}">
+                  <img src="{{ url_for('static', filename='img/help.png') }}" alt="Aide" width="15" />
+                </div>
+              {% endif %}
+            </td>
         </tr>
     {% endfor %}
     </table>

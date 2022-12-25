@@ -27,10 +27,10 @@ class Schema(dict):
             "properties": {},
         }
 
-    def add_parameter(self, section, name, schema, title="", required=True):
+    def add_parameter(self, section, name, schema, title="", description="", required=True):
         if section not in self["properties"]:
             self.add_section(section)
-        schema = {**schema, "title": title}
+        schema = {**schema, "title": title, "description": description}
         self["properties"][section]["required"].append(name)
         self["properties"][section]["properties"][name] = schema
 
@@ -104,7 +104,7 @@ schema.add_int(
 
 schema.add_section("alarm", "Alarme")
 schema.add_int(
-    "alarm", "delay_before_alert", min=0, max=60, title="Délai avant déclenchement (s)"
+    "alarm", "delay_before_alert", min=0, max=60, title="Délai avant déclenchement (s)", description="Si une présence est détectée, on attend un peu avant de déclencher l'alarme pour éviter les faux positifs.",
 )
 schema.add_int(
     "alarm",
@@ -112,6 +112,7 @@ schema.add_int(
     min=0,
     max=60,
     title="Délai avant mise en écoute (s)",
+    description="Au démarrage de la carte, le détecteur de mouvement est activé. On attend un peu qu'il s'éteigne sinon on déclencherait l'alarme.",
 )
 schema.add_time("alarm", "lunch", title="Midi")
 schema.add_time("alarm", "night", title="Nuit")
@@ -121,7 +122,7 @@ schema.add_number(
     "lights", "press_delay", min=0.1, max=5, title="Durée de pression des boutons (s)"
 )
 schema.add_int(
-    "lights", "inactivity_delay", min=1, max=60, title="Délai d'inactivité (min)"
+    "lights", "inactivity_delay", min=1, max=60, title="Délai d'inactivité (min)", description="Si aucune présence est détectée durant cette période, les lumières intérieures sont éteintes."
 )
 
 schema.add_section("tank", "Eau")
@@ -145,6 +146,7 @@ schema.add_int(
     min=0,
     max=100,
     title="Débit minimal de la pompe du puits (L/min)",
+    description="En-dessous de ce débit, on arrête la pompe du puits et attend que ce dernier se re-remplisse.",
 )
 schema.add_int(
     "tank",
@@ -152,6 +154,7 @@ schema.add_int(
     min=1,
     max=(60 * 24),
     title="Durée entre deux remplissages (min)",
+    description="Durée estimée de remplissage du puits, c'est-à-dire entre deux allumages de la pompe du puits.",
 )
 schema.add_int(
     "tank",
@@ -159,6 +162,7 @@ schema.add_int(
     min=1,
     max=10000,
     title="Volume dans la cuve avant d'éteindre la ville (L)",
+    description="Pour éviter d'éteindre la ville et de la rallumer immédiatement, on s'assure que la cuve est un minimum pleine avant de basculer dessus.",
 )
 schema.add_int(
     "tank",
@@ -180,6 +184,7 @@ schema.add_int(
     min=1,
     max=60,
     title="Durée entre deux ouvertures consécutives du filtre (s)",
+    description="Pour bien le décrasser, on ouvre le filtre deux fois à chaque nettoyage.",
 )
 schema.add_int(
     "tank",
@@ -187,6 +192,7 @@ schema.add_int(
     min=1,
     max=300,
     title="Temps mis par l'eau pour remonter le puits (s)",
+    description="Si à l'allumage de la pompe du puits on n'a pas de débit pendant cette durée, on considère que c'est normal.",
 )
 schema.add_int(
     "tank",
@@ -201,6 +207,7 @@ schema.add_int(
     min=1,
     max=60,
     title="Durée minimale de pause de la pompe du surpresseur (min)",
+    description="Quand la membrane du surpresseur est détendue, le capteur de pression commandant la pompe du surpresseur n'est pas fiable et peut mener à des démarrages/arrêts à fréquence rapide de la pompe. Quand cela arrive, il faut une action manuelle pour regonfler la membrane.",
 )
 schema.add_int(
     "tank",
@@ -208,6 +215,7 @@ schema.add_int(
     min=1,
     max=120,
     title="Durée maximale sans consommation détectée (min)",
+    description="Si aucune consommation est détectée pendant cette période, on lève une alerte car cela peut signifier qu'il y a un problème de sortie d'eau.",
 )
 schema.add_int(
     "tank",
@@ -233,6 +241,7 @@ schema.add_int(
     min=1,
     max=5000,
     title="Puissance de la pompe du surpresseur (W)",
+    description="Pour calculer la consommation électrique.",
 )
 schema.add_int(
     "tank",
@@ -240,8 +249,8 @@ schema.add_int(
     min=1,
     max=1000,
     title="Puissance de l'électrovanne de ville (W)",
+    description="Pour calculer la consommation électrique.",
 )
-
 
 _config = {}
 _validated = False

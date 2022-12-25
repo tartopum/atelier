@@ -27,6 +27,7 @@ def _parameter_to_field(name, parameter):
     return field_cls(
         parameter.get("title") or name,
         [InputRequired(), _make_parameter_validator(parameter)],
+        description=parameter.get("description", ""),
     )
 
 

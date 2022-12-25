@@ -565,10 +565,20 @@ footer .help {
     max-width: 300px;
 }
 
+#content.config .field-input {
+  display: flex;
+  align-items: center;
+}
+
 #content.config .field-input input {
     width: 50px;
     text-align: center;
     padding: 5px;
+}
+
+#content.config .field-input .field-description {
+    margin-left: 5px;
+    cursor: help;
 }
 
 #content.config input[type="submit"] {

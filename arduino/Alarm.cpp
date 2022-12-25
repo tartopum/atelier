@@ -137,7 +137,7 @@ void Alarm::loop()
         return;
     }
 
-    // We wait a bit before raising the alert
+    // We wait a bit before raising the alert to avoid false positive
     if (millis() - _breachTime < delayBeforeAlert) {
         return;
     }
