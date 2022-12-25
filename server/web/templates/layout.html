@@ -35,6 +35,17 @@
                 <li {% if page == "tank" or page == "tank_stats" %}class="active"{% endif %}>
                     <a href="{{ url_for('tank.tank_route') }}">Eau</a>
                 </li>
+                <li {% if page == "config" %}class="active"{% endif %}>
+                    <a href="{{ url_for('config.config_route') }}">Config</a>
+                </li>
+                <li {% if page == "debug" %}class="active"{% endif %}>
+                    <a href="{{ url_for('monitoring.monitoring_route') }}">Debug</a>
+                </li>
+                <li>
+                  <a href="https://github.com/tartopum/atelier/blob/master/docs/manuel.md" title="Aide" target="_blank">
+                      <img src="{{ url_for('static', filename='img/help.png') }}" alt="Aide" width="20" />
+                  </a>
+                </li>
             </ul>
         </div>
     </header>
@@ -50,26 +61,6 @@
         {% endwith %}
         {% block content %}{% endblock %}
     </div>
-    <footer>
-        <div class="home">
-            <a href="/">Accueil</a>
-        </div>
-        <div class="nav">
-            <ul>
-                <li {% if page == "config" %}class="active"{% endif %}>
-                    <a href="{{ url_for('config.config_route') }}">Config</a>
-                </li>
-                <li {% if page == "debug" %}class="active"{% endif %}>
-                    <a href="{{ url_for('monitoring.monitoring_route') }}">Debug</a>
-                </li>
-            </ul>
-        </div>
-        <div class="help">
-            <a href="https://github.com/tartopum/atelier/blob/master/docs/manuel.md" title="Aide" target="_blank">
-                <img src="{{ url_for('static', filename='img/help.png') }}" alt="Aide" />
-            </a>
-        </div>
-    </footer>
     {% block js %}{% endblock %}
 </body>
 </html>

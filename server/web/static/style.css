@@ -112,10 +112,12 @@ header .logo {
 .nav ul {
     margin: 0;
     padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: end;
 }
 
 .nav ul li {
-    display: inline-block;
     list-style-type: none;
     padding: 0;
     margin: 0;
@@ -150,15 +152,6 @@ footer .help {
 @media (max-width: 500px) {
     header, footer {
         padding: 10px 20px;
-    }
-    header .nav li,
-    footer .nav li {
-        display: block;
-    }
-    header .nav li:not(:last-child),
-    footer .nav li:not(:last-child) {
-        margin: 0;
-        margin-bottom: 20px;
     }
 }
 
@@ -585,4 +578,15 @@ footer .help {
     padding: 3px;
     cursor: pointer;
     margin-top: 5px;
+}
+
+@media (max-width: 700px) {
+  .nav ul {
+    display: block;
+  }
+
+  .nav ul li {
+    margin-right: 0 !important;
+    margin-bottom: 10px;
+  }
 }
