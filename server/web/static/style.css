@@ -143,18 +143,6 @@ footer .help {
     margin-left: 30px;
 }
 
-@media (max-width: 260px) {
-    header .logo {
-        display: none;
-    }
-}
-
-@media (max-width: 500px) {
-    header, footer {
-        padding: 10px 20px;
-    }
-}
-
 .flashes {
   padding: 0;
   margin-bottom: 50px;
@@ -580,7 +568,11 @@ footer .help {
     margin-top: 5px;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 600px) {
+  header, footer {
+      padding: 10px 20px;
+  }
+
   .nav ul {
     display: block;
   }
@@ -589,4 +581,10 @@ footer .help {
     margin-right: 0 !important;
     margin-bottom: 10px;
   }
+}
+
+@media (max-width: 260px) {
+    header .logo {
+        display: none;
+    }
 }
