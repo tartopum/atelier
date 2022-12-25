@@ -43,6 +43,12 @@ STATE_ERRORS = (
     _StateAlert(
         "tank", "tank", "is_overpressured", 1, "Le système est en surpression."
     ),
+    _StateAlert(
+        "tank", "tank", "pump_in_activated", 0, "La pompe du puits est désactivée."
+    ),
+    _StateAlert(
+        "tank", "tank", "pump_out_activated", 0, "La pompe du surpresseur est désactivée."
+    ),
     _StateAlert("tank", "tank", "manual_mode", 1, "La cuve est en mode manuel."),
 )
 

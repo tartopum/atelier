@@ -26,7 +26,7 @@
   "tank": {
     "manual_mode": 0,
     "pump_in": 1,
-    "pump_in_activated": 1,
+    "pump_in_activated": 0,
     "pump_in_running_duration": 180,
     "pump_out": 0,
     "pump_out_activated": 1,
