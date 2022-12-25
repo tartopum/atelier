@@ -84,8 +84,8 @@ def home_route():
         "home.html",
         no_alerts=(len(past_alerts) < 1),
         alerts=grouped_alerts,
-        errors=map(parse_alert, alerts.get_errors(states)),
-        warnings=map(parse_alert, alerts.get_warnings(states)),
+        errors=list(map(parse_alert, alerts.get_errors(states))),
+        warnings=list(map(parse_alert, alerts.get_warnings(states))),
     )
 
 

@@ -8,8 +8,6 @@
       <img src="{{ url_for('static', filename='img/alert.png') }}" alt="Alerte" />
       Alertes en cours
   </h2>
-{% else %}
-  <div>Aucune alerte en cours.</div>
 {% endif %}
 <div class="messages">
 {% for m, url_ in errors %}
@@ -28,7 +26,6 @@
 
 <div class="alerts">
     <h2>
-        <img src="{{ url_for('static', filename='img/alert.png') }}" alt="Alerte" />
         Alertes passées récentes
     </h2>
     {% if no_alerts %}
