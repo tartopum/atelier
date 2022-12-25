@@ -115,6 +115,7 @@ void Alarm::loop()
         }
         return;
     }
+    // Show red light
     digitalWrite(_pinListening, HIGH);
     digitalWrite(_pinNotListening, LOW);
 
@@ -152,6 +153,7 @@ void Alarm::_httpRouteGet(WebServer &server)
     server.httpSuccess("application/json");
     server << "{ ";
     server << "\"listen\": " << (_state != DISABLED) << ", ";
+    server << "\"starting\": " << (_state == STARTING) << ", ";
     server << "\"breach\": " << breachDetected() << ", ";
     server << "\"delay_before_alert\": " << delayBeforeAlert << ", ";
     server << "\"delay_before_listening\": " << delayBeforeListening << ", ";
