@@ -11,6 +11,10 @@ h1, h2, h3 {
     text-transform: uppercase;
 }
 
+summary {
+  cursor: pointer;
+}
+
 .switch-wrapper {
     font-family: Slabo, Helvetica, Arial, sans-serif;
     text-transform: uppercase;
@@ -167,6 +171,19 @@ footer .help {
     flex-grow: 1;
 }
 
+#content.home h2 {
+  text-align: left;
+  max-width: 500px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+#content.home h2 img {
+    margin-right: 10px;
+}
+
 #content.home .messages {
   margin: auto;
   margin-bottom: 40px;
@@ -202,20 +219,16 @@ footer .help {
   border-color: #ffecb5;
 }
 
-#content.home .alerts h2 img {
-    vertical-align: middle;
-    margin-right: 10px;
-}
-
-#content.home .alerts h3 {
-    margin: 0;
-    margin-top: 10px;
-}
-
 #content.home .alert-list {
     max-width: 500px;
     text-align: left;
     margin: auto;
+}
+
+#content.home .alert-list summary {
+    font-family: Slabo, Helvetica, Arial, sans-serif;
+    text-transform: uppercase;
+    margin-top: 10px;
 }
 
 #content.home .alert-list .day {
