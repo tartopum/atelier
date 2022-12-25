@@ -1,3 +1,4 @@
+import datetime as dt
 import itertools
 import json
 import logging
@@ -65,8 +66,19 @@ def after_request(response):
 @app.route("/")
 @arduino_get_route
 def home_route():
+    def alert_day_label(date):
+        delta_days = (dt.date.today() - date.date()).days
+        if delta_days == 0:
+            return "Aujourd'hui"
+        prefix = f"Il y a {delta_days} jour{'s' if delta_days > 1 else ''}"
+        date_str = date.strftime("%d/%m/%Y")
+        return f"{prefix} ({date_str})"
+
     past_alerts = db.list_alerts(n_days_ago=7)
-    grouped_alerts = itertools.groupby(past_alerts, lambda x: x[0].strftime("%A %d %B"))
+    grouped_alerts = itertools.groupby(
+        past_alerts,
+        lambda x: alert_day_label(x[0])
+    )
     states = arduino.read_states()
     return render_template(
         "home.html",
