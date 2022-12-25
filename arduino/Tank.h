@@ -58,6 +58,7 @@ class Tank
         bool isWellEmpty();
         bool canCleanFilter();
         bool pumpOutRunningForTooLong();
+        bool pumpOutRestartingTooQuickly();
         bool canPumpOutRun();
         bool isFillingCycleEmpty();
         bool isConsumptionMissing();
