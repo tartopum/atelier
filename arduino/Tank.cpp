@@ -39,6 +39,14 @@ Tank::Tank(
         MID_ALERT,
         120
     ),
+    _pumpOutRestartingTooQuicklyAlert(
+        "tank",
+        "La pompe du surpresseur a redémarré trop rapidement, peut-être la membrane est-elle dégonflée.",
+        sendAlert,
+        lightFatal,
+        MID_ALERT,
+        120
+    ),
     _filterInBlockedAlert(
         "tank",
         "Le filtre est encrassé.",
@@ -224,7 +232,8 @@ bool Tank::pumpOutRestartingTooQuickly()
     // commandant la pompe du surpresseur n'est pas fiable et peut mener
     // a des demarrages/arrets a frequence rapide de la pompe
     // Quand cela arrive, il faut une action manuelle pour regonfler la membrane
-    return isOn(_pinPumpOut) && (millis() - _lastTimePumpOutOff < minPumpOutStopDuration);
+    // On verifie _lastTimePumpOutOff > 0 sinon l'alerte est levee au demarrage de la controllino
+    return isOn(_pinPumpOut) && _lastTimePumpOutOff > 0 && (millis() - _lastTimePumpOutOff < minPumpOutStopDuration);
 }
 
 bool Tank::pumpOutRunningForTooLong()
@@ -327,6 +336,7 @@ void Tank::loop()
     _manualModeAlert.raise(_manualMode);
     _motorInBlockedAlert.raise(isMotorInBlocked());
     _motorOutBlockedAlert.raise(isMotorOutBlocked());
+    _pumpOutRestartingTooQuicklyAlert.raise(pumpOutRestartingTooQuickly());
     _filterInBlockedAlert.raise(isFilterInBlocked());
     _overpressureAlert.raise(isOverpressured());
     _pumpOutRunningForTooLongAlert.raise(pumpOutRunningForTooLong());

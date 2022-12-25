@@ -126,6 +126,7 @@ class Tank
 
         Alert _motorInBlockedAlert;
         Alert _motorOutBlockedAlert;
+        Alert _pumpOutRestartingTooQuicklyAlert;
         Alert _filterInBlockedAlert;
         Alert _overpressureAlert;
         Alert _urbanNetworkUsedAlert;
