@@ -5,10 +5,19 @@
 {% block content %}
 <div class="alarm row">
     <div id="alarme">
-    {% if alarm["listen"] %}
+    {% if alarm["starting"] %}
+        <h2>Alarme en pré-écoute</h2>
+        <a href="{{ url_for('workshop.activate_alarm_route', activated=0) }}" title="Alarme en pré-écoute. Cliquer pour désactiver.">
+            <img src="{{ url_for('static', filename='img/alarm_listen_on.png') }}" alt="Alarme en écoute. Cliquer pour désactiver." />
+        </a>
+    {% elif alarm["listen"] %}
         <h2>Alarme en écoute</h2>
         <a href="{{ url_for('workshop.activate_alarm_route', activated=0) }}" title="Alarme en écoute. Cliquer pour désactiver.">
-            <img src="{{ url_for('static', filename='img/alarm_listen_on.png') }}" alt="Alarme en écoute. Cliquer pour désactiver." />
+            {% if alarm["breach"] or alarm["listen"] and alarm["movement"] %}
+                <img src="{{ url_for('static', filename='img/alarm_breach.png') }}" alt="Alarme en écoute. Cliquer pour désactiver." />
+            {% else %}
+                <img src="{{ url_for('static', filename='img/alarm_listen_on.png') }}" alt="Alarme en écoute. Cliquer pour désactiver." />
+            {% endif %}
         </a>
     {% else %}
         <h2>Alarme désactivée</h2>

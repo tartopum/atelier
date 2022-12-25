@@ -1,7 +1,8 @@
 {
   "alarm": {
-    "listen": 0,
-    "movement": 1,
+    "listen": 1,
+    "starting": 0,
+    "movement": 0,
     "breach": 0,
     "delay_before_listening": 60000,
     "delay_before_alert": 4000
