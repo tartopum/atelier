@@ -304,6 +304,20 @@ footer .help {
   margin-top: 0;
 }
 
+#content.tank .stat-card {
+  border-radius: 5px;
+  padding: 10px 20px;
+  margin: 5px 50px;
+}
+
+#content.tank .stat-card .title {
+  margin-bottom: 10px;
+}
+
+#content.tank .stat-card .value {
+  font-size: 2.5rem;
+}
+
 #content.tank .stats {
     display: flex;
     padding-right: 20px;
@@ -593,6 +607,14 @@ footer .help {
   .nav ul li {
     margin-right: 0 !important;
     margin-bottom: 10px;
+  }
+
+  #content.tank .stat-card {
+    margin: 5px 10px;
+  }
+
+  #content.tank .stat-card .value {
+    font-size: 1.5rem;
   }
 }
 
