@@ -14,6 +14,7 @@
   <a href="{{ url_ }}" class="message error">
     <img src="{{ url_for('static', filename='img/error.png') }}" alt="Erreur : " />
     {{ m }}
+    <div style="flex-grow: 1; text-align: right; text-decoration: underline;">Afficher</div>
   </a>
 {% endfor %}
 {% for m, url_ in warnings %}
