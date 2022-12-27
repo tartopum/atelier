@@ -205,8 +205,8 @@ schema.add_int(
     "tank",
     "min_pump_out_stop_time",
     min=1,
-    max=60,
-    title="Durée minimale de pause de la pompe du surpresseur (min)",
+    max=3600,
+    title="Durée minimale de pause de la pompe du surpresseur (s)",
     description="Quand la membrane du surpresseur est détendue, le capteur de pression commandant la pompe du surpresseur n'est pas fiable et peut mener à des démarrages/arrêts à fréquence rapide de la pompe. Quand cela arrive, il faut une action manuelle pour regonfler la membrane.",
 )
 schema.add_int(
