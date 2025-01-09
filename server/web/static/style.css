@@ -319,7 +319,6 @@ footer .help {
 }
 
 #content.tank .stats {
-    display: flex;
     padding-right: 20px;
     margin-bottom: 60px;
     font-family: Slabo, Helvetica, Arial, sans-serif;

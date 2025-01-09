@@ -21,9 +21,9 @@ def tank_route():
     )
     return render_template(
         "tank.html",
-        average_well_production=mean(stats["y_well"]),
-        average_tank_consumption=mean(stats["y_tank"]),
-        average_city_consumption=mean(stats["y_city"]),
+        average_well_production=mean(stats["y_well"]) if stats["y_well"] else 0,
+        average_tank_consumption=mean(stats["y_tank"]) if stats["y_tank"] else 0,
+        average_city_consumption=mean(stats["y_city"]) if stats["y_city"] else 0,
         state=arduino.tank.read_state(),
         water_level=tank.water_level(),
     )

@@ -5,14 +5,14 @@
 {% block content %}
 {{ stats }}
 <div class="stats">
-    <div style="flex-grow: 1; display: flex; flex-wrap: wrap; justify-content: center;">
+    <div style="display: flex; flex-wrap: wrap; justify-content: center;">
         {% with title="Puits", value=average_well_production, color="#aec5e0" %}{% include './tank_stat_card.html' %}{% endwith %}
         {% with title="Cuve", value=average_tank_consumption, color="#e9e9e9" %}{% include './tank_stat_card.html' %}{% endwith %}
         {% with title="Ville", value=average_city_consumption, color="#ff6961" %}{% include './tank_stat_card.html' %}{% endwith %}
     </div>
-    <div>
-        <a href="{{ url_for('tank.stats_route') }}" title="Consulter les statistiques">
-            <img src="{{ url_for('static', filename='img/stats.png') }}" alt="Statistiques" style="max-width: 50px;" />
+    <div style="margin-top: 10px; font-size: 0.9rem;">
+        <a style="text-decoration: underline;" href="{{ url_for('tank.stats_route') }}" title="Consulter les statistiques">
+          Afficher les statistiques historiques
         </a>
     </div>
 </div>
