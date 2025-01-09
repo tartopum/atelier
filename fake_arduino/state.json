@@ -1,6 +1,6 @@
 {
   "alarm": {
-    "listen": 0,
+    "listen": 1,
     "starting": 0,
     "movement": 1,
     "breach": 0,
@@ -26,7 +26,7 @@
   "tank": {
     "manual_mode": 0,
     "pump_in": 1,
-    "pump_in_activated": 0,
+    "pump_in_activated": 1,
     "pump_in_running_duration": 180,
     "pump_out": 0,
     "pump_out_activated": 1,
@@ -56,7 +56,7 @@
     "pump_in_start_duration": 10000,
     "min_flow_in": 14,
     "max_pump_out_running_time": 600000,
-    "min_pump_out_stop_time": 120000,
+    "min_pump_out_stop_time": 2000,
     "max_duration_without_flow_out": 3600000,
     "flow_in": 10,
     "flow_out": 0

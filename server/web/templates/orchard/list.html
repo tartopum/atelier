@@ -1,0 +1,20 @@
+{% set page = 'orchard_list' %}
+{% extends "layout.html" %}
+{% block title %}Verger{% endblock %}
+
+{% block content %}
+  <h1>Cartes de préconisation vergers</h1>
+  <form method="POST" action="">
+    {{ form_create.hidden_tag() }}
+    {{ form_create.name.label }} {{ form_create.name(size=20) }}
+    <input type="submit" value="Créer">
+  </form>
+
+  <ul>
+    {% for orchard in orchards %}
+        <li>
+          <a href="{{ url_for('orchard.detail_route', id=orchard.id) }}">{{ orchard.name }}</a>
+        </li>
+    {% endfor %}
+  </ul>
+{% endblock %}

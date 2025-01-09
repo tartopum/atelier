@@ -4,6 +4,7 @@ import json
 import logging
 
 from flask import Flask, render_template, request, url_for
+from flask_wtf import CSRFProtect
 
 from . import routes
 from .auth import auth
@@ -23,8 +24,14 @@ app.logger = logger
 app.register_blueprint(routes.config.blueprint, url_prefix="/config")
 app.register_blueprint(routes.fence.blueprint, url_prefix="/cloture")
 app.register_blueprint(routes.monitoring.blueprint, url_prefix="/debug")
+app.register_blueprint(routes.orchard.blueprint, url_prefix="/verger")
 app.register_blueprint(routes.tank.blueprint, url_prefix="/eau")
 app.register_blueprint(routes.workshop.blueprint, url_prefix="/atelier")
+
+csrf = CSRFProtect(app)
+
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + db.db_path()
+db.db.init_app(app)
 
 
 ALERT_NAME_TO_URL = {

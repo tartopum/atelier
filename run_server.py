@@ -125,6 +125,8 @@ def main():
         remove_logging_handler(scheduler.logger, "console")
 
     db.create_tables()
+    with web.app.app_context():
+        db.db.create_all()
 
     try:
         arduino.configure()

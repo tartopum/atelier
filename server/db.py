@@ -1,9 +1,14 @@
+import os
 from contextlib import contextmanager
 import datetime
-import os
+import json
 import sqlite3
 import subprocess as sp
 from threading import Lock
+
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Column, Integer, String, JSON
+from sqlalchemy.orm import DeclarativeBase
 
 from . import config
 
@@ -200,3 +205,18 @@ def read_tank_power_consumption(start, end=None):
             pump_out.append(row[TANK_PUMP_OUT_COL])
             city.append(row[TANK_CITY_COL])
     return dates, pump_in, pump_out, city
+
+
+class Base(DeclarativeBase):
+  pass
+
+
+db = SQLAlchemy(model_class=Base)
+
+
+class Orchard(db.Model):
+    __tablename__ = "orchard"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+    structure = Column(JSON, nullable=True)

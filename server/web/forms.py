@@ -1,5 +1,6 @@
+from flask_wtf import FlaskForm
 import jsonschema
-from wtforms import Form, FloatField, IntegerField, StringField
+from wtforms import Form, FloatField, IntegerField, StringField, SubmitField
 from wtforms.validators import InputRequired, ValidationError
 
 from .. import config
@@ -64,3 +65,7 @@ class ConfigForms(dict):
             for field in form:
                 config.set(section, field.short_name, field.data)
         config.validate()
+
+
+class OrchardCreateForm(FlaskForm):
+    name = StringField("Nom du verger")
