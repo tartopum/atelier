@@ -21,7 +21,7 @@
         <div class="logo">
             <img src="{{ url_for('static', filename='img/favicon.ico') }}" alt="Vache" />
         </div>
-        <div class="home{% if page == "home" %} active{% endif %}">
+        <div class="home">
             <a href="/">Accueil</a>
         </div>
         <div class="nav">
@@ -32,7 +32,7 @@
                 <li {% if page == "workshop" %}class="active"{% endif %}>
                     <a href="{{ url_for('workshop.workshop_route') }}">Atelier</a>
                 </li>
-                <li {% if page == "tank" or page == "tank_stats" %}class="active"{% endif %}>
+                <li {% if page.startswith("tank") %}class="active"{% endif %}>
                     <a href="{{ url_for('tank.tank_route') }}">Eau</a>
                 </li>
                 <li {% if page.startswith("orchard") %}class="active"{% endif %}>
