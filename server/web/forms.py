@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
 import jsonschema
-from wtforms import Form, FloatField, IntegerField, StringField, SubmitField
+from wtforms import Form, FieldList, FormField, FileField, FloatField, IntegerField, StringField, SubmitField
 from wtforms.validators import InputRequired, ValidationError
+from wtforms.widgets import NumberInput, TextArea
 
 from .. import config
 
@@ -69,3 +70,35 @@ class ConfigForms(dict):
 
 class OrchardCreateForm(FlaskForm):
     name = StringField("Nom du verger")
+
+
+class OrchardRowForm(FlaskForm):
+    lat_start = FloatField(validators=[InputRequired()])
+    lng_start = FloatField(validators=[InputRequired()])
+    lat_stop = FloatField(validators=[InputRequired()])
+    lng_stop = FloatField(validators=[InputRequired()])
+    n_trees = IntegerField(validators=[InputRequired()])
+
+
+class OrchardUpdateForm(FlaskForm):
+    name = StringField("Nom")
+    rows = FieldList(FormField(OrchardRowForm), min_entries=0)
+
+
+class OrchardImportPoints(FlaskForm):
+    file = FileField("Excel de jalons", validators=[InputRequired()])
+
+
+class OrchardOverrideFromPoints(FlaskForm):
+    mapping = StringField("", widget=TextArea(), validators=[InputRequired()])
+    distance_from_trees = FloatField(
+        "Distance entre la mesure et le tronc (m)",
+        validators=[InputRequired()],
+        widget=NumberInput(step=0.1),
+    )
+    distance_between_trees = FloatField(
+        "Distance entre deux arbres du même rang (m)",
+        validators=[InputRequired()],
+        default=2,
+        widget=NumberInput(step=0.1),
+    )

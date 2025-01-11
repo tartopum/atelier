@@ -13,7 +13,7 @@
   <ul>
     {% for orchard in orchards %}
         <li>
-          <a href="{{ url_for('orchard.detail_route', id=orchard.id) }}">{{ orchard.name }}</a>
+          <a href="{{ url_for('orchard.detail_route', pk=orchard.id) }}">{{ orchard.name }}</a>
         </li>
     {% endfor %}
   </ul>

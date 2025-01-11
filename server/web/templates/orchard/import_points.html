@@ -1,0 +1,105 @@
+{% set page = 'orchard_import_points' %}
+{% extends "layout.html" %}
+{% block title %}Verger {{ orchard.name }}{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+{% endblock %}
+
+{% block content %}
+  <h1>{{ orchard.name }} : importer les jalons</h1>
+
+  <form method="POST" action="">
+    {{ form_save.hidden_tag() }}
+    {{ form_save.distance_between_trees.label }} {{ form_save.distance_between_trees }}
+    {{ form_save.distance_from_trees.label }} {{ form_save.distance_from_trees }}
+    {{ form_save.mapping }}
+    <input type="submit" value="Enregistrer" name="_save">
+  </form>
+
+  <div id="map" style="width: 800px; height: 600px;"></div>
+{% endblock %}
+
+{% block js %}
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+  <script>
+    (function() {
+      const points = {{ latlngs }};
+      const pointToMarker = {};
+      let mappingLines = [];
+      const mapping = {};
+      let currentPoint = null;
+
+      const updateInput = () => document.getElementById('mapping').value = JSON.stringify(mapping, null, 2);
+      const removeMapping = (key) => {
+        mapping[key] = null;
+        for (let k in mapping) {
+          if (mapping[k] === key) {
+            mapping[k] = null;
+          }
+        }
+      };
+      const render = () => {
+        mappingLines.map((x) => x.remove());
+        mappingLines = [];
+        Object.entries(pointToMarker).map(([key, marker]) => {
+          marker.setStyle({
+            fillColor: key === currentPoint ? 'blue' : 'white',
+          });
+          if (mapping[key]) {
+            marker.setStyle({
+              fillColor: 'yellow',
+            });
+            mappingLines.push(L.polyline(
+              [marker.getLatLng(), pointToMarker[mapping[key]].getLatLng()],
+              {
+                fill: false,
+                color: 'yellow',
+                weight: 2,
+              },
+            ).addTo(map));
+          }
+        });
+      };
+
+      const map = L.map('map').setView(points[0], 19);
+      L.tileLayer('https://data.geopf.fr/wmts?service=WMTS&request=GetTile&version=1.0.0&tilematrixset=PM&tilematrix={z}&tilecol={x}&tilerow={y}&layer=ORTHOIMAGERY.ORTHOPHOTOS&format=image/jpeg&style=normal', {
+        maxZoom: 19,
+      }).addTo(map);
+
+      points.map((p) => {
+        const key = p.join(',');
+        mapping[key] = null;
+
+        pointToMarker[key] = L.circleMarker(p, {
+          radius: 5,
+          stroke: false,
+          fillColor: 'white',
+          fillOpacity: 1,
+        }).addTo(map);
+
+        pointToMarker[key].on('click', (e) => {
+          if (currentPoint === null) {
+            currentPoint = key;
+          } else if (key === currentPoint) {
+            currentPoint = null;
+          } else {
+            removeMapping(currentPoint);
+            removeMapping(key);
+            mapping[currentPoint] = key;
+            mapping[key] = currentPoint;
+            currentPoint = null;
+            updateInput();
+          }
+          render();
+        });
+      });
+
+      updateInput();
+    })();
+  </script>
+{% endblock %}

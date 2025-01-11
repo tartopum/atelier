@@ -4,4 +4,28 @@
 
 {% block content %}
   <h1>Verger {{ orchard.name }}</h1>
+
+  <form method="POST" action="">
+    {{ form.hidden_tag() }}
+    {{ form.name.label }} {{ form.name(size=20) }}
+    {{ orchard.structure }}
+    {% for row in form.rows %}
+      <fieldset>
+        {{ row.lat_start.label }} {{ row.lat_start }}
+        {{ row.lng_start.label }} {{ row.lng_start }}
+        {{ row.lat_stop.label }} {{ row.lat_stop }}
+        {{ row.lng_stop.label }} {{ row.lng_stop }}
+      </fieldset>
+    {% endfor %}
+    <input type="submit" value="Modifier" name="_update">
+  </form>
+
+  <form method="POST" action="{{ url_for('orchard.import_points_route', pk=orchard.id) }}" enctype="multipart/form-data" style="margin-top: 20px;">
+    {{ form_import_points.hidden_tag() }}
+    <div>
+      {{ form_import_points.file.label }}
+      {{ form_import_points.file }}
+    </div>
+    <input type="submit" value="Importer les jalons" name="_import_points">
+  </form>
 {% endblock %}
