@@ -11,6 +11,10 @@ h1, h2, h3 {
     text-transform: uppercase;
 }
 
+h1 a {
+  color: currentcolor;
+}
+
 summary {
   cursor: pointer;
 }

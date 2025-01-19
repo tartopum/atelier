@@ -28,12 +28,16 @@
   {% if rows_json %}
     <div style="display: flex; flex-wrap: wrap; gap: 25px; max-width: 1200px; margin: auto; margin-top: 30px;">
       <div id="map" style="flex-grow: 1; max-width: 800px; height: 600px;"></div>
-      <div>
+      <div style="text-align: left;">
         <h2>Cartes de préconisation</h2>
-        <a href="{{ url_for('orchard.recommendation_map_create_route', pk=orchard.id) }}">Ajouter</a>
+        <a href="{{ url_for('orchard.recommendation_map_create_route', pk=orchard.id) }}">+ Ajouter</a>
         <ul>
           {% for map in orchard.recommendation_maps %}
-            <li>{{ map.title }} ({{ map.created_at }})</li>
+            <li>
+              <a href="{{ url_for('orchard.recommendation_map_route', orchard_id=orchard.id, pk=map.id) }}">
+                {{ map }}
+              </a>
+            </li>
           {% endfor %}
         </ul>
       </div>

@@ -228,6 +228,13 @@ class Orchard(db.Model):
 
     recommendation_maps = relationship("RecommendationMap", back_populates="orchard", cascade="delete", order_by="desc(RecommendationMap.created_at)")
 
+    def __str__(self):
+        return self.name
+
+    @property
+    def rows_json(self):
+        return json.dumps(self.rows) if self.rows else None
+
 
 class RecommendationMap(db.Model):
     __tablename__ = "recommendation_map"
@@ -243,13 +250,16 @@ class RecommendationMap(db.Model):
     orchard = relationship("Orchard", back_populates="recommendation_maps", cascade="delete")
 
     COLORS = [
-        "green",
-        "red",
-        "blue",
-        "yellow",
-        "gray",
+        "#C1CFA1",
+        "#BC7C7C",
+        "#CDC1FF",
+        "#E3F4F4",
+        "#000000",
     ]
 
+    def __str__(self):
+        return f"{self.date_str} {self.title}"
+
     @property
-    def label(self):
-        return self.title or self.created_at.strftime("%d/%m/%Y %H:%M")
+    def date_str(self):
+        return self.created_at.strftime("%d/%m/%Y")

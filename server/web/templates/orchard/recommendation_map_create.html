@@ -3,15 +3,17 @@
 {% block title %}Verger {{ orchard.name }}{% endblock %}
 
 {% block content %}
-  <h1>Verger {{ orchard.name }} : créer une carte de préconisation</h1>
+  <h1><a href="{{ url_for('orchard.detail_route', pk=orchard.id) }}">Verger {{ orchard.name }}</a> : créer une carte de préconisation</h1>
 
-  <form method="POST" action="" style="max-width: 800px; height: 600px; margin: auto;">
+  <form method="POST" action="" style="max-width: 200px; margin: auto;">
     {{ form.hidden_tag() }}
-    {% for field in form %}
-      {% if field.widget.input_type != "hidden" %}
-        <div>{{ field.label }} {{ field }}</div>
-      {% endif %}
-    {% endfor %}
+    <div style="display: grid; grid-template-columns: 80px 100px; gap: 10px; text-align: left; margin-bottom: 20px;">
+      {% for field in form %}
+        {% if field.widget.input_type != "hidden" %}
+          {{ field.label }} {{ field }}
+        {% endif %}
+      {% endfor %}
+    </div>
     <input type="submit" value="Créer">
   </form>
 {% endblock %}

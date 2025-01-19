@@ -2,16 +2,56 @@
 {% extends "layout.html" %}
 {% block title %}Verger {{ orchard.name }}{% endblock %}
 
-{% block content %}
-  <h1>Verger {{ orchard.name }} : carte de préconisation {{ map_.label }}</h1>
+{% block css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+{% endblock %}
 
-  <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-    <p style="margin: 0;">Options :</p>
+{% block content %}
+  <h1><a href="{{ url_for('orchard.detail_route', pk=orchard.id) }}">Verger {{ orchard.name }}</a> : carte de préconisation {{ map_ }}</h1>
+
+  <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+    <div style="display: flex; gap: 5px; align-items: center;">
+      <div style="width: 10px; height: 10px; border-radius: 100%; background: white; border: 1px solid #000;"></div>
+      Sans observation
+    </div>
     {% for choice, conf in map_.choices.items() %}
-      <div style="display: flex; gap: 5px;">
-        <div style="width: 15px; height: 15px; background: {{ conf.color }};"></div>
+      <div style="display: flex; gap: 5px; align-items: center;">
+        <div style="width: 10px; height: 10px; border-radius: 100%; background: {{ conf.color }};"></div>
         {{ choice }}
       </div>
     {% endfor %}
   </div>
+
+  <div id="map" style="max-width: 800px; height: 600px; margin: auto; margin-top: 10px;"></div>
+{% endblock %}
+
+{% block js %}
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+  <script>
+    (function() {
+      const rows = {{ rows_json|safe }};
+      const observations = {{ observations_json|safe }};
+      const choices = {{ choices_json|safe }};
+      const map = L.map('map').setView([{{ orchard.lat }}, {{ orchard.lng }}], 18);
+      L.tileLayer('https://data.geopf.fr/wmts?service=WMTS&request=GetTile&version=1.0.0&tilematrixset=PM&tilematrix={z}&tilecol={x}&tilerow={y}&layer=ORTHOIMAGERY.ORTHOPHOTOS&format=image/jpeg&style=normal', {
+        maxZoom: 19,
+      }).addTo(map);
+
+      rows.map((row, i) => {
+        row.trees.map((p, j) => {
+          const obs = observations[i][j];
+          L.circleMarker(p, {
+            radius: 3,
+            fillOpacity: 1,
+            stroke: false,
+            fillColor: obs ? choices[obs].color : 'white',
+          }).bindPopup(obs || 'Sans observation').addTo(map);
+        });
+      });
+    })();
+  </script>
 {% endblock %}

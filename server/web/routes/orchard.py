@@ -47,7 +47,7 @@ def detail_route(pk):
     return render_template(
         "orchard/detail.html",
         orchard=orchard,
-        rows_json=json.dumps(orchard.rows) if orchard.rows else None,
+        rows_json=orchard.rows_json,
         form=form,
         form_import_points=forms.OrchardImportPoints(),
     )
@@ -185,4 +185,7 @@ def recommendation_map_route(orchard_id, pk):
         "orchard/recommendation_map.html",
         orchard=map_.orchard,
         map_=map_,
+        rows_json=map_.orchard.rows_json,
+        observations_json=json.dumps(map_.observations),
+        choices_json=json.dumps(map_.choices),
     )
