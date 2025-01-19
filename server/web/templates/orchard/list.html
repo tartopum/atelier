@@ -4,13 +4,13 @@
 
 {% block content %}
   <h1>Cartes de préconisation vergers</h1>
-  <form method="POST" action="">
+  <form method="POST" action="" style="text-align: left; max-width: 500px; margin: auto;">
     {{ form_create.hidden_tag() }}
     {{ form_create.name.label }} {{ form_create.name(size=20) }}
     <input type="submit" value="Créer">
   </form>
 
-  <ul>
+  <ul style="font-size: 1.5rem; max-width: 500px; margin: auto; margin-top: 25px; text-align: left;">
     {% for orchard in orchards %}
         <li>
           <a href="{{ url_for('orchard.detail_route', pk=orchard.id) }}">{{ orchard.name }}</a>

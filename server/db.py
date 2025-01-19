@@ -7,7 +7,7 @@ import subprocess as sp
 from threading import Lock
 
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, Integer, String, JSON
+from sqlalchemy import Column, Float, Integer, String, JSON
 from sqlalchemy.orm import DeclarativeBase
 
 from . import config
@@ -219,4 +219,9 @@ class Orchard(db.Model):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=False)
-    structure = Column(JSON, nullable=True)
+    lat = Column(Float, nullable=True)
+    lng = Column(Float, nullable=True)
+    # Un rang est un alignement d'arbres espacés de façon équidistante
+    # Si au sein d'un même rang les arbres changent d'espacement, il faudra créer deux rangs d'affilée
+    # Voir web.routes.orchard.import_points_route() pour la structure
+    rows = Column(JSON, default=list)

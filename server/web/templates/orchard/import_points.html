@@ -9,17 +9,23 @@
 {% endblock %}
 
 {% block content %}
-  <h1>{{ orchard.name }} : importer les jalons</h1>
+  <h1>Verger {{ orchard.name }} : importer les jalons</h1>
 
-  <form method="POST" action="">
+  <form method="POST" action="" style="max-width: 800px; height: 600px; margin: auto;">
     {{ form_save.hidden_tag() }}
-    {{ form_save.distance_between_trees.label }} {{ form_save.distance_between_trees }}
-    {{ form_save.distance_from_trees.label }} {{ form_save.distance_from_trees }}
-    {{ form_save.mapping }}
+    <div style="display: flex; gap: 15px; text-align: left; margin-bottom: 20px;">
+      <div>
+        {{ form_save.distance_between_trees.label }}<br />{{ form_save.distance_between_trees }}
+      </div>
+      <div>
+        {{ form_save.distance_from_trees.label }}<br />{{ form_save.distance_from_trees }}
+      </div>
+    </div>
+    <p style="text-align: left; margin-bottom: 5px;">Associer les extrémités de chaque rang en cliquant sur les jalons :</p>
+    <div id="map" style="height: 600px; margin-bottom: 15px;"></div>
     <input type="submit" value="Enregistrer" name="_save">
   </form>
 
-  <div id="map" style="width: 800px; height: 600px;"></div>
 {% endblock %}
 
 {% block js %}
@@ -36,12 +42,10 @@
 
       const updateInput = () => document.getElementById('mapping').value = JSON.stringify(mapping, null, 2);
       const removeMapping = (key) => {
-        mapping[key] = null;
-        for (let k in mapping) {
-          if (mapping[k] === key) {
-            mapping[k] = null;
-          }
+        if (mapping[key]) {
+          mapping[mapping[key]] = null;
         }
+        mapping[key] = null;
       };
       const render = () => {
         mappingLines.map((x) => x.remove());
@@ -66,7 +70,7 @@
         });
       };
 
-      const map = L.map('map').setView(points[0], 19);
+      const map = L.map('map').setView(points[0], 18);
       L.tileLayer('https://data.geopf.fr/wmts?service=WMTS&request=GetTile&version=1.0.0&tilematrixset=PM&tilematrix={z}&tilecol={x}&tilerow={y}&layer=ORTHOIMAGERY.ORTHOPHOTOS&format=image/jpeg&style=normal', {
         maxZoom: 19,
       }).addTo(map);

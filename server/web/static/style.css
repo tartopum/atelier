@@ -584,10 +584,13 @@ footer {
     cursor: help;
 }
 
-#content.config input[type="submit"] {
-    padding: 3px;
+#content input[type="submit"] {
+    padding: 3px 5px;
     cursor: pointer;
     margin-top: 5px;
+    background: white;
+    border: 1px solid #000;
+    border-radius: 5px;
 }
 
 @media (max-width: 600px) {

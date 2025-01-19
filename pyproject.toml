@@ -17,6 +17,8 @@ psutil = "^5.8.0"
 flask-wtf = "^1.2.2"
 flask-sqlalchemy = "^3.1.1"
 openpyxl = "^3.1.5"
+haversine = "^2.9.0"
+shapely = "^2.0.6"
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b1"
