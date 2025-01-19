@@ -26,7 +26,17 @@
   </form>
 
   {% if rows_json %}
-    <div id="map" style="margin: auto; margin-top: 30px; max-width: 800px; height: 600px;"></div>
+    <div style="display: flex; flex-wrap: wrap; gap: 25px; max-width: 1200px; margin: auto; margin-top: 30px;">
+      <div id="map" style="flex-grow: 1; max-width: 800px; height: 600px;"></div>
+      <div>
+        <h2>Cartes de préconisation</h2>
+        <ul>
+          {% for map in orchard.recommendation_maps %}
+            <li>{{ map.title }} ({{ map.created_at }})</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div> 
   {% endif %}
 
   <form method="POST" action="{{ url_for('orchard.import_points_route', pk=orchard.id) }}" enctype="multipart/form-data" style="margin-top: 40px;">

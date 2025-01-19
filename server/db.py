@@ -7,8 +7,8 @@ import subprocess as sp
 from threading import Lock
 
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, Float, Integer, String, JSON
-from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy import func, Column, DateTime, Float, ForeignKey, Integer, String, JSON
+from sqlalchemy.orm import DeclarativeBase, relationship
 
 from . import config
 
@@ -225,3 +225,19 @@ class Orchard(db.Model):
     # Si au sein d'un même rang les arbres changent d'espacement, il faudra créer deux rangs d'affilée
     # Voir web.routes.orchard.import_points_route() pour la structure
     rows = Column(JSON, default=list)
+
+    recommendation_maps = relationship("RecommendationMap", back_populates="orchard", cascade="delete", order_by="desc(RecommendationMap.created_at)")
+
+
+class RecommendationMap(db.Model):
+    __tablename__ = "recommendation_map"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    title = Column(String, nullable=False)
+    created_at = Column(DateTime, default=func.now())
+    updated_at = Column(DateTime, nullable=True)
+    orchard_id = Column(Integer, ForeignKey("orchard.id"))
+    choices = Column(JSON, default=list)
+    observations = Column(JSON, default=list)
+
+    orchard = relationship("Orchard", back_populates="recommendation_maps", cascade="delete")
