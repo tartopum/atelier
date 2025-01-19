@@ -30,6 +30,7 @@
       <div id="map" style="flex-grow: 1; max-width: 800px; height: 600px;"></div>
       <div>
         <h2>Cartes de préconisation</h2>
+        <a href="{{ url_for('orchard.recommendation_map_create_route', pk=orchard.id) }}">Ajouter</a>
         <ul>
           {% for map in orchard.recommendation_maps %}
             <li>{{ map.title }} ({{ map.created_at }})</li>

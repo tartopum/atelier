@@ -102,3 +102,18 @@ class OrchardOverrideFromPoints(FlaskForm):
         default=2,
         widget=NumberInput(step=0.1),
     )
+
+
+class RecommendationMapCreateForm(FlaskForm):
+    title = StringField("Nom :")
+    choice1 = StringField(
+        "Option 1 * :",
+        validators=[InputRequired()],
+    )
+    choice2 = StringField(
+        "Option 2 * :",
+        validators=[InputRequired()],
+    )
+    choice3 = StringField("Option 3 :")
+    choice4 = StringField("Option 4 :")
+    choice5 = StringField("Option 5 :")

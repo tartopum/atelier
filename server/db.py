@@ -237,7 +237,19 @@ class RecommendationMap(db.Model):
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, nullable=True)
     orchard_id = Column(Integer, ForeignKey("orchard.id"))
-    choices = Column(JSON, default=list)
+    choices = Column(JSON, default=dict)
     observations = Column(JSON, default=list)
 
     orchard = relationship("Orchard", back_populates="recommendation_maps", cascade="delete")
+
+    COLORS = [
+        "green",
+        "red",
+        "blue",
+        "yellow",
+        "gray",
+    ]
+
+    @property
+    def label(self):
+        return self.title or self.created_at.strftime("%d/%m/%Y %H:%M")

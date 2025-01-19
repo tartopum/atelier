@@ -44,18 +44,6 @@ def detail_route(pk):
         db.db.session.commit()
         return redirect(url_for("orchard.detail_route", pk=pk))
 
-    """
-    form_override_excel = forms.OrchardOverrideFromExcel(prefix="excel")
-    if "_override_excel" in request.form and form_override_excel.validate_on_submit():
-        orchard.override_from_excel(
-            f=io.BytesIO(request.files["excel-file"].read()),
-            distance_between_trees=form_override_excel.distance_between_trees.data,
-            distance_from_trees=form_override_excel.distance_from_trees.data,
-        )
-        db.db.session.commit()
-        return redirect(url_for("orchard.detail_route", pk=pk))
-    """
-
     return render_template(
         "orchard/detail.html",
         orchard=orchard,
@@ -155,4 +143,46 @@ def import_points_route(pk):
         orchard=orchard,
         form_save=form_save,
         latlngs=latlngs,
+    )
+
+
+@blueprint.route("/<int:pk>/carte-preco/creer/", methods=["GET", "POST"])
+def recommendation_map_create_route(pk):
+    orchard = db.db.get_or_404(db.Orchard, pk)
+    form = forms.RecommendationMapCreateForm()
+    if form.validate_on_submit():
+        choices = [
+            getattr(form, f"choice{i+1}").data
+            for i in range(5)
+            if getattr(form, f"choice{i+1}").data
+        ]
+        map_ = db.RecommendationMap(
+            orchard_id=orchard.id,
+            title=form.title.data,
+            choices={
+                c: {"color": db.RecommendationMap.COLORS[i]} for i, c in enumerate(choices)
+            },
+            observations=[
+                [None for tree in row["trees"]]
+                for row in orchard.rows
+            ],
+        )
+        db.db.session.add(map_)
+        db.db.session.commit()
+        return redirect(url_for("orchard.recommendation_map_route", orchard_id=orchard.id, pk=map_.id))
+
+    return render_template(
+        "orchard/recommendation_map_create.html",
+        orchard=orchard,
+        form=form,
+    )
+
+
+@blueprint.route("/<int:orchard_id>/carte-preco/<int:pk>/", methods=["GET", "POST"])
+def recommendation_map_route(orchard_id, pk):
+    map_ = db.db.get_or_404(db.RecommendationMap, pk)
+    return render_template(
+        "orchard/recommendation_map.html",
+        orchard=map_.orchard,
+        map_=map_,
     )

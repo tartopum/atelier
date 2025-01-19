@@ -1,0 +1,17 @@
+{% set page = 'orchard_import_points' %}
+{% extends "layout.html" %}
+{% block title %}Verger {{ orchard.name }}{% endblock %}
+
+{% block content %}
+  <h1>Verger {{ orchard.name }} : carte de préconisation {{ map_.label }}</h1>
+
+  <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+    <p style="margin: 0;">Options :</p>
+    {% for choice, conf in map_.choices.items() %}
+      <div style="display: flex; gap: 5px;">
+        <div style="width: 15px; height: 15px; background: {{ conf.color }};"></div>
+        {{ choice }}
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}

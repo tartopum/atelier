@@ -1,0 +1,17 @@
+{% set page = 'orchard_import_points' %}
+{% extends "layout.html" %}
+{% block title %}Verger {{ orchard.name }}{% endblock %}
+
+{% block content %}
+  <h1>Verger {{ orchard.name }} : créer une carte de préconisation</h1>
+
+  <form method="POST" action="" style="max-width: 800px; height: 600px; margin: auto;">
+    {{ form.hidden_tag() }}
+    {% for field in form %}
+      {% if field.widget.input_type != "hidden" %}
+        <div>{{ field.label }} {{ field }}</div>
+      {% endif %}
+    {% endfor %}
+    <input type="submit" value="Créer">
+  </form>
+{% endblock %}
