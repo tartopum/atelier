@@ -33,6 +33,7 @@
      crossorigin=""></script>
   <script>
     (function() {
+      let geolocMarker;
       const rows = {{ rows_json|safe }};
       const observations = {{ observations_json|safe }};
       const choices = {{ choices_json|safe }};
@@ -52,6 +53,17 @@
           }).bindPopup(obs || 'Sans observation').addTo(map);
         });
       });
+
+      if (navigator.geolocation) {
+        setInterval(() => navigator.geolocation.getCurrentPosition((position) => {
+          const latlng = [position.coords.latitude, position.coords.longitude];
+          if (!geolocMarker) {
+            geolocMarker = L.marker(latlng).addTo(map);
+          } else {
+            geolocMarker.setLatLng(latlng);
+          }
+        }), 2000);
+      }
     })();
   </script>
 {% endblock %}
