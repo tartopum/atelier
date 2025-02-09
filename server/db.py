@@ -219,11 +219,21 @@ class Orchard(db.Model):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=False)
+    start_side_name = Column(String())
+    end_side_name = Column(String())
     lat = Column(Float, nullable=True)
     lng = Column(Float, nullable=True)
     # Un rang est un alignement d'arbres espacés de façon équidistante
     # Si au sein d'un même rang les arbres changent d'espacement, il faudra créer deux rangs d'affilée
-    # Voir web.routes.orchard.import_points_route() pour la structure
+    #
+    # [
+    #   {
+    #     "name": "",
+    #     "n_trees": n,
+    #     "start": [lat, lng],
+    #     "end": [lat, lng],
+    #   }
+    # ]
     rows = Column(JSON, default=list)
 
     recommendation_maps = relationship("RecommendationMap", back_populates="orchard", cascade="delete", order_by="desc(RecommendationMap.created_at)")
@@ -244,7 +254,17 @@ class RecommendationMap(db.Model):
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, nullable=True)
     orchard_id = Column(Integer, ForeignKey("orchard.id"))
+    # {
+    #   label: {
+    #     "color": "",
+    #   }
+    # }
     choices = Column(JSON, default=dict)
+    # [
+    #   [val_tree_1_row_1, val_tree_2_row_1, ...],
+    #   [val_tree_1_row_2, val_tree_2_row_2, ...],
+    #   ...
+    # ]
     observations = Column(JSON, default=list)
 
     orchard = relationship("Orchard", back_populates="recommendation_maps", cascade="delete")

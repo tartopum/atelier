@@ -14,44 +14,42 @@
   <form method="POST" action="">
     {{ form.hidden_tag() }}
     {{ form.name.label }} {{ form.name(size=20) }}
-    {% for row in form.rows %}
-      <fieldset>
-        {{ row.lat_start.label }} {{ row.lat_start }}
-        {{ row.lng_start.label }} {{ row.lng_start }}
-        {{ row.lat_stop.label }} {{ row.lat_stop }}
-        {{ row.lng_stop.label }} {{ row.lng_stop }}
-      </fieldset>
-    {% endfor %}
     <input type="submit" value="Modifier" name="_update">
   </form>
 
   {% if rows_json %}
-    <div style="display: flex; flex-wrap: wrap; gap: 25px; max-width: 1200px; margin: auto; margin-top: 30px;">
-      <div id="map" style="flex-grow: 1; max-width: 800px; height: 600px;"></div>
-      <div style="text-align: left;">
-        <h2>Cartes de préconisation</h2>
-        <a href="{{ url_for('orchard.recommendation_map_create_route', pk=orchard.id) }}">+ Ajouter</a>
-        <ul>
-          {% for map in orchard.recommendation_maps %}
-            <li>
-              <a href="{{ url_for('orchard.recommendation_map_route', orchard_id=orchard.id, pk=map.id) }}">
-                {{ map }}
-              </a>
-            </li>
-          {% endfor %}
-        </ul>
+    <div style="margin-top: 30px; display: inline-flex; align-items: center; gap: 30px;">
+      <div style="font-size: 1.3rem; text-transform: uppercase; text-align: center;">{{ orchard.start_side_name }}</div>
+      <div>
+        {% for row in orchard.rows %}
+          <div style="display: flex; align-items: center; gap: 3px; margin-bottom: 10px;">
+            <div style="margin-right: 10px; font-size: 0.8rem;">
+              {{ row.name }}
+              <br />
+              ({{ row.n_trees }} arbres)
+            </div>
+            {% for i in range(row.n_trees) %}
+              <div style="width: 10px; height: 10px; border: 1px solid #000; border-radius: 100%;"></div>
+            {% endfor %}
+          </div>
+        {% endfor %}
       </div>
-    </div> 
-  {% endif %}
-
-  <form method="POST" action="{{ url_for('orchard.import_points_route', pk=orchard.id) }}" enctype="multipart/form-data" style="margin-top: 40px;">
-    {{ form_import_points.hidden_tag() }}
-    <div style="margin-bottom: 10px;">
-      {{ form_import_points.file.label }}
-      {{ form_import_points.file }}
+      <div style="font-size: 1.3rem; text-transform: uppercase; text-align: center;">{{ orchard.end_side_name }}</div>
     </div>
-    <input type="submit" value="Importer les jalons" name="_import_points">
-  </form>
+    <div style="text-align: left;">
+      <h2>Cartes de préconisation</h2>
+      <a href="{{ url_for('orchard.recommendation_map_create_route', pk=orchard.id) }}">+ Ajouter</a>
+      <ul>
+        {% for map in orchard.recommendation_maps %}
+          <li>
+            <a href="{{ url_for('orchard.recommendation_map_route', orchard_id=orchard.id, pk=map.id) }}">
+              {{ map }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
 {% endblock %}
 
 {% block js %}
@@ -61,6 +59,7 @@
        crossorigin=""></script>
     <script>
       (function() {
+        return;  // TODO
         const rows = {{ rows_json|safe }};
         const map = L.map('map').setView([{{ orchard.lat }}, {{ orchard.lng }}], 18);
         L.tileLayer('https://data.geopf.fr/wmts?service=WMTS&request=GetTile&version=1.0.0&tilematrixset=PM&tilematrix={z}&tilecol={x}&tilerow={y}&layer=ORTHOIMAGERY.ORTHOPHOTOS&format=image/jpeg&style=normal', {

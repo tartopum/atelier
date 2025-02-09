@@ -11,44 +11,6 @@
 {% block content %}
   <h1><a href="{{ url_for('orchard.detail_route', pk=orchard.id) }}">Verger {{ orchard.name }}</a> : carte de préconisation {{ map_ }}</h1>
 
-  <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
-    <div style="display: flex; gap: 5px; align-items: center;">
-      <div style="width: 10px; height: 10px; border-radius: 100%; background: white; border: 1px solid #000;"></div>
-      Sans observation
-    </div>
-    {% for choice, conf in map_.choices.items() %}
-      <div style="display: flex; gap: 5px; align-items: center;">
-        <div style="width: 10px; height: 10px; border-radius: 100%; background: {{ conf.color }};"></div>
-        {{ choice }}
-      </div>
-    {% endfor %}
-  </div>
-
-  <div style="margin-top: 30px; display: inline-flex; align-items: center; gap: 30px;">
-    <div style="font-size: 1.3rem; text-transform: uppercase; text-align: center;">{{ orchard.start_side_name }}</div>
-    <div>
-      {% for row in rows %}
-        <div style="display: flex; align-items: center; gap: 3px; margin-bottom: 10px;">
-          <div style="margin-right: 10px; font-size: 0.8rem;">
-            {{ row.name }}
-          </div>
-          {% for obs in row.observations %}
-            {% if loop.first %}
-              <a href="#debut">
-            {% elif loop.last %}
-              <a href="#fin">
-            {% endif %}
-            <div style="width: 10px; height: 10px; {% if obs.value %}background-color: {{ obs.color }};{% else %}border: 1px solid #000; border-radius: 100%;{% endif %}" title="{{ obs.value|default("Sans observation", true) }}">
-            </div>
-            {% if loop.first or loop.last %}
-              </a>
-            {% endif %}
-          {% endfor %}
-        </div>
-      {% endfor %}
-    </div>
-    <div style="font-size: 1.3rem; text-transform: uppercase; text-align: center;">{{ orchard.end_side_name }}</div>
-  </div>
 {% endblock %}
 
 {% block js %}
@@ -57,7 +19,6 @@
      crossorigin=""></script>
   <script>
     (function() {
-      return;
       let geolocMarker;
       const rows = {{ rows_json|safe }};
       const observations = {{ observations_json|safe }};

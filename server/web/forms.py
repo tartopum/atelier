@@ -69,7 +69,16 @@ class ConfigForms(dict):
 
 
 class OrchardCreateForm(FlaskForm):
-    name = StringField("Ajouter un verger :")
+    name = StringField("Nom :")
+    start_side_name = StringField("Nom du côté du début des rangs :", render_kw={"placeholder": "Ex : nord, route, haut..."})
+    end_side_name = StringField("Nom du côté de la fin des rangs :", render_kw={"placeholder": "Ex : sud, champ, bas..."})
+    rows = StringField(widget=TextArea(), render_kw={"x-model": "rowsJSON"})
+    distance_between_trees = FloatField(
+        "Distance entre deux arbres du même rang (m) :",
+        validators=[InputRequired()],
+        default=2,
+        widget=NumberInput(step=0.1),
+    )
 
 
 class OrchardRowForm(FlaskForm):

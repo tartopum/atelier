@@ -1,0 +1,46 @@
+{% set page = 'orchard_list' %}
+{% extends "layout.html" %}
+{% block title %}Créer un verger{% endblock %}
+
+{% block js_head %}
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+{% endblock %}
+
+{% block content %}
+  <h1>Cartes de préconisation vergers</h1>
+  <form method="POST"
+        action=""
+        style="text-align: left; max-width: 700px; margin: auto;"
+        x-data="{
+          rows: [],
+          get rowsJSON() {
+            return JSON.stringify(this.rows, null, 2)
+          },
+          addRow() {
+            this.rows.push({
+              name: '',
+              n_trees: 0,
+            });
+          }
+        }">
+    {{ form.hidden_tag() }}
+    {{ form.name.label }} {{ form.name(size=20) }}
+    <br />
+    {{ form.distance_between_trees.label }} {{ form.distance_between_trees(size=10) }}
+    <br />
+    Le début des rangs est du côté {{ form.start_side_name(size=18) }} du verger, la fin du côté {{ form.end_side_name(size=18) }}
+    <br />
+    {{ form.rows }}
+    <br />
+    <ul>
+      <template x-for="row in rows">
+        <li>
+          Nom : <input type="text" @change="row.name = $event.target.value" />
+          Nombre d'arbres : <input type="number" @change="row.n_trees = parseInt($event.target.value)" />
+        </li>
+      </template>
+    </ul>
+    <button @click.prevent="addRow">Ajouter un rang</button>
+    <input type="submit" value="Créer">
+  </form>
+{% endblock %}

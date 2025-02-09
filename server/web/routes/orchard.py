@@ -16,19 +16,30 @@ blueprint = Blueprint("orchard", __name__)
 
 @blueprint.route("/", methods=["GET", "POST"])
 def list_route():
-    form_create = forms.OrchardCreateForm()
-    if form_create.validate_on_submit():
-        name = form_create.name.data
-        orchard = db.Orchard(name=name)
-        db.db.session.add(orchard)
-        db.db.session.commit()
-        return redirect(url_for("orchard.detail_route", pk=orchard.id))
     return render_template(
         "orchard/list.html",
         orchards=db.db.session.execute(
             db.db.select(db.Orchard).order_by(db.Orchard.name)
         ).scalars(),
-        form_create=form_create,
+    )
+
+
+@blueprint.route("/creer/", methods=["GET", "POST"])
+def create_route():
+    form = forms.OrchardCreateForm()
+    if form .validate_on_submit():
+        orchard = db.Orchard(
+            name=form.name.data,
+            start_side_name=form.start_side_name.data,
+            end_side_name=form.end_side_name.data,
+            rows=json.loads(form.rows.data),
+        )
+        db.db.session.add(orchard)
+        db.db.session.commit()
+        return redirect(url_for("orchard.detail_route", pk=orchard.id))
+    return render_template(
+        "orchard/create.html",
+        form=form,
     )
 
 
@@ -49,7 +60,6 @@ def detail_route(pk):
         orchard=orchard,
         rows_json=orchard.rows_json,
         form=form,
-        form_import_points=forms.OrchardImportPoints(),
     )
 
 
@@ -163,7 +173,7 @@ def recommendation_map_create_route(pk):
                 c: {"color": db.RecommendationMap.COLORS[i]} for i, c in enumerate(choices)
             },
             observations=[
-                [None for tree in row["trees"]]
+                [None] * row["n_trees"]
                 for row in orchard.rows
             ],
         )
@@ -185,7 +195,32 @@ def recommendation_map_route(orchard_id, pk):
         "orchard/recommendation_map.html",
         orchard=map_.orchard,
         map_=map_,
+        rows=[
+            {
+                **row,
+                "observations": [
+                    {
+                        "value": val,
+                        "color": map_.choices.get(val, {}).get("color"),
+                    }
+                    for val in map_.observations[i]
+                ],
+            }
+            for i, row in enumerate(map_.orchard.rows)
+        ],
         rows_json=map_.orchard.rows_json,
         observations_json=json.dumps(map_.observations),
         choices_json=json.dumps(map_.choices),
+    )
+
+
+@blueprint.route("/<int:orchard_id>/carte-preco/<int:pk>/rang/<int:row_id>/", methods=["GET", "POST"])
+def recommendation_map_row_route(orchard_id, pk, row_id):
+    map_ = db.db.get_or_404(db.RecommendationMap, pk)
+    row = map_.orchard.rows[abs(row_id)]
+    return render_template(
+        "orchard/recommendation_map_row.html",
+        orchard=map_.orchard,
+        map_=map_,
+        row=row,
     )
